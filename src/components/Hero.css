@@ -12,6 +12,15 @@
   overflow: hidden;
   flex-shrink: 0;
   background: var(--color-surface);
+  position: relative;   /* needed for z-index during drag */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Active drag state — shadow ring shows the image is "lifted" */
+.hero__avatar--dragging {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), 0 0 0 3px rgba(45, 45, 45, 0.08);
+  overflow: visible;  /* let shadow render outside the circle */
 }
 
 .hero__avatar-img {
