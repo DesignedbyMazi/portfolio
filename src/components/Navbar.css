@@ -1,14 +1,54 @@
+/* ── Base navbar ─────────────────────────────────────── */
 .navbar {
-  position: sticky;
+  position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   z-index: 100;
   width: 100%;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.8);
+
+  /* Border on bottom (top position), transparent on top */
+  border-top:    0.8px solid transparent;
   border-bottom: 0.8px solid rgba(234, 234, 234, 0.6);
+
+  /* Subtle directional shadow — below when at top */
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+
+  /* Smooth slide between top and bottom */
+  transform: translateY(0);
+  transition:
+    transform   0.5s cubic-bezier(0.16, 1, 0.3, 1),
+    border-color 0.3s ease,
+    box-shadow   0.3s ease;
 }
 
+/* ── Bottom position (while scrolling) ──────────────── */
+/* translateY(calc(100vh - 100%)) moves top:0 element
+   so its bottom edge sits flush with the viewport bottom */
+.navbar--bottom {
+  transform: translateY(calc(100vh - 100%));
+  border-top:    0.8px solid rgba(234, 234, 234, 0.6);
+  border-bottom: 0.8px solid transparent;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+}
+
+/* ── Dark mode ───────────────────────────────────────── */
+[data-theme="dark"] .navbar {
+  background: rgba(17, 17, 17, 0.8);
+  border-bottom-color: #1F1F1F;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="dark"] .navbar--bottom {
+  border-top-color:  #1F1F1F;
+  border-bottom-color: transparent;
+  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
+}
+
+/* ── Inner layout ────────────────────────────────────── */
 .navbar__inner {
   max-width: var(--page-width);
   margin: 0 auto;
@@ -33,7 +73,7 @@
 }
 
 .navbar__link {
-  font-size: var(--text-xs);      /* 12px desktop */
+  font-size: var(--text-xs);
   line-height: var(--leading-xs);
   font-weight: 500;
   color: var(--color-text-muted);
@@ -93,27 +133,22 @@
   .navbar__inner { padding: 0 40px; }
 }
 
-/* ── Mobile: 14px nav links ─────────── */
+/* ── Mobile ──────────────────────────── */
 @media (max-width: 767px) {
   .navbar__inner {
     padding: 0 24px;
     gap: 12px;
   }
-
   .navbar__links { gap: 16px; }
-
-  .navbar__link {
-    font-size: 14px;           /* ← 14px on mobile as requested */
-    letter-spacing: 0;
-  }
+  .navbar__link  { font-size: 14px; letter-spacing: 0; }
 }
 
-/* ── Narrow: hide status text, keep dot */
+/* ── Narrow: hide status text, keep dot ── */
 @media (max-width: 520px) {
   .navbar__status-text { display: none; }
 }
 
-/* ── Very narrow: drop Services + About Me */
+/* ── Very narrow: drop Services + About Me ── */
 @media (max-width: 380px) {
   .navbar__links { gap: 12px; }
   .navbar__link-wrap:nth-child(n+3) { display: none; }

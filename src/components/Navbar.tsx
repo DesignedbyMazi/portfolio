@@ -1,14 +1,34 @@
+import { useEffect, useState } from 'react';
 import './Navbar.css';
 
 const navLinks = ['Home', 'Work', 'Services', 'About Me'];
 
 export default function Navbar() {
+  const [atBottom, setAtBottom] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const y = window.scrollY;
+      setAtBottom((prev) => {
+        if (!prev && y > 80) return true;   // slip to bottom after 80px scroll
+        if (prev  && y < 16) return false;  // snap back to top near the very top
+        return prev;                         // hysteresis — no change in between
+      });
+    };
+
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
-    <nav className="navbar">
+    <nav className={`navbar${atBottom ? ' navbar--bottom' : ''}`}>
       <div className="navbar__inner">
         <div className="navbar__links">
           {navLinks.map((link) => (
-            <div key={link} className={`navbar__link-wrap ${link === 'Home' ? 'navbar__link-wrap--active' : ''}`}>
+            <div
+              key={link}
+              className={`navbar__link-wrap ${link === 'Home' ? 'navbar__link-wrap--active' : ''}`}
+            >
               <a href="#" className="navbar__link">{link}</a>
               <div className="navbar__underline" />
             </div>

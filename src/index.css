@@ -79,11 +79,6 @@
   --color-success:        #11AB2A;   /* green stays the same */
 }
 
-/* Navbar dark mode — frosted dark glass */
-[data-theme="dark"] .navbar {
-  background: rgba(17, 17, 17, 0.8);
-  border-bottom-color: #1F1F1F;
-}
 
 /* ── Smooth theme transition ─────────── */
 /* Added/removed on <html> around each toggle click */
