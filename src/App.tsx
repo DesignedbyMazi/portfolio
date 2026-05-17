@@ -16,26 +16,23 @@ function App() {
       <Navbar />
       <main className="main">
         <div className="content">
-          {/* Hero — each sub-element animates individually */}
           <Hero />
 
-          {/* IntroCopy — each paragraph has its own data-animate + stagger delay */}
           <IntroCopy />
 
-          <div data-animate data-delay="0">
+          <div data-animate>
             <SocialSection />
           </div>
 
-          <div data-animate data-delay="0">
+          <div data-animate>
             <SelectedProjects />
           </div>
 
-          {/* 48px gap between projects and brands (override uniform content gap) */}
-          <div data-animate data-delay="0" className="content__brands">
+          <div data-animate className="content__brands">
             <BrandLogos />
           </div>
 
-          <div data-animate data-delay="0">
+          <div data-animate>
             <Footer />
           </div>
         </div>

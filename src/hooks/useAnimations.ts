@@ -2,10 +2,9 @@ import { useEffect } from 'react';
 
 /**
  * Observes every [data-animate] element on the page.
- * When an element enters the viewport it receives the
- * 'anim-visible' class, triggering the CSS transition.
- * The optional data-delay attribute (ms) staggers items
- * within the same group.
+ * When an element enters the viewport it immediately receives
+ * the 'anim-visible' class — no artificial delay, the CSS
+ * transition handles the smooth appearance.
  */
 export function useAnimations() {
   useEffect(() => {
@@ -15,22 +14,12 @@ export function useAnimations() {
       (entries) => {
         entries.forEach((entry) => {
           if (!entry.isIntersecting) return;
-
-          const el = entry.target as HTMLElement;
-          const delay = Number(el.dataset.delay ?? 0);
-
-          setTimeout(() => {
-            el.classList.add('anim-visible');
-          }, delay);
-
-          // Animate once only
-          observer.unobserve(el);
+          entry.target.classList.add('anim-visible');
+          observer.unobserve(entry.target);
         });
       },
       {
-        // Fire when at least 12% of the element is visible
         threshold: 0.12,
-        // Only trigger when element is 48px inside the viewport bottom edge
         rootMargin: '0px 0px -48px 0px',
       }
     );
