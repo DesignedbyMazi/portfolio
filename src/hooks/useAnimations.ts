@@ -1,9 +1,13 @@
 import { useEffect } from 'react';
 
 /**
- * Observes every [data-animate] element on the page.
- * Fires as soon as the element just enters the viewport
- * so the full translateY travel is visible.
+ * Bi-directional scroll reveal.
+ *
+ * • Element enters viewport  → transition plays, element slides in.
+ * • Element leaves viewport  → class removed instantly (no transition)
+ *   so it resets to the hidden/offset state and re-animates next time.
+ *
+ * This makes the effect consistent whether the user scrolls down or up.
  */
 export function useAnimations() {
   useEffect(() => {
@@ -12,15 +16,26 @@ export function useAnimations() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add('anim-visible');
-          observer.unobserve(entry.target);
+          const el = entry.target as HTMLElement;
+
+          if (entry.isIntersecting) {
+            // Restore the CSS transition and animate in
+            el.style.transition = '';
+            el.classList.add('anim-visible');
+          } else {
+            // Kill transition so the reset is instant (no visible exit animation)
+            el.style.transition = 'none';
+            el.classList.remove('anim-visible');
+            // Re-enable transition after two frames so the reset is committed
+            requestAnimationFrame(() => {
+              requestAnimationFrame(() => {
+                el.style.transition = '';
+              });
+            });
+          }
         });
       },
       {
-        // Fire when just 5% of the element peeks into the viewport —
-        // the animation starts while the element is still mostly offscreen,
-        // making the slide-in clearly visible.
         threshold: 0.05,
         rootMargin: '0px 0px -20px 0px',
       }
