@@ -4,7 +4,7 @@ export default function IntroCopy() {
   return (
     <div className="intro">
       <p className="intro__para" data-animate data-delay="0">
-        I design digital products that are clear, purposeful, and built to convert. For 2+ years I've worked across{' '}
+        I design digital products that are clear, purposeful, and built to convert. For 3+ years I've worked across{' '}
         <strong>SaaS</strong>, <strong>B2C</strong>, and <strong>B2B products</strong> — moving from idea to launch in{' '}
         <strong>Payment</strong>, <strong>Edtech</strong>, <strong>Healthtech</strong>,{' '}
         <strong>Ecommerce</strong>, <strong>Fitness</strong>, and <strong>Automotive platforms</strong>.
