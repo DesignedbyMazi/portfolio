@@ -1,6 +1,4 @@
 import { useEffect, useState } from 'react';
-import arrowIcon from '../assets/icons/arrow-up-right2.png';
-import sunIcon from '../assets/icons/sun.png';
 import './Footer.css';
 
 function useCurrentTime() {
@@ -13,7 +11,6 @@ function useCurrentTime() {
 }
 
 function formatDate(date: Date) {
-  // Display in WAT (UTC+1) regardless of local timezone
   return date.toLocaleDateString('en-GB', {
     weekday: 'short',
     day: 'numeric',
@@ -32,6 +29,48 @@ function formatTime(date: Date) {
   });
 }
 
+function ArrowUpRightIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden="true"
+      className="footer__email-arrow"
+    >
+      <path
+        d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
+
+function GlobeIcon() {
+  return (
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+      className="footer__globe"
+    >
+      <circle cx="12" cy="12" r="9.5" stroke="currentColor" strokeWidth="1.5" />
+      <path
+        d="M12 2.5C12 2.5 8.5 6.5 8.5 12C8.5 17.5 12 21.5 12 21.5M12 2.5C12 2.5 15.5 6.5 15.5 12C15.5 17.5 12 21.5 12 21.5M2.5 12H21.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+      />
+    </svg>
+  );
+}
+
 export default function Footer() {
   const now = useCurrentTime();
 
@@ -45,18 +84,18 @@ export default function Footer() {
             <a href="mailto:designedbyuche@gmail.com" className="footer__email-link">
               designedbyuche@gmail.com
             </a>
-            <img src={arrowIcon} alt="" className="footer__email-arrow" />
+            <ArrowUpRightIcon />
           </div>
         </div>
         <div className="footer__meta-row">
           <div className="footer__meta">
+            <GlobeIcon />
             <span className="footer__date">{formatDate(now)}</span>
             <span className="footer__sep">·</span>
             <span className="footer__time">
               {formatTime(now)}
               <span className="footer__tz"> (WAT)</span>
             </span>
-            <img src={sunIcon} alt="" className="footer__sun" />
           </div>
         </div>
       </div>

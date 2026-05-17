@@ -1,5 +1,25 @@
-import arrowIcon from '../assets/icons/arrow-up-right.png';
 import './SelectedProjects.css';
+
+function ArrowUpRightIcon() {
+  return (
+    <svg
+      width="14"
+      height="14"
+      viewBox="0 0 14 14"
+      fill="none"
+      aria-hidden="true"
+      className="selected-projects__arrow"
+    >
+      <path
+        d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  );
+}
 
 interface Project {
   id: number;
@@ -46,7 +66,7 @@ export default function SelectedProjects() {
         <h2 className="selected-projects__heading">Selected Projects</h2>
         <a href="#" className="selected-projects__view-all">
           <span>View all</span>
-          <img src={arrowIcon} alt="" className="selected-projects__arrow" />
+          <ArrowUpRightIcon />
         </a>
       </div>
       <div className="selected-projects__grid">

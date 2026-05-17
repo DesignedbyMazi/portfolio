@@ -16,15 +16,11 @@ function App() {
       <Navbar />
       <main className="main">
         <div className="content">
-          {/* Hero — first element on screen, no delay */}
-          <div data-animate data-delay="0">
-            <Hero />
-          </div>
+          {/* Hero — each sub-element animates individually */}
+          <Hero />
 
-          {/* Intro copy — each paragraph staggers via the component */}
-          <div data-animate data-delay="60">
-            <IntroCopy />
-          </div>
+          {/* IntroCopy — each paragraph has its own data-animate + stagger delay */}
+          <IntroCopy />
 
           <div data-animate data-delay="0">
             <SocialSection />
@@ -34,7 +30,8 @@ function App() {
             <SelectedProjects />
           </div>
 
-          <div data-animate data-delay="0">
+          {/* 48px gap between projects and brands (override uniform content gap) */}
+          <div data-animate data-delay="0" className="content__brands">
             <BrandLogos />
           </div>
 
