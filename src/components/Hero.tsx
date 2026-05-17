@@ -3,72 +3,110 @@ import { useRef, useEffect } from 'react';
 import './Hero.css';
 
 /* ── Constants ───────────────────────────────────────── */
-const LONG_PRESS_MS    = 380;   // hold time before drag activates
-const MOVE_CANCEL_PX   = 8;    // drift threshold that cancels the long-press
-const SPRING_MS        = 620;   // spring-back duration on release
+const LONG_PRESS_MS  = 380;
+const MOVE_CANCEL_PX = 8;
+const SPRING_MS      = 620;
 
-/* Block-level text tags worth magnifying */
-const TEXT_TAGS = new Set(['P', 'H1', 'H2', 'H3', 'H4', 'H5']);
+/* ── Caret helpers ───────────────────────────────────── */
 
-/* ── Magnify helpers ─────────────────────────────────── */
-
-/** Find the deepest block-level text element at (x, y), skipping `exclude`. */
-function textUnder(x: number, y: number, exclude: Element): HTMLElement | null {
-  const hits = document.elementsFromPoint(x, y) as HTMLElement[];
-  for (const el of hits) {
-    if (el === exclude || exclude.contains(el)) continue;
-    // Direct block text hit
-    if (TEXT_TAGS.has(el.tagName) && el.textContent?.trim()) return el;
-    // Inline child (span / strong / a) → climb to its block parent
-    const block = el.closest('p,h1,h2,h3,h4,h5') as HTMLElement | null;
-    if (block && block.textContent?.trim()) return block;
-  }
+/** Returns the text node + char offset visually under (x, y). */
+function caretAt(x: number, y: number): { node: Text; offset: number } | null {
+  const doc = document as any;
+  try {
+    // Firefox / standard
+    if (doc.caretPositionFromPoint) {
+      const p = doc.caretPositionFromPoint(x, y);
+      if (p?.offsetNode?.nodeType === Node.TEXT_NODE)
+        return { node: p.offsetNode as Text, offset: p.offset };
+    }
+    // Chrome / Safari / WebKit
+    if (doc.caretRangeFromPoint) {
+      const r = doc.caretRangeFromPoint(x, y);
+      if (r?.startContainer?.nodeType === Node.TEXT_NODE)
+        return { node: r.startContainer as Text, offset: r.startOffset };
+    }
+  } catch { /* ignore cross-origin or sandboxed errors */ }
   return null;
 }
 
-/** Scale the element up — bounce spring for a lively feel. */
-function magnify(el: HTMLElement) {
-  // Cancel any in-flight shrink for this element
-  const pending = (el as any).__shrinkTimer as ReturnType<typeof setTimeout> | undefined;
-  if (pending) { clearTimeout(pending); (el as any).__shrinkTimer = null; }
-
-  el.style.transition = 'transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)';
-  el.style.transform   = 'scale(1.13)';
-  el.style.transformOrigin = 'left center';
-  el.style.position    = 'relative';
-  el.style.zIndex      = '5';
+/** Finds the sentence boundaries inside `text` around character `offset`. */
+function sentenceBounds(text: string, offset: number): [number, number] {
+  // Walk backward to find end of previous sentence (. ! ?)
+  let start = 0;
+  for (let i = offset - 1; i > 0; i--) {
+    if (/[.!?]/.test(text[i - 1]) && /\s/.test(text[i])) {
+      start = i;
+      while (start < text.length && /\s/.test(text[start])) start++; // skip space
+      break;
+    }
+  }
+  // Walk forward to find end of this sentence
+  let end = text.length;
+  for (let i = Math.max(start, offset); i < text.length; i++) {
+    if (/[.!?]/.test(text[i])) { end = i + 1; break; }
+  }
+  return [start, end];
 }
 
-/** Scale the element back and clear inline styles once done. */
-function shrink(el: HTMLElement) {
-  el.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
-  el.style.transform  = 'scale(1)';
+/* ── Sentence magnification ──────────────────────────── */
 
-  const tid = setTimeout(() => {
-    el.style.transition      = '';
-    el.style.transform       = '';
-    el.style.transformOrigin = '';
-    el.style.position        = '';
-    el.style.zIndex          = '';
-    (el as any).__shrinkTimer = null;
-  }, 340);
-  (el as any).__shrinkTimer = tid;
+/**
+ * Splits the text node at sentence boundaries, wraps the sentence in a
+ * <span class="sentence-zoom">, and returns the span.
+ */
+function wrapSentence(caret: { node: Text; offset: number }): HTMLElement | null {
+  const text = caret.node.textContent ?? '';
+  if (!text.trim()) return null;
+
+  const [start, end] = sentenceBounds(text, caret.offset);
+  if (end <= start) return null;
+
+  const range = document.createRange();
+  range.setStart(caret.node, start);
+  range.setEnd(caret.node, end);
+
+  const span = document.createElement('span');
+  span.className = 'sentence-zoom';
+
+  try {
+    range.surroundContents(span);
+    // Let the browser paint scale(1) first, then zoom on the next frame
+    requestAnimationFrame(() => span.classList.add('sentence-zoom--active'));
+    return span;
+  } catch {
+    return null; // bail if range crosses element boundaries
+  }
+}
+
+/** Immediately removes the sentence span, merging text nodes back. */
+function unwrapNow(span: HTMLElement) {
+  const parent = span.parentNode;
+  if (!parent) return;
+  while (span.firstChild) parent.insertBefore(span.firstChild, span);
+  parent.removeChild(span);
+  parent.normalize(); // re-merge split text nodes
+}
+
+/** Animates zoom back to scale(1) then removes the span from the DOM. */
+function unwrapAnimated(span: HTMLElement) {
+  span.classList.remove('sentence-zoom--active');
+  setTimeout(() => unwrapNow(span), 300); // matches CSS transition duration
 }
 
 /* ── Main hook ───────────────────────────────────────── */
+
 function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
 
-    let isDragging  = false;
-    let startX      = 0;
-    let startY      = 0;
+    let isDragging    = false;
+    let startX        = 0;
+    let startY        = 0;
     let longPressTimer: ReturnType<typeof setTimeout> | null = null;
     let cleanupTimer:   ReturnType<typeof setTimeout> | null = null;
-    let magnifiedEl:    HTMLElement | null = null;
+    let currentSpan:    HTMLElement | null = null;
 
-    /* Activate drag mode — subtle scale-up signals to the user */
     const activateDrag = () => {
       isDragging = true;
       el.classList.add('hero__avatar--dragging');
@@ -90,29 +128,32 @@ function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
       const dy = t.clientY - startY;
 
       if (!isDragging) {
-        // Cancel long-press if finger drifts too far before timer fires
+        // Cancel long-press if finger drifts before timer fires
         if (Math.abs(dx) > MOVE_CANCEL_PX || Math.abs(dy) > MOVE_CANCEL_PX) {
           if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
         }
         return;
       }
 
-      e.preventDefault(); // prevent page scroll while dragging
-
-      /* Move the image with the finger */
+      e.preventDefault(); // block page scroll while dragging
       el.style.transition = 'none';
       el.style.transform  = `translate(${dx}px, ${dy}px) scale(1.07)`;
 
-      /* ── Text magnification ── */
-      const target = textUnder(t.clientX, t.clientY, el);
+      /* ── Sentence detection ── */
 
-      if (target !== magnifiedEl) {
-        // Un-magnify the element we just left
-        if (magnifiedEl) shrink(magnifiedEl);
-        // Magnify the new element
-        if (target) magnify(target);
-        magnifiedEl = target;
-      }
+      // 1. Quick check — still on the same sentence span?
+      const check = caretAt(t.clientX, t.clientY);
+      if (check && currentSpan?.contains(check.node)) return;
+
+      // 2. Moved off current sentence — remove span immediately so DOM is clean
+      if (currentSpan) { unwrapNow(currentSpan); currentSpan = null; }
+
+      // 3. Fresh caret query on the clean DOM
+      const fresh = caretAt(t.clientX, t.clientY);
+      if (!fresh || el.contains(fresh.node) || !fresh.node.textContent?.trim()) return;
+
+      // 4. Wrap the new sentence
+      currentSpan = wrapSentence(fresh);
     };
 
     const onTouchEnd = () => {
@@ -122,10 +163,10 @@ function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
       isDragging = false;
       el.classList.remove('hero__avatar--dragging');
 
-      /* Shrink whichever text is still magnified */
-      if (magnifiedEl) { shrink(magnifiedEl); magnifiedEl = null; }
+      // Animate the last magnified sentence back to normal
+      if (currentSpan) { unwrapAnimated(currentSpan); currentSpan = null; }
 
-      /* Spring the image back to its origin */
+      // Spring image back to origin
       el.style.transition = `transform ${SPRING_MS}ms cubic-bezier(0.34, 1.56, 0.64, 1)`;
       el.style.transform  = 'translate(0px, 0px) scale(1)';
 
@@ -148,6 +189,7 @@ function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
       el.removeEventListener('touchcancel', onTouchEnd);
       if (longPressTimer) clearTimeout(longPressTimer);
       if (cleanupTimer)   clearTimeout(cleanupTimer);
+      if (currentSpan) unwrapNow(currentSpan); // force cleanup on unmount
     };
   }, [ref]);
 }

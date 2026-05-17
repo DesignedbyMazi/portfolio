@@ -11,16 +11,31 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--color-surface);
-  position: relative;   /* needed for z-index during drag */
+  background: transparent;  /* no fill — image covers the full circle */
+  position: relative;
   user-select: none;
   -webkit-user-select: none;
 }
 
-/* Active drag state — shadow ring shows the image is "lifted" */
+/* Lifted state during drag */
 .hero__avatar--dragging {
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18), 0 0 0 3px rgba(45, 45, 45, 0.08);
-  overflow: visible;  /* let shadow render outside the circle */
+  overflow: visible;
+}
+
+/* ── Sentence magnification ──────────────────────────
+   Applied dynamically to a <span> wrapping a single
+   sentence when the profile image drags over it.
+──────────────────────────────────────────────────── */
+.sentence-zoom {
+  display: inline-block;
+  transform: scale(1);
+  transform-origin: left center;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.sentence-zoom--active {
+  transform: scale(1.16);
 }
 
 .hero__avatar-img {
