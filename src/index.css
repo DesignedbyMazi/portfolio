@@ -68,15 +68,21 @@
 /* ── Dark mode token overrides ───────── */
 [data-theme="dark"] {
   --color-text-primary:   #F0F0F0;
-  --color-text-body:      #9A9A9A;
-  --color-text-secondary: #9A9A9A;
+  --color-text-body:      #959595;
+  --color-text-secondary: #959595;
   --color-text-muted:     #505050;
-  --color-border:         #242424;
+  --color-border:         #1F1F1F;
   --color-bg:             #111111;
   --color-surface:        #1C1C1C;
   --color-grey-150:       #3A3A3A;
   --color-dark:           #F0F0F0;   /* inverted — light button bg in dark mode */
   --color-success:        #11AB2A;   /* green stays the same */
+}
+
+/* Navbar dark mode — frosted dark glass */
+[data-theme="dark"] .navbar {
+  background: rgba(17, 17, 17, 0.8);
+  border-bottom-color: #1F1F1F;
 }
 
 /* ── Smooth theme transition ─────────── */
