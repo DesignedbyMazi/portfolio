@@ -1,0 +1,36 @@
+.intro {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  width: 100%;
+}
+
+.intro__para {
+  font-size: var(--text-base);        /* 16px desktop, 15px mobile via :root override */
+  line-height: var(--leading-base);   /* 26px desktop, 24px mobile */
+  font-weight: 400;
+  color: var(--color-text-body);      /* #5A5A5A */
+}
+
+.intro__para strong {
+  font-weight: 500;
+  color: var(--color-text-primary);   /* #2D2D2D */
+}
+
+.intro__link {
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.intro__link:hover {
+  opacity: 0.75;
+}
+
+@media (max-width: 767px) {
+  .intro {
+    gap: 24px;
+  }
+  /* font-size & line-height already handled by :root mobile override in index.css */
+}

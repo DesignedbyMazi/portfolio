@@ -1,0 +1,144 @@
+.footer {
+  width: 100%;
+  flex-shrink: 0;
+  padding-bottom: 40px;
+}
+
+.footer__divider {
+  width: 100%;
+  height: 1px;
+  background: var(--color-border);
+  margin-bottom: 32px;
+}
+
+.footer__content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.footer__email-row {
+  display: flex;
+  align-items: center;
+  gap: 64px;
+}
+
+.footer__label {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  min-width: 48px;
+}
+
+.footer__email-link-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.footer__email-link {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  letter-spacing: 0.15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 0.15s;
+}
+
+.footer__email-link:hover {
+  opacity: 0.7;
+}
+
+.footer__email-arrow {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.footer__meta-row {
+  display: flex;
+  align-items: center;
+}
+
+.footer__meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.footer__date {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  font-weight: 400;
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.footer__sep {
+  color: var(--color-grey-150);
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+}
+
+.footer__time {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: 0.15px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.footer__tz {
+  font-weight: 400;
+  color: var(--color-text-secondary);
+}
+
+.footer__sun {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+/* ── Mobile ─────────────────────────────── */
+@media (max-width: 600px) {
+  .footer__email-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  .footer__label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .footer__email-link {
+    font-size: var(--text-sm);
+  }
+}
+
+@media (max-width: 400px) {
+  .footer__email-link {
+    font-size: 13px;
+  }
+
+  .footer__time {
+    font-size: var(--text-sm);
+  }
+
+  .footer__date {
+    font-size: var(--text-sm);
+  }
+}

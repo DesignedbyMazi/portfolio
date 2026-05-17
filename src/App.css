@@ -1,0 +1,46 @@
+.page {
+  width: 100%;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+.main {
+  width: 100%;
+  padding-top: 100px;
+  padding-bottom: 80px;
+}
+
+.content {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--content-padding);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4xl);
+}
+
+/* ── Responsive breakpoints ──────────── */
+
+@media (max-width: 1200px) {
+  :root { --content-padding: 120px; }
+}
+
+@media (max-width: 1024px) {
+  :root { --content-padding: 60px; }
+  .main { padding-top: 80px; }
+}
+
+@media (max-width: 767px) {
+  :root {
+    --content-padding: 20px;
+    --space-4xl: 44px;
+  }
+  .main { padding-top: 56px; }
+}
+
+@media (max-width: 420px) {
+  :root {
+    --content-padding: 16px;
+    --space-4xl: 36px;
+  }
+}

@@ -1,0 +1,93 @@
+.hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+
+.hero__avatar {
+  width: 78px;
+  height: 78px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--color-surface);
+}
+
+.hero__avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.hero__info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.hero__text {
+  display: flex;
+  flex-direction: column;
+}
+
+.hero__name {
+  font-size: var(--text-base);
+  line-height: var(--leading-base);
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+.hero__role {
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  font-weight: 400;
+  color: var(--color-text-muted);
+  letter-spacing: 0.15px;
+}
+
+.hero__cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface);
+  font-size: var(--text-xs);
+  line-height: var(--leading-xs);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  letter-spacing: 0.15px;
+  white-space: nowrap;
+  width: fit-content;
+  cursor: pointer;
+}
+
+.hero__cta:hover {
+  background: #e8e8e8;
+}
+
+@media (max-width: 767px) {
+  .hero {
+    gap: 14px;
+  }
+
+  .hero__avatar {
+    width: 64px;
+    height: 64px;
+  }
+
+  .hero__name {
+    font-size: 15px;   /* stays 15px on mobile */
+  }
+}
+
+@media (max-width: 420px) {
+  .hero__avatar {
+    width: 56px;
+    height: 56px;
+  }
+}

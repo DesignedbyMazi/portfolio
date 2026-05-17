@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* ── Colors ──────────────────────────── */
+  --color-text-primary:    #2D2D2D;   /* headings, names, active nav, bold spans */
+  --color-text-body:       #5A5A5A;   /* body paragraphs, regular prose */
+  --color-text-secondary:  #5A5A5A;   /* alias used in components */
+  --color-text-muted:      #777777;   /* captions, labels, inactive nav, meta */
+  --color-border:          #EAEAEA;
+  --color-bg:              #FFFFFF;
+  --color-surface:         #F4F4F4;
+  --color-grey-150:        #DFDFDF;
+  --color-success:         #11AB2A;
+  --color-dark:            #2D2D2D;
+
+  /* ── Typography ──────────────────────── */
+  --font-family: 'Inter', sans-serif;
+
+  /* desktop scale */
+  --text-xs:   12px;
+  --text-sm:   14px;
+  --text-base: 16px;   /* ← 16px on desktop */
+  --text-lg:   18px;
+
+  /* line-heights */
+  --leading-xs:   18px;
+  --leading-sm:   20px;
+  --leading-base: 26px;   /* bumped for 16px body */
+  --leading-lg:   32px;
+
+  /* ── Spacing ─────────────────────────── */
+  --space-xs:  4px;
+  --space-sm:  8px;
+  --space-md:  12px;
+  --space-lg:  16px;
+  --space-xl:  24px;
+  --space-2xl: 32px;
+  --space-3xl: 40px;
+  --space-4xl: 56px;
+  --space-5xl: 72px;
+  --space-6xl: 100px;
+
+  /* ── Radii ───────────────────────────── */
+  --radius-pill: 9999px;
+  --radius-card: 40px;
+
+  /* ── Layout ──────────────────────────── */
+  --content-width:   720px;
+  --page-width:      1440px;
+  --content-padding: 320px;   /* ← 320px on desktop */
+}
+
+/* ── Mobile scale override ───────────── */
+@media (max-width: 767px) {
+  :root {
+    --text-base:    15px;
+    --leading-base: 24px;
+  }
+}
+
+/* ── Base styles ─────────────────────── */
+html, body {
+  font-family: var(--font-family);
+  font-size: var(--text-base);
+  background-color: var(--color-bg);
+  color: var(--color-text-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  font-family: var(--font-family);
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+p { margin: 0; }
