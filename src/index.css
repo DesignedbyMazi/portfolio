@@ -103,6 +103,11 @@
   color: #111111;
 }
 
+/* Project card border — #1F1F1F at 30% opacity in dark mode */
+[data-theme="dark"] .project-card {
+  border-color: rgba(31, 31, 31, 0.3);
+}
+
 /* Project card placeholder checkerboard — darker in dark mode */
 [data-theme="dark"] .project-card__image {
   background-image:
