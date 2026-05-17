@@ -121,6 +121,9 @@ export default function Footer() {
         </div>
 
       </div>
+      <p className="footer__end-caption">
+        😔 There's nothing to see here, click on uche's email
+      </p>
     </footer>
   );
 }

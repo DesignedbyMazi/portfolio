@@ -123,6 +123,15 @@
   background-color: var(--color-surface);
 }
 
+.footer__end-caption {
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 400;
+  color: var(--color-text-body);
+  margin-top: 32px;
+  text-align: center;
+}
+
 /* ── Mobile ─────────────────────────────── */
 @media (max-width: 600px) {
   .footer__email-row {
