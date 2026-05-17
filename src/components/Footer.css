@@ -130,6 +130,40 @@
   color: var(--color-text-body);
   margin-top: 32px;
   text-align: center;
+  cursor: pointer;
+  min-height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Cinematic spinner ───────────────── */
+.footer__caption-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid rgba(17, 171, 42, 0.2);
+  border-top-color: #11AB2A;
+  animation: caption-spin 0.75s linear infinite;
+}
+
+@keyframes caption-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ── Green glow — mirrors the available dot pulse ── */
+@keyframes caption-glow {
+  0%   { color: var(--color-text-body); text-shadow: none; }
+  25%  { color: #11AB2A; text-shadow: 0 0 6px rgba(17, 171, 42, 0.8), 0 0 18px rgba(17, 171, 42, 0.4); }
+  60%  { color: #11AB2A; text-shadow: 0 0 6px rgba(17, 171, 42, 0.8), 0 0 18px rgba(17, 171, 42, 0.4); }
+  100% { color: var(--color-text-body); text-shadow: none; }
+}
+
+.footer__caption-text--glow {
+  animation: caption-glow 3.2s ease-in-out forwards;
 }
 
 /* ── Mobile ─────────────────────────────── */

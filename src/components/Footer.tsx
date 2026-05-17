@@ -121,9 +121,41 @@ export default function Footer() {
         </div>
 
       </div>
-      <p className="footer__end-caption">
-        😔 There's nothing to see here, click on uche's email
-      </p>
+      <EndCaption />
     </footer>
+  );
+}
+
+/* ── Interactive end caption ─────────────────────────── */
+type CaptionState = 'idle' | 'loading' | 'glowing';
+
+function EndCaption() {
+  const [state, setState] = useState<CaptionState>('idle');
+
+  const handleInteract = () => {
+    if (state !== 'idle') return;
+    setState('loading');
+    setTimeout(() => {
+      setState('glowing');
+      setTimeout(() => setState('idle'), 3200);
+    }, 1800);
+  };
+
+  return (
+    <p
+      className="footer__end-caption"
+      onClick={handleInteract}
+      onTouchStart={handleInteract}
+      role="button"
+      aria-label="Easter egg"
+    >
+      {state === 'loading' ? (
+        <span className="footer__caption-spinner" aria-hidden="true" />
+      ) : (
+        <span className={state === 'glowing' ? 'footer__caption-text--glow' : ''}>
+          😔 There's nothing to see here, click on uche's email
+        </span>
+      )}
+    </p>
   );
 }
