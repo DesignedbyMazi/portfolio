@@ -2,9 +2,8 @@ import { useEffect } from 'react';
 
 /**
  * Observes every [data-animate] element on the page.
- * When an element enters the viewport it immediately receives
- * the 'anim-visible' class — no artificial delay, the CSS
- * transition handles the smooth appearance.
+ * Fires as soon as the element just enters the viewport
+ * so the full translateY travel is visible.
  */
 export function useAnimations() {
   useEffect(() => {
@@ -19,8 +18,11 @@ export function useAnimations() {
         });
       },
       {
-        threshold: 0.12,
-        rootMargin: '0px 0px -48px 0px',
+        // Fire when just 5% of the element peeks into the viewport —
+        // the animation starts while the element is still mostly offscreen,
+        // making the slide-in clearly visible.
+        threshold: 0.05,
+        rootMargin: '0px 0px -20px 0px',
       }
     );
 
