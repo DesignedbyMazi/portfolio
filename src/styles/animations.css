@@ -1,0 +1,29 @@
+/* ────────────────────────────────────────────
+   Scroll-triggered fade-slide-up animation
+   Each element with [data-animate] starts
+   invisible and slides up when it enters view.
+   data-delay (ms) controls per-element stagger.
+──────────────────────────────────────────── */
+
+[data-animate] {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity  0.65s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: opacity, transform;
+}
+
+[data-animate].anim-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Respect reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+  [data-animate] {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

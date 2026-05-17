@@ -21,28 +21,31 @@
   border-radius: 50%;
 }
 
+/* Info column: height matches avatar (78px) exactly */
 .hero__info {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  height: 78px;
   flex: 1;
 }
 
 .hero__text {
   display: flex;
   flex-direction: column;
+  gap: 2px;
 }
 
 .hero__name {
-  font-size: var(--text-base);
-  line-height: var(--leading-base);
+  font-size: var(--text-base);   /* 16px desktop, 15px mobile */
+  line-height: 24px;
   font-weight: 600;
   color: var(--color-text-primary);
 }
 
 .hero__role {
   font-size: var(--text-xs);
-  line-height: var(--leading-xs);
+  line-height: 18px;
   font-weight: 400;
   color: var(--color-text-muted);
   letter-spacing: 0.15px;
@@ -64,30 +67,15 @@
   white-space: nowrap;
   width: fit-content;
   cursor: pointer;
+  transition: background 0.15s;
 }
 
-.hero__cta:hover {
-  background: #e8e8e8;
-}
+.hero__cta:hover { background: #e8e8e8; }
 
+/* ── Mobile: avatar stays 78px, info aligns to match ── */
 @media (max-width: 767px) {
-  .hero {
-    gap: 14px;
-  }
+  .hero { gap: 14px; }
 
-  .hero__avatar {
-    width: 64px;
-    height: 64px;
-  }
-
-  .hero__name {
-    font-size: 15px;   /* stays 15px on mobile */
-  }
-}
-
-@media (max-width: 420px) {
-  .hero__avatar {
-    width: 56px;
-    height: 56px;
-  }
+  /* Avatar unchanged at 78px — info block is also naturally 78px */
+  .hero__name { font-size: 15px; }
 }

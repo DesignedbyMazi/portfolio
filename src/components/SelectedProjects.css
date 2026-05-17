@@ -35,9 +35,7 @@
   transition: opacity 0.15s;
 }
 
-.selected-projects__view-all:hover {
-  opacity: 0.7;
-}
+.selected-projects__view-all:hover { opacity: 0.7; }
 
 .selected-projects__arrow {
   width: 14px;
@@ -52,20 +50,22 @@
   width: 100%;
 }
 
-/* ── Project Card ─────────────────── */
+/* ── Project Card ──────────────────────── */
 .project-card {
   display: flex;
   flex-direction: column;
-  border: 1px solid var(--color-border);
+  border: 1px solid #F4F4F4;
   border-radius: var(--radius-card);
   overflow: hidden;
   flex: 1;
   cursor: pointer;
-  transition: border-color 0.15s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
 }
 
 .project-card:hover {
-  border-color: #d0d0d0;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.09);
+  border-color: #e8e8e8;
 }
 
 .project-card__image {
@@ -89,11 +89,12 @@
   object-fit: cover;
 }
 
+/* Text body: 24px top/bottom, 20px left/right */
 .project-card__body {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 28px 20px;
+  padding: 24px 20px;
   flex: 1;
 }
 
@@ -102,14 +103,14 @@
   font-size: 16px;
   line-height: 24px;
   font-weight: 600;
-  color: var(--color-text-primary);   /* #2D2D2D */
+  color: var(--color-text-primary);
 }
 
 .project-card__desc {
   font-size: 14px;
   line-height: 20px;
   font-weight: 400;
-  color: var(--color-text-body);      /* #5A5A5A */
+  color: var(--color-text-body);
   letter-spacing: 0.1px;
   overflow: hidden;
   display: -webkit-box;
@@ -117,26 +118,22 @@
   -webkit-box-orient: vertical;
 }
 
-/* ── Mobile overrides ─────────────── */
+/* ── Mobile ───────────────────────────── */
 @media (max-width: 767px) {
   .selected-projects__grid {
     grid-template-columns: 1fr;
     gap: 16px;
   }
 
-  .project-card__body {
-    padding: 20px 16px;
-  }
-
   .selected-projects__heading {
-    font-size: var(--text-base);   /* 15px on mobile */
+    font-size: var(--text-base);
     line-height: var(--leading-base);
   }
 
-  /* Mobile card typography */
+  /* Mobile card typography — same padding */
   .project-card__title {
     font-size: 15px;
-    line-height: 24px;
+    line-height: 22px;
     font-weight: 500;
   }
 

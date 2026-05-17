@@ -6,7 +6,7 @@
 }
 
 .brands__label {
-  font-size: var(--text-sm);
+  font-size: 14px;               /* 14px on both desktop and mobile */
   line-height: var(--leading-sm);
   font-weight: 500;
   color: var(--color-text-muted);
@@ -56,7 +56,5 @@
     height: 20px;
   }
 
-  .brands__label {
-    font-size: var(--text-xs);
-  }
+  /* brands__label stays 14px on mobile — no override */
 }
