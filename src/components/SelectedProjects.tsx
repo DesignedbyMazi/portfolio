@@ -1,6 +1,7 @@
+import carloftyImg from '../assets/logos/carlofty.png';
 import './SelectedProjects.css';
 
-function ArrowUpRightIcon() {
+function ArrowUpRightIcon({ className }: { className?: string }) {
   return (
     <svg
       width="14"
@@ -8,7 +9,7 @@ function ArrowUpRightIcon() {
       viewBox="0 0 14 14"
       fill="none"
       aria-hidden="true"
-      className="selected-projects__arrow"
+      className={className}
     >
       <path
         d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9"
@@ -21,39 +22,42 @@ function ArrowUpRightIcon() {
   );
 }
 
-interface Project {
+interface CaseStudy {
   id: number;
   title: string;
   description: string;
-  image?: string;
+  image: string;
+  link?: string;
 }
 
-const projects: Project[] = [
+const caseStudies: CaseStudy[] = [
   {
     id: 1,
-    title: 'Designing Trust into a Broken Payment Experience For Cross-border Car Sourcing',
+    title: 'Designing Trust into a Broken Payment Experience For Cross-border Car Sourcing.',
     description:
       "Global car auctions shouldn't require a middleman. Carlofty was designed to give Nigerian buyers direct, transparent access to Copart, Manheim, and IAAI — from a single platform they could actually trust.",
-  },
-  {
-    id: 2,
-    title: 'Designing Trust into a Broken Payment Experience For Cross-border Car Sourcing',
-    description:
-      "Global car auctions shouldn't require a middleman. Carlofty was designed to give Nigerian buyers direct, transparent access to Copart, Manheim, and IAAI — from a single platform they could actually trust.",
+    image: carloftyImg,
+    link: '#',
   },
 ];
 
-function ProjectCard({ project }: { project: Project }) {
+function CaseStudyCard({ study }: { study: CaseStudy }) {
   return (
-    <div className="project-card">
-      <div className="project-card__image">
-        {project.image && (
-          <img src={project.image} alt={project.title} className="project-card__img" />
-        )}
+    <div className="case-card">
+      {/* Screenshot */}
+      <div className="case-card__image">
+        <img src={study.image} alt={study.title} className="case-card__img" />
       </div>
-      <div className="project-card__body">
-        <p className="project-card__title">{project.title}</p>
-        <p className="project-card__desc">{project.description}</p>
+      {/* Body */}
+      <div className="case-card__body">
+        <h3 className="case-card__title">{study.title}</h3>
+        <p className="case-card__desc">{study.description}</p>
+        {study.link && (
+          <a href={study.link} className="case-card__link">
+            <span>Read Case Study</span>
+            <ArrowUpRightIcon className="case-card__link-arrow" />
+          </a>
+        )}
       </div>
     </div>
   );
@@ -63,15 +67,19 @@ export default function SelectedProjects() {
   return (
     <div className="selected-projects">
       <div className="selected-projects__header">
-        <h2 className="selected-projects__heading">Selected Projects</h2>
+        <div className="selected-projects__title-group">
+          <h2 className="selected-projects__heading">Selected Case Studies</h2>
+          <p className="selected-projects__subheading">A record of my thoughtful process</p>
+        </div>
         <a href="#" className="selected-projects__view-all">
           <span>View all</span>
-          <ArrowUpRightIcon />
+          <ArrowUpRightIcon className="selected-projects__arrow" />
         </a>
       </div>
-      <div className="selected-projects__grid">
-        {projects.map((project) => (
-          <ProjectCard key={project.id} project={project} />
+
+      <div className="selected-projects__list">
+        {caseStudies.map((study) => (
+          <CaseStudyCard key={study.id} study={study} />
         ))}
       </div>
     </div>
