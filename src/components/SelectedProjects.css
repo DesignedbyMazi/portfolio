@@ -21,7 +21,7 @@
 .selected-projects__title-group {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
 }
 
 .selected-projects__heading {

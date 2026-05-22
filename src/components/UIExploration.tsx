@@ -7,6 +7,8 @@ import dashboardImg from '../assets/images/dashboard-card.png';
 import dashboardVideo from '../assets/videos/dashboard-demo.mp4';
 import balanceeImg from '../assets/images/balancee-card.png';
 import balanceeVideo from '../assets/videos/balancee-demo.mp4';
+import cryptoWalletImg from '../assets/images/crypto-wallet-card.png';
+import karsaImg from '../assets/images/karsa-card.png';
 import './UIExploration.css';
 
 /* ── Arrow icon ─────────────────────────────── */
@@ -72,6 +74,24 @@ const CARDS: UICardData[] = [
     tag: 'FinTech',
     image: balanceeImg,
     video: balanceeVideo,
+  },
+  {
+    id: 5,
+    title: 'Crypto Wallet App',
+    subtitle: 'Transfer assets from wallet to your preferred destination with ease.',
+    bg: '#3B0FA0',
+    accentColor: '#A78BFA',
+    tag: 'Web3',
+    image: cryptoWalletImg,
+  },
+  {
+    id: 6,
+    title: 'Karsa — Spend Anywhere',
+    subtitle: 'Transfer money globally with ease. Additional support for US transfers.',
+    bg: '#111111',
+    accentColor: '#6EE7B7',
+    tag: 'Finance',
+    image: karsaImg,
   },
 ];
 
@@ -191,15 +211,9 @@ function UICard({ card }: { card: UICardData }) {
 /* ── Section ─────────────────────────────────── */
 export default function UIExploration() {
   const [paused, setPaused] = useState(false);
-  const [stickerDone, setStickerDone] = useState(false);
-  const stickerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const handleEnter = () => {
     setPaused(true);
-    if (!stickerDone) {
-      if (stickerTimer.current) clearTimeout(stickerTimer.current);
-      stickerTimer.current = setTimeout(() => setStickerDone(true), 500);
-    }
   };
 
   // Duplicate cards for seamless infinite loop
@@ -225,12 +239,6 @@ export default function UIExploration() {
         onMouseEnter={handleEnter}
         onMouseLeave={() => setPaused(false)}
       >
-        {/* Floating sticker */}
-        <div className={`ui-exploration__sticker${stickerDone ? ' ui-exploration__sticker--hidden' : ''}`}>
-          <span className="ui-exploration__sticker-hand">👆</span>
-          <span className="ui-exploration__sticker-text">Hover on cards</span>
-        </div>
-
         {/* Scrolling track */}
         <div className={`ui-exploration__track${paused ? ' ui-exploration__track--paused' : ''}`}>
           {allCards.map((card, i) => (
