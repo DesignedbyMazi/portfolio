@@ -35,7 +35,8 @@
   font-size: var(--text-sm);
   line-height: var(--leading-sm);
   font-weight: 400;
-  color: var(--color-text-secondary);
+  color: #777777;
+  font-family: 'Inter', sans-serif;
 }
 
 .ui-exploration__view-all {
@@ -150,14 +151,12 @@
   overflow: hidden;
   flex-shrink: 0;
   cursor: pointer;
-  transition:
-    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ui-card--hovered {
-  transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
+  /* No lift — video/play effect is the only hover indicator */
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
 }
 
 /* Glow overlay */
@@ -300,7 +299,7 @@
 }
 
 .ui-card--hovered .ui-card__screen {
-  height: 190px;
+  height: 180px;
 }
 
 /* Browser chrome */

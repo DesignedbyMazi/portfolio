@@ -11,13 +11,9 @@ import BrandLogos from './components/BrandLogos';
 import Footer from './components/Footer';
 import './App.css';
 
-/* ── Welcome confetti — fires once per session ── */
+/* ── Welcome confetti — fires on every page load ── */
 function useWelcomeConfetti() {
   useEffect(() => {
-    const key = 'portfolio-welcomed';
-    if (sessionStorage.getItem(key)) return;
-    sessionStorage.setItem(key, '1');
-
     // Small delay so the page is visually settled
     const tid = setTimeout(() => {
       const count = 120;

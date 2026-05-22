@@ -35,7 +35,8 @@
   font-size: var(--text-sm);
   line-height: var(--leading-sm);
   font-weight: 400;
-  color: var(--color-text-secondary);
+  color: #777777;
+  font-family: 'Inter', sans-serif;
 }
 
 .selected-projects__view-all {
@@ -80,17 +81,19 @@
   border: 1px solid #F4F4F4;
   overflow: hidden;
   cursor: pointer;
-  transition: box-shadow 0.25s ease;
+  transition: box-shadow 0.3s ease;
+  /* Subtle ambient shadow always present */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
 .case-card:hover {
-  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
 }
 
-/* Screenshot — 467px tall, fills full width */
+/* Screenshot — 400px tall, fills full width */
 .case-card__image {
   width: 100%;
-  height: 467px;
+  height: 400px;
   overflow: hidden;
   flex-shrink: 0;
 }
@@ -116,9 +119,9 @@
   border-top: 1px solid #F4F4F4;
 }
 
-/* Title: 24px / 32px lh */
+/* Title: 20px / 32px lh, semibold */
 .case-card__title {
-  font-size: 24px;
+  font-size: 20px;
   line-height: 32px;
   font-weight: 600;
   color: var(--color-text-primary);
@@ -131,7 +134,8 @@
   font-size: 15px;
   line-height: 24px;
   font-weight: 400;
-  color: var(--color-text-body);
+  color: #777777;
+  font-family: 'Inter', sans-serif;
   letter-spacing: 0.1px;
   margin-bottom: 12px;
 }
@@ -176,7 +180,7 @@
   }
 
   .case-card__image {
-    height: 220px;
+    height: 200px;
   }
 
   .case-card__body {

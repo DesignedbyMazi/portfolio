@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react';
 import pay4meImg from '../assets/images/pay4me-card.png';
 import pay4meVideo from '../assets/videos/pay4me-demo.mp4';
+import barakaImg from '../assets/images/baraka-card.jpg';
+import barakaVideo from '../assets/videos/baraka-demo.mp4';
 import './UIExploration.css';
 
 /* ── Arrow icon ─────────────────────────────── */
@@ -44,6 +46,8 @@ const CARDS: UICardData[] = [
     bg: '#0C0C14',
     accentColor: '#A78BFA',
     tag: 'Investing',
+    image: barakaImg,
+    video: barakaVideo,
   },
   {
     id: 3,
