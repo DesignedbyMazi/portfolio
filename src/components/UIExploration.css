@@ -96,8 +96,8 @@
 /* ── Card ───────────────────────────── */
 .ui-card {
   position: relative;
-  width: 400px;
-  height: 300px;
+  width: 320px;
+  height: 218px;
   border-radius: 0;
   overflow: hidden;
   flex-shrink: 0;
