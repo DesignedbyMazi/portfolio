@@ -3,6 +3,8 @@ import pay4meImg from '../assets/images/pay4me-card.png';
 import pay4meVideo from '../assets/videos/pay4me-demo.mp4';
 import barakaImg from '../assets/images/baraka-card.jpg';
 import barakaVideo from '../assets/videos/baraka-demo.mp4';
+import dashboardImg from '../assets/images/dashboard-card.png';
+import dashboardVideo from '../assets/videos/dashboard-demo.mp4';
 import './UIExploration.css';
 
 /* ── Arrow icon ─────────────────────────────── */
@@ -51,11 +53,13 @@ const CARDS: UICardData[] = [
   },
   {
     id: 3,
-    title: 'Learnbeta Dashboard',
-    subtitle: 'A reimagined learning experience that keeps students engaged and instructors in control.',
-    bg: '#111827',
-    accentColor: '#60A5FA',
-    tag: 'EdTech',
+    title: 'Project Management Dashboard',
+    subtitle: 'Designed for efficiency, the dashboard effectively highlights crucial project data.',
+    bg: '#1E2A78',
+    accentColor: '#818CF8',
+    tag: 'Productivity',
+    image: dashboardImg,
+    video: dashboardVideo,
   },
 ];
 

@@ -147,7 +147,7 @@
   position: relative;
   width: 400px;
   height: 300px;
-  border-radius: 20px;
+  border-radius: 0;
   overflow: hidden;
   flex-shrink: 0;
   cursor: pointer;
@@ -387,7 +387,7 @@
   .ui-card {
     width: 300px;
     height: 230px;
-    border-radius: 16px;
+    border-radius: 0;
   }
 
   .ui-exploration__heading {

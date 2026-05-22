@@ -1,13 +1,13 @@
 import { useEffect } from 'react';
 
 /**
- * Bi-directional scroll reveal.
+ * One-direction scroll reveal.
  *
- * • Element enters viewport  → transition plays, element slides in.
- * • Element leaves viewport  → class removed instantly (no transition)
- *   so it resets to the hidden/offset state and re-animates next time.
- *
- * This makes the effect consistent whether the user scrolls down or up.
+ * When a [data-animate] element enters the viewport it plays its
+ * reveal animation exactly once and is then unobserved — it never
+ * resets or replays.  This prevents the "both directions at the same
+ * time" glitch that bi-directional observers can show when you're
+ * half-way through a tall section.
  */
 export function useAnimations() {
   useEffect(() => {
@@ -16,28 +16,21 @@ export function useAnimations() {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
-          const el = entry.target as HTMLElement;
+          if (!entry.isIntersecting) return;
 
-          if (entry.isIntersecting) {
-            // Restore the CSS transition and animate in
-            el.style.transition = '';
-            el.classList.add('anim-visible');
-          } else {
-            // Kill transition so the reset is instant (no visible exit animation)
-            el.style.transition = 'none';
-            el.classList.remove('anim-visible');
-            // Re-enable transition after two frames so the reset is committed
-            requestAnimationFrame(() => {
-              requestAnimationFrame(() => {
-                el.style.transition = '';
-              });
-            });
-          }
+          const el = entry.target as HTMLElement;
+          el.classList.add('anim-visible');
+          // Unobserve immediately — animation plays once and stays
+          observer.unobserve(el);
         });
       },
       {
-        threshold: 0.05,
-        rootMargin: '0px 0px -20px 0px',
+        // Fire when at least 8% of the element is in view.
+        // Negative bottom margin means the trigger line is 48px
+        // above the viewport bottom so sections reveal just before
+        // they reach the fold — feels natural and never glitches.
+        threshold: 0.08,
+        rootMargin: '0px 0px -48px 0px',
       }
     );
 
