@@ -6,10 +6,17 @@
 }
 
 .intro__para {
-  font-size: var(--text-base);        /* 16px desktop, 15px mobile via :root override */
-  line-height: var(--leading-base);   /* 26px desktop, 24px mobile */
+  font-size: 18px;
+  line-height: 32px;
   font-weight: 400;
   color: var(--color-text-body);      /* #5A5A5A */
+}
+
+@media (max-width: 767px) {
+  .intro__para {
+    font-size: var(--text-base);      /* 15px on mobile */
+    line-height: var(--leading-base); /* 24px on mobile */
+  }
 }
 
 .intro__para strong {

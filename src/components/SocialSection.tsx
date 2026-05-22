@@ -76,7 +76,14 @@ export default function SocialSection() {
           ))}
         </div>
       </div>
-      <button className="social-section__cv-btn">Download CV</button>
+      <a
+        href="https://flowcv.com/resume/3nwi95uqw41q"
+        target="_blank"
+        rel="noreferrer"
+        className="social-section__cv-btn"
+      >
+        Download CV
+      </a>
     </div>
   );
 }
