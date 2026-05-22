@@ -5,6 +5,8 @@ import barakaImg from '../assets/images/baraka-card.jpg';
 import barakaVideo from '../assets/videos/baraka-demo.mp4';
 import dashboardImg from '../assets/images/dashboard-card.png';
 import dashboardVideo from '../assets/videos/dashboard-demo.mp4';
+import balanceeImg from '../assets/images/balancee-card.png';
+import balanceeVideo from '../assets/videos/balancee-demo.mp4';
 import './UIExploration.css';
 
 /* ── Arrow icon ─────────────────────────────── */
@@ -60,6 +62,16 @@ const CARDS: UICardData[] = [
     tag: 'Productivity',
     image: dashboardImg,
     video: dashboardVideo,
+  },
+  {
+    id: 4,
+    title: 'Balanceé Feature',
+    subtitle: 'Streamlined Vehicle Repair and Maintenance Services with customer-focused features.',
+    bg: '#0D7C7C',
+    accentColor: '#5EEAD4',
+    tag: 'FinTech',
+    image: balanceeImg,
+    video: balanceeVideo,
   },
 ];
 

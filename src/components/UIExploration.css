@@ -391,8 +391,15 @@
   }
 
   .ui-exploration__heading {
-    font-size: var(--text-base);
-    line-height: var(--leading-base);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
+  }
+
+  .ui-exploration__subtitle {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
   }
 
   .ui-exploration__sticker {
@@ -407,7 +414,7 @@
   }
 
   .ui-card--hovered .ui-card__screen {
-    height: 140px;
+    height: 130px;
   }
 }
 

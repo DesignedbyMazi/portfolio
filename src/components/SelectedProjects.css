@@ -174,28 +174,46 @@
 
 /* ── Mobile ──────────────────────────── */
 @media (max-width: 767px) {
+  /* Section header */
   .selected-projects__heading {
-    font-size: var(--text-base);
-    line-height: var(--leading-base);
+    font-size: 20px;
+    line-height: 28px;
+    font-weight: 600;
   }
 
+  .selected-projects__subheading {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+  }
+
+  /* Card image */
   .case-card__image {
     height: 200px;
   }
 
+  /* Card body */
   .case-card__body {
     padding: 24px;
   }
 
+  /* Card title: 18px semibold */
   .case-card__title {
     font-size: 18px;
     line-height: 26px;
+    font-weight: 600;
     margin-bottom: 10px;
   }
 
+  /* Card subtext: 14px regular */
   .case-card__desc {
     font-size: 14px;
     line-height: 22px;
+    font-weight: 400;
     margin-bottom: 10px;
+  }
+
+  .case-card__link {
+    font-size: 13px;
   }
 }
