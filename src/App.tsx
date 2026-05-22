@@ -81,9 +81,9 @@ function App() {
             <SocialSection />
           </div>
 
-          <div data-animate>
-            <UIExploration />
-          </div>
+          {/* UIExploration: no data-animate wrapper — internal carousel animation
+              would glitch if parent transform/opacity transition fires simultaneously */}
+          <UIExploration />
 
           <div data-animate>
             <SelectedProjects />

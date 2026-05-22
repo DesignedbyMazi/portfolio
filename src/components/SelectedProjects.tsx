@@ -1,4 +1,4 @@
-import carloftyImg from '../assets/logos/carlofty.png';
+import carloftyImg from '../assets/images/carlofty-case-study.png';
 import './SelectedProjects.css';
 
 function ArrowUpRightIcon({ className }: { className?: string }) {

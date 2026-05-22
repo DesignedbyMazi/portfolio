@@ -1,15 +1,16 @@
-/* ────────────────────────────────────────
+/* ─────────────────────────────────────────
    UI Exploration — auto-scroll carousel
-──────────────────────────────────────── */
+───────────────────────────────────────── */
 
 .ui-exploration {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   width: 100%;
+  padding: 24px 0;
 }
 
-/* ── Header ──────────────────────────── */
+/* ── Section header ─────────────────── */
 .ui-exploration__header {
   display: flex;
   align-items: flex-start;
@@ -61,39 +62,18 @@
   flex-shrink: 0;
 }
 
-/* ── Carousel container ──────────────── */
+/* ── Carousel wrapper ───────────────── */
 .ui-exploration__carousel {
   position: relative;
   overflow: hidden;
-  cursor: default;
-  /* Bleed slightly outside the content column */
+  /* Bleed slightly past content column so partial cards hint at more */
   margin-left: -24px;
   margin-right: -24px;
-  padding-left: 24px;
-  padding-right: 24px;
+  padding: 4px 24px 8px;
+  cursor: default;
 }
 
-/* Edge fade overlays */
-.ui-exploration__fade {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 80px;
-  z-index: 2;
-  pointer-events: none;
-}
-
-.ui-exploration__fade--left {
-  left: 0;
-  background: linear-gradient(to right, var(--color-bg) 0%, transparent 100%);
-}
-
-.ui-exploration__fade--right {
-  right: 0;
-  background: linear-gradient(to left, var(--color-bg) 0%, transparent 100%);
-}
-
-/* ── Scrolling track ─────────────────── */
+/* ── Infinite scroll animation ──────── */
 @keyframes ui-scroll {
   0%   { transform: translateX(0); }
   100% { transform: translateX(-50%); }
@@ -103,18 +83,18 @@
   display: flex;
   gap: 16px;
   width: max-content;
-  animation: ui-scroll 22s linear infinite;
-  padding: 4px 0 8px;
+  animation: ui-scroll 28s linear infinite;
+  will-change: transform;
 }
 
 .ui-exploration__track--paused {
   animation-play-state: paused;
 }
 
-/* ── Floating sticker ────────────────── */
+/* ── Floating sticker ───────────────── */
 .ui-exploration__sticker {
   position: absolute;
-  top: 12px;
+  top: 16px;
   right: 36px;
   z-index: 10;
   display: flex;
@@ -128,22 +108,22 @@
   font-weight: 500;
   color: var(--color-text-secondary);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  transition: opacity 0.4s ease, transform 0.4s ease;
   pointer-events: none;
   white-space: nowrap;
-  /* Subtle float animation */
+  transition: opacity 0.4s ease, transform 0.4s ease;
   animation: sticker-float 3s ease-in-out infinite;
 }
 
 .ui-exploration__sticker--hidden {
   opacity: 0;
-  transform: translateY(-6px) scale(0.95);
+  transform: translateY(-6px) scale(0.94);
+  animation: none;
 }
 
 .ui-exploration__sticker-hand {
-  font-size: 14px;
-  animation: sticker-hand 1.2s ease-in-out infinite;
   display: inline-block;
+  font-size: 14px;
+  animation: sticker-hand 1.4s ease-in-out infinite;
 }
 
 .ui-exploration__sticker-text {
@@ -157,86 +137,30 @@
 
 @keyframes sticker-hand {
   0%, 100% { transform: rotate(0deg); }
-  30%       { transform: rotate(-12deg); }
-  60%       { transform: rotate(8deg); }
+  30%       { transform: rotate(-14deg); }
+  65%       { transform: rotate(8deg); }
 }
 
-/* ── Individual card ─────────────────── */
+/* ── Card ───────────────────────────── */
 .ui-card {
   position: relative;
-  width: 280px;
-  height: 360px;
+  width: 400px;
+  height: 300px;
   border-radius: 20px;
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
-  padding: 20px 20px 0;
   flex-shrink: 0;
   cursor: pointer;
-  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition:
+    transform 0.35s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.ui-card:hover,
 .ui-card--hovered {
   transform: translateY(-6px) scale(1.02);
-  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.28);
 }
 
-/* Tag */
-.ui-card__tag {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  padding: 3px 10px;
-  border-radius: 100px;
-  font-size: 11px;
-  font-weight: 500;
-  border: 1px solid;
-  margin-bottom: 10px;
-  letter-spacing: 0.2px;
-}
-
-/* Title block */
-.ui-card__head {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 16px;
-}
-
-.ui-card__title {
-  font-size: 15px;
-  line-height: 20px;
-  font-weight: 600;
-  letter-spacing: -0.1px;
-}
-
-.ui-card__subtitle {
-  font-size: 11.5px;
-  line-height: 17px;
-  font-weight: 400;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-/* Screen area — sticks to card bottom */
-.ui-card__screen {
-  flex: 1;
-  position: relative;
-  border-radius: 10px 10px 0 0;
-  overflow: hidden;
-  margin: 0 -2px;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.ui-card--hovered .ui-card__screen {
-  transform: translateY(-4px);
-}
-
-/* Glow layer */
+/* Glow overlay */
 .ui-card__glow {
   position: absolute;
   inset: 0;
@@ -250,148 +174,220 @@
   opacity: 1;
 }
 
-/* ── Browser chrome mockup ─────────── */
+/* ── Real-asset card (Pay4Me) ────────── */
+.ui-card__media {
+  position: absolute;
+  inset: 0;
+}
+
+.ui-card__img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  transition: opacity 0.35s ease;
+}
+
+.ui-card__img--hidden {
+  opacity: 0;
+}
+
+.ui-card__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: top center;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.ui-card__video--visible {
+  opacity: 1;
+}
+
+/* Play badge */
+.ui-card__play-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #fff;
+  animation: badge-pop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes badge-pop {
+  from { opacity: 0; transform: scale(0.75) translateY(4px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.ui-card__sparkle-icon {
+  display: inline-block;
+  animation: sparkle-spin 1.6s linear infinite;
+  font-size: 11px;
+}
+
+@keyframes sparkle-spin {
+  0%   { transform: rotate(0deg) scale(1); }
+  50%  { transform: rotate(180deg) scale(1.25); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* ── Mock-asset card (Baraka, Learnbeta) ── */
+.ui-card__head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px 20px 0;
+  position: relative;
+  z-index: 2;
+}
+
+.ui-card__tag {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 11px;
+  font-weight: 500;
+  border: 1px solid;
+  margin-bottom: 4px;
+  letter-spacing: 0.2px;
+}
+
+.ui-card__title {
+  font-size: 15px;
+  line-height: 20px;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: -0.1px;
+}
+
+.ui-card__subtitle {
+  font-size: 11.5px;
+  line-height: 17px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.52);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ui-card__screen {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 180px;
+  overflow: hidden;
+  border-radius: 8px 8px 0 0;
+  transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.ui-card--hovered .ui-card__screen {
+  height: 190px;
+}
+
+/* Browser chrome */
 .ui-card__browser {
   width: 100%;
   height: 100%;
   border-radius: 8px 8px 0 0;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  transition: filter 0.35s ease;
+  transition: filter 0.3s ease;
 }
 
 .ui-card__browser--playing {
-  filter: brightness(1.08) saturate(1.1);
+  filter: brightness(1.1) saturate(1.1);
 }
 
 .ui-card__browser-bar {
   display: flex;
   align-items: center;
   gap: 5px;
-  padding: 8px 10px;
-  background: rgba(0, 0, 0, 0.25);
+  padding: 7px 10px;
+  background: rgba(0, 0, 0, 0.3);
   flex-shrink: 0;
 }
 
 .ui-card__dot {
-  width: 8px;
-  height: 8px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
 .ui-card__url-bar {
   flex: 1;
-  height: 16px;
+  height: 14px;
   background: rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   display: flex;
   align-items: center;
-  padding: 0 8px;
+  padding: 0 7px;
   margin-left: 4px;
 }
 
 .ui-card__url-text {
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.4);
+  font-size: 8px;
+  color: rgba(255, 255, 255, 0.35);
 }
 
-/* Screen content area */
-.ui-card__screen-content {
+.ui-card__mock-body {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  padding: 16px 12px 12px;
-  gap: 8px;
+  padding: 10px 10px 0;
 }
 
 .ui-card__mock-hero {
-  flex: 1;
   border-radius: 6px;
-  padding: 14px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  justify-content: center;
+  gap: 7px;
 }
 
 .ui-card__mock-line {
   border-radius: 4px;
-  height: 10px;
+  height: 9px;
 }
-
-.ui-card__mock-line--lg  { width: 80%; height: 14px; opacity: 0.9; }
-.ui-card__mock-line--md  { width: 60%; opacity: 0.7; }
-.ui-card__mock-line--sm  { width: 45%; opacity: 0.5; }
+.ui-card__mock-line--lg { width: 75%; height: 13px; }
+.ui-card__mock-line--md { width: 55%; opacity: 0.7; }
+.ui-card__mock-line--sm { width: 40%; opacity: 0.45; }
 
 .ui-card__mock-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 5px 12px;
+  padding: 5px 10px;
   border-radius: 4px;
-  font-size: 9px;
+  font-size: 8px;
   font-weight: 600;
   width: fit-content;
   margin-top: 4px;
   letter-spacing: 0.3px;
 }
 
-.ui-card__mock-footer {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.ui-card__mock-dot {
-  width: 20px;
-  height: 6px;
-  border-radius: 3px;
-}
-
-/* Play badge */
-.ui-card__play-badge {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  padding: 4px 8px;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(6px);
-  border-radius: 100px;
-  font-size: 10px;
-  color: #fff;
-  font-weight: 500;
-  animation: play-badge-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-  z-index: 3;
-}
-
-@keyframes play-badge-in {
-  from { opacity: 0; transform: scale(0.8) translateY(4px); }
-  to   { opacity: 1; transform: scale(1) translateY(0); }
-}
-
-@keyframes sparkle-spin {
-  0%   { transform: rotate(0deg) scale(1); }
-  50%  { transform: rotate(180deg) scale(1.2); }
-  100% { transform: rotate(360deg) scale(1); }
-}
-
-.ui-card__play-sparkle {
-  animation: sparkle-spin 1.5s linear infinite;
-  display: inline-block;
-  font-size: 11px;
-}
-
-/* ── Mobile ──────────────────────────── */
+/* ── Mobile ─────────────────────────── */
 @media (max-width: 767px) {
   .ui-card {
-    width: 240px;
-    height: 310px;
-    padding: 16px 16px 0;
+    width: 300px;
+    height: 230px;
     border-radius: 16px;
   }
 
@@ -401,16 +397,24 @@
   }
 
   .ui-exploration__sticker {
-    top: 8px;
-    right: 32px;
+    top: 10px;
+    right: 28px;
     font-size: 11px;
     padding: 5px 10px 5px 7px;
+  }
+
+  .ui-card__screen {
+    height: 130px;
+  }
+
+  .ui-card--hovered .ui-card__screen {
+    height: 140px;
   }
 }
 
 @media (max-width: 400px) {
   .ui-card {
-    width: 210px;
-    height: 280px;
+    width: 260px;
+    height: 200px;
   }
 }
