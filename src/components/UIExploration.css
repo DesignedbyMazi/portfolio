@@ -96,8 +96,8 @@
 /* ── Card ───────────────────────────── */
 .ui-card {
   position: relative;
-  width: 320px;
-  height: 218px;
+  width: 400px;
+  height: 300px;
   border-radius: 0;
   overflow: hidden;
   flex-shrink: 0;
@@ -336,8 +336,8 @@
 /* ── Mobile ─────────────────────────── */
 @media (max-width: 767px) {
   .ui-card {
-    width: 300px;
-    height: 300px;
+    width: 320px;
+    height: 218px;
     border-radius: 0;
   }
 
