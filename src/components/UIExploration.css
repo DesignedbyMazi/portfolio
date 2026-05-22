@@ -337,13 +337,13 @@
 @media (max-width: 767px) {
   .ui-card {
     width: 300px;
-    height: 230px;
+    height: 300px;
     border-radius: 0;
   }
 
   .ui-exploration__heading {
-    font-size: 20px;
-    line-height: 28px;
+    font-size: 18px;
+    line-height: 26px;
     font-weight: 600;
   }
 
@@ -365,6 +365,6 @@
 @media (max-width: 400px) {
   .ui-card {
     width: 260px;
-    height: 200px;
+    height: 260px;
   }
 }
