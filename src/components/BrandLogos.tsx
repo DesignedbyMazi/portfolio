@@ -10,16 +10,16 @@ import './BrandLogos.css';
 
 const row1 = [
   { src: carloftyLogo, alt: 'Carlofty', width: 87 },
-  { src: karsaLogo, alt: 'Karsa', width: 67 },
-  { src: logo3, alt: 'Brand', width: 48 },
+  { src: karsaLogo,   alt: 'Karsa',    width: 67, invert: true },
+  { src: logo3,       alt: 'Brand',    width: 48 },
   { src: betaplayLogo, alt: 'BetaPlay', width: 128 },
 ];
 
 const row2 = [
-  { src: learnbetaLogo, alt: 'LearnBeta', width: 73 },
-  { src: twingleLogo, alt: 'Twingle', width: 83 },
-  { src: valueplusLogo, alt: 'ValuePlus', width: 88 },
-  { src: betacareLogo, alt: 'Betacare', width: 100 },
+  { src: learnbetaLogo,  alt: 'LearnBeta',  width: 73 },
+  { src: twingleLogo,    alt: 'Twingle',    width: 83 },
+  { src: valueplusLogo,  alt: 'ValuePlus',  width: 88 },
+  { src: betacareLogo,   alt: 'Betacare',   width: 100 },
 ];
 
 export default function BrandLogos() {
@@ -30,7 +30,11 @@ export default function BrandLogos() {
         <div className="brands__row">
           {row1.map((logo) => (
             <div key={logo.alt} className="brands__logo-wrap" style={{ width: logo.width }}>
-              <img src={logo.src} alt={logo.alt} className="brands__logo" />
+              <img
+                src={logo.src}
+                alt={logo.alt}
+                className={`brands__logo${logo.invert ? ' brands__logo--invert' : ''}`}
+              />
             </div>
           ))}
         </div>

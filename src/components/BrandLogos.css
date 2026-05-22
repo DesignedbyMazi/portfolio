@@ -40,6 +40,11 @@
   object-position: left center;
 }
 
+/* Logos that are dark/black — invert to white in dark mode */
+[data-theme="dark"] .brands__logo--invert {
+  filter: invert(1);
+}
+
 @media (max-width: 767px) {
   .brands__grid {
     gap: 12px;
