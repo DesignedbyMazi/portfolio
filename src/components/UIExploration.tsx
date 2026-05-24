@@ -23,6 +23,8 @@ interface UICardData {
   image?: string;
   /** Real video asset — plays on hover */
   video?: string;
+  /** Optional link — opens in new tab on click */
+  href?: string;
 }
 
 const CARDS: UICardData[] = [
@@ -45,6 +47,7 @@ const CARDS: UICardData[] = [
     tag: 'Investing',
     image: barakaImg,
     video: barakaVideo,
+    href: 'https://barakaredesign.framer.website/',
   },
   {
     id: 3,
@@ -134,14 +137,19 @@ function UICard({ card }: { card: UICardData }) {
     }
   };
 
+  const handleClick = () => {
+    if (card.href) window.open(card.href, '_blank', 'noreferrer');
+  };
+
   const hasRealAssets = Boolean(card.image || card.video);
 
   return (
     <div
-      className={`ui-card${hovered ? ' ui-card--hovered' : ''}`}
+      className={`ui-card${hovered ? ' ui-card--hovered' : ''}${card.href ? ' ui-card--linked' : ''}`}
       style={{ backgroundColor: card.bg }}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
+      onClick={handleClick}
     >
       {hasRealAssets ? (
         /* ── Real asset card (Pay4Me) ── */

@@ -52,6 +52,10 @@
   box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
 }
 
+.ui-card--linked {
+  cursor: pointer;
+}
+
 /* Glow overlay */
 .ui-card__glow {
   position: absolute;
