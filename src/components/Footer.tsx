@@ -105,7 +105,7 @@ export default function Footer() {
       <div className="footer__content">
 
         <div className="footer__email-row">
-          <span className="footer__label">Email</span>
+          <span className="footer__label">Email:</span>
           <div className="footer__email-link-wrap">
             <a href="mailto:designedbyuche@gmail.com" className="footer__email-link">
               designedbyuche@gmail.com
