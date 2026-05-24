@@ -40,6 +40,11 @@
   object-position: left center;
 }
 
+/* Heading: white in dark mode */
+[data-theme="dark"] .brands__label {
+  color: var(--color-text-primary);
+}
+
 /* Logos that are dark/black — invert to white in dark mode */
 [data-theme="dark"] .brands__logo--invert {
   filter: invert(1);

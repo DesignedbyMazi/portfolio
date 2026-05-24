@@ -5,12 +5,23 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>portfolio</title>
-    <!-- Apply saved theme before first paint to prevent flash -->
+    <!-- Apply theme before first paint: saved preference, else auto WAT time-based -->
     <script>
       (function(){
         try {
           var t = localStorage.getItem('portfolio-theme');
-          if (t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+          if (t) {
+            document.documentElement.setAttribute('data-theme', t);
+          } else {
+            // No saved preference — auto: 6 pm–6 am WAT = dark
+            var hour = parseInt(
+              new Date().toLocaleString('en-GB', {
+                hour: 'numeric', hour12: false, timeZone: 'Africa/Lagos'
+              }), 10);
+            if (hour >= 18 || hour < 6) {
+              document.documentElement.setAttribute('data-theme', 'dark');
+            }
+          }
         } catch(e){}
       })();
     </script>

@@ -25,16 +25,6 @@
     box-shadow   0.3s ease;
 }
 
-/* ── Bottom position (while scrolling) ──────────────── */
-/* translateY(calc(100vh - 100%)) moves top:0 element
-   so its bottom edge sits flush with the viewport bottom */
-.navbar--bottom {
-  transform: translateY(calc(100vh - 100%));
-  border-top:    0.8px solid rgba(234, 234, 234, 0.6);
-  border-bottom: 0.8px solid transparent;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
-}
-
 /* ── Dark mode ───────────────────────────────────────── */
 [data-theme="dark"] .navbar {
   background: rgba(17, 17, 17, 0.8);
@@ -42,10 +32,21 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
-[data-theme="dark"] .navbar--bottom {
-  border-top-color:  #1F1F1F;
-  border-bottom-color: transparent;
-  box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
+/* ── Bottom position — MOBILE ONLY ──────────────────── */
+/* On desktop the class is still applied by JS but has no effect */
+@media (max-width: 767px) {
+  .navbar--bottom {
+    transform: translateY(calc(100vh - 100%));
+    border-top:    0.8px solid rgba(234, 234, 234, 0.6);
+    border-bottom: 0.8px solid transparent;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
+  }
+
+  [data-theme="dark"] .navbar--bottom {
+    border-top-color:    #1F1F1F;
+    border-bottom-color: transparent;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
+  }
 }
 
 /* ── Inner layout ────────────────────────────────────── */

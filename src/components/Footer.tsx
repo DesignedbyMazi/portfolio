@@ -1,12 +1,27 @@
 import { useEffect, useState } from 'react';
 import './Footer.css';
 
+/* ── Time-based theme detection (WAT = UTC+1) ────────── */
+function getAutoTheme(): boolean {
+  try {
+    const stored = localStorage.getItem('portfolio-theme');
+    if (stored) return stored === 'dark'; // respect manual override
+  } catch { /* ignore */ }
+  // No stored preference — auto-detect: 6 pm–6 am WAT = dark
+  const hour = parseInt(
+    new Date().toLocaleString('en-GB', {
+      hour: 'numeric',
+      hour12: false,
+      timeZone: 'Africa/Lagos',
+    }),
+    10,
+  );
+  return hour >= 18 || hour < 6;
+}
+
 /* ── Theme hook ──────────────────────────────────────── */
 function useTheme() {
-  const [isDark, setIsDark] = useState(() => {
-    try { return localStorage.getItem('portfolio-theme') === 'dark'; }
-    catch { return false; }
-  });
+  const [isDark, setIsDark] = useState(getAutoTheme);
 
   useEffect(() => {
     const root = document.documentElement;
