@@ -6,8 +6,8 @@
 }
 
 .intro__para {
-  font-size: 17px;
-  line-height: 28px;
+  font-size: 16px;
+  line-height: 24px;
   font-weight: 400;
   color: var(--color-text-body);      /* #5A5A5A */
 }
