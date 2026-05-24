@@ -3,74 +3,16 @@
 ───────────────────────────────────────── */
 
 .ui-exploration {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
   width: 100%;
-  padding: 24px 0;
-}
-
-/* ── Section header ─────────────────── */
-.ui-exploration__header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 100%;
-}
-
-.ui-exploration__title-group {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.ui-exploration__heading {
-  font-size: var(--text-lg);
-  line-height: var(--leading-lg);
-  font-weight: 600;
-  color: var(--color-text-primary);
-}
-
-.ui-exploration__subtitle {
-  font-size: var(--text-sm);
-  line-height: var(--leading-sm);
-  font-weight: 400;
-  color: #777777;
-  font-family: 'Inter', sans-serif;
-}
-
-.ui-exploration__view-all {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-size: var(--text-sm);
-  line-height: var(--leading-sm);
-  font-weight: 500;
-  color: var(--color-text-primary);
-  text-decoration: underline;
-  text-underline-offset: 2px;
-  white-space: nowrap;
-  transition: opacity 0.15s;
-  flex-shrink: 0;
-  margin-top: 3px;
-}
-
-.ui-exploration__view-all:hover { opacity: 0.6; }
-
-.ui-exploration__arrow {
-  width: 14px;
-  height: 14px;
-  flex-shrink: 0;
+  margin-bottom: var(--space-4xl);
 }
 
 /* ── Carousel wrapper ───────────────── */
 .ui-exploration__carousel {
   position: relative;
   overflow: hidden;
-  /* Bleed slightly past content column so partial cards hint at more */
-  margin-left: -24px;
-  margin-right: -24px;
-  padding: 4px 24px 8px;
+  width: 100%;
+  padding: 0;
   cursor: default;
 }
 
@@ -339,18 +281,6 @@
     width: 320px;
     height: 218px;
     border-radius: 0;
-  }
-
-  .ui-exploration__heading {
-    font-size: 18px;
-    line-height: 26px;
-    font-weight: 600;
-  }
-
-  .ui-exploration__subtitle {
-    font-size: 14px;
-    line-height: 20px;
-    font-weight: 400;
   }
 
 .ui-card__screen {

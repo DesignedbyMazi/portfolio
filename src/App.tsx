@@ -68,6 +68,10 @@ function App() {
     <div className="page">
       <Navbar />
       <main className="main">
+
+        {/* Full-width carousel — sits right below the navbar, outside content padding */}
+        <UIExploration />
+
         <div className="content">
           <Hero />
 
@@ -76,10 +80,6 @@ function App() {
           <div data-animate>
             <SocialSection />
           </div>
-
-          {/* UIExploration: no data-animate wrapper — internal carousel animation
-              would glitch if parent transform/opacity transition fires simultaneously */}
-          <UIExploration />
 
           <div data-animate>
             <SelectedProjects />

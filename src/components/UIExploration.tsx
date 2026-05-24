@@ -11,15 +11,6 @@ import cryptoWalletImg from '../assets/images/crypto-wallet-card.png';
 import karsaImg from '../assets/images/karsa-card.png';
 import './UIExploration.css';
 
-/* ── Arrow icon ─────────────────────────────── */
-function ArrowUpRightIcon({ className }: { className?: string }) {
-  return (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true" className={className}>
-      <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5M11.5 2.5V9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-    </svg>
-  );
-}
-
 /* ── Card data ──────────────────────────────── */
 interface UICardData {
   id: number;
@@ -221,25 +212,12 @@ export default function UIExploration() {
 
   return (
     <section className="ui-exploration">
-      {/* Header animates in on scroll; carousel does NOT use data-animate to avoid transform conflicts */}
-      <div className="ui-exploration__header" data-animate>
-        <div className="ui-exploration__title-group">
-          <h2 className="ui-exploration__heading">UI Exploration</h2>
-          <p className="ui-exploration__subtitle">My playfulness around UIs</p>
-        </div>
-        <a href="#" className="ui-exploration__view-all">
-          <span>View all</span>
-          <ArrowUpRightIcon className="ui-exploration__arrow" />
-        </a>
-      </div>
-
-      {/* Carousel — no data-animate to prevent transform glitch */}
+      {/* Carousel only — no header */}
       <div
         className="ui-exploration__carousel"
         onMouseEnter={handleEnter}
         onMouseLeave={() => setPaused(false)}
       >
-        {/* Scrolling track */}
         <div className={`ui-exploration__track${paused ? ' ui-exploration__track--paused' : ''}`}>
           {allCards.map((card, i) => (
             <UICard key={`${card.id}-${i}`} card={card} />
