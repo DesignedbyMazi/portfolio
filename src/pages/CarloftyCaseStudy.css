@@ -175,14 +175,20 @@
 .cs-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 
 .cs-tag {
+  display: inline-flex;
+  align-items: center;
   font-size: 12px;
   font-weight: 500;
   color: var(--color-text-primary);
-  background: #F4F4F4;
+  background-color: #F4F4F4;
   border: 1px solid var(--color-border);
   border-radius: 999px;
-  padding: 4px 12px;
+  padding: 5px 14px;
   white-space: nowrap;
+}
+
+[data-theme="dark"] .cs-tag {
+  background-color: #2A2A2A;
 }
 
 /* ── Red callout ───────────────────────────────────── */
@@ -228,6 +234,7 @@
 .cs-callout-gray__body {
   font-size: 16px;
   line-height: 26px;
+  font-weight: 500;
   color: #2D2D2D;
   margin: 0;
 }
@@ -554,6 +561,9 @@
     font-size: 13px;
     font-weight: 400;
   }
+
+  /* Mobile body text */
+  .cs-body { font-size: 15px; line-height: 24px; }
 
   /* Mobile sticky offsets — smaller since navbar goes to bottom */
   .cs-solution-sticky:nth-child(1) { top: 16px; }
