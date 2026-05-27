@@ -38,8 +38,8 @@
 /* ── Card ───────────────────────────── */
 .ui-card {
   position: relative;
-  width: 400px;
-  height: 300px;
+  width: 300px;
+  height: 200px;
   border-radius: 0;
   overflow: hidden;
   flex-shrink: 0;
@@ -189,14 +189,14 @@
   bottom: 0;
   left: 0;
   right: 0;
-  height: 180px;
+  height: 120px;
   overflow: hidden;
   border-radius: 8px 8px 0 0;
   transition: height 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .ui-card--hovered .ui-card__screen {
-  height: 180px;
+  height: 120px;
 }
 
 /* Browser chrome */
@@ -282,23 +282,31 @@
 /* ── Mobile ─────────────────────────── */
 @media (max-width: 767px) {
   .ui-card {
-    width: 320px;
-    height: 218px;
+    width: 240px;
+    height: 160px;
     border-radius: 0;
   }
 
-.ui-card__screen {
-    height: 130px;
+  .ui-card__screen {
+    height: 95px;
   }
 
   .ui-card--hovered .ui-card__screen {
-    height: 130px;
+    height: 95px;
   }
 }
 
 @media (max-width: 400px) {
   .ui-card {
-    width: 260px;
-    height: 260px;
+    width: 200px;
+    height: 135px;
+  }
+
+  .ui-card__screen {
+    height: 78px;
+  }
+
+  .ui-card--hovered .ui-card__screen {
+    height: 78px;
   }
 }
