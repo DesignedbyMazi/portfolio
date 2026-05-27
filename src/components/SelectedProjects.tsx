@@ -41,7 +41,7 @@ const caseStudies: CaseStudy[] = [
   },
 ];
 
-function CaseStudyCard({ study }: { study: CaseStudy }) {
+function CaseStudyCard({ study, onReadCaseStudy }: { study: CaseStudy; onReadCaseStudy?: () => void }) {
   return (
     <div className="case-card">
       {/* Screenshot */}
@@ -53,7 +53,16 @@ function CaseStudyCard({ study }: { study: CaseStudy }) {
         <h3 className="case-card__title">{study.title}</h3>
         <p className="case-card__desc">{study.description}</p>
         {study.link && (
-          <a href={study.link} className="case-card__link">
+          <a
+            href={study.link}
+            className="case-card__link"
+            onClick={(e) => {
+              if (onReadCaseStudy) {
+                e.preventDefault();
+                onReadCaseStudy();
+              }
+            }}
+          >
             <span>Read Case Study</span>
             <ArrowUpRightIcon className="case-card__link-arrow" />
           </a>
@@ -63,7 +72,11 @@ function CaseStudyCard({ study }: { study: CaseStudy }) {
   );
 }
 
-export default function SelectedProjects() {
+interface SelectedProjectsProps {
+  onReadCaseStudy?: () => void;
+}
+
+export default function SelectedProjects({ onReadCaseStudy }: SelectedProjectsProps) {
   return (
     <div className="selected-projects">
       <div className="selected-projects__header">
@@ -79,7 +92,7 @@ export default function SelectedProjects() {
 
       <div className="selected-projects__list">
         {caseStudies.map((study) => (
-          <CaseStudyCard key={study.id} study={study} />
+          <CaseStudyCard key={study.id} study={study} onReadCaseStudy={onReadCaseStudy} />
         ))}
       </div>
     </div>

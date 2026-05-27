@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useAnimations } from './hooks/useAnimations';
 import Navbar from './components/Navbar';
@@ -8,6 +8,7 @@ import SocialSection from './components/SocialSection';
 import UIExploration from './components/UIExploration';
 import SelectedProjects from './components/SelectedProjects';
 import Footer from './components/Footer';
+import CarloftyCaseStudy from './pages/CarloftyCaseStudy';
 import './App.css';
 
 /* ── Welcome confetti — fires on every page load ── */
@@ -60,8 +61,19 @@ function useWelcomeConfetti() {
 }
 
 function App() {
+  const [currentView, setCurrentView] = useState<'home' | 'carlofty'>('home');
   useAnimations();
   useWelcomeConfetti();
+
+  useEffect(() => {
+    if (currentView === 'carlofty') {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+  }, [currentView]);
+
+  if (currentView === 'carlofty') {
+    return <CarloftyCaseStudy onBack={() => setCurrentView('home')} />;
+  }
 
   return (
     <div className="page">
@@ -81,7 +93,7 @@ function App() {
           </div>
 
           <div data-animate>
-            <SelectedProjects />
+            <SelectedProjects onReadCaseStudy={() => setCurrentView('carlofty')} />
           </div>
 
           <div data-animate>
