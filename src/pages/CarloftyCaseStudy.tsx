@@ -1,4 +1,9 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {
+  Layers, Smartphone, CreditCard, LayoutDashboard,
+  TrendingUp, Zap, Package, ShieldCheck,
+  UserX,
+} from 'lucide-react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import carloftyHeroImg from '../assets/images/carlofty-landing.png';
@@ -8,6 +13,21 @@ import carloftyWaitlistVideo from '../assets/videos/carlofty-waitlist.mp4';
 import './CarloftyCaseStudy.css';
 
 interface Props { onBack: () => void; }
+
+/* ── Custom eased scroll to top ──────────────────── */
+function scrollToTopSmooth() {
+  const start = window.scrollY;
+  const duration = 900;
+  const startTime = performance.now();
+  const ease = (t: number) =>
+    t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+  const step = (now: number) => {
+    const t = Math.min((now - startTime) / duration, 1);
+    window.scrollTo(0, start * (1 - ease(t)));
+    if (t < 1) requestAnimationFrame(step);
+  };
+  requestAnimationFrame(step);
+}
 
 /* ── Auto-play video on scroll into view ─────────── */
 function VideoInView({ src, className }: { src: string; className?: string }) {
@@ -49,7 +69,14 @@ function Eyebrow({ text }: { text: string }) {
     <p className="cs-eyebrow">
       {text.slice(0, idx)}
       {' — '}
-      <span className="cs-eyebrow__brand">{text.slice(idx + 3)}</span>
+      <a
+        href="https://www.carlofty.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="cs-eyebrow__brand"
+      >
+        {text.slice(idx + 3)}
+      </a>
     </p>
   );
 }
@@ -61,6 +88,47 @@ function BanIcon() {
       <circle cx="8" cy="8" r="6.5" stroke="#E53935" strokeWidth="1.4"/>
       <line x1="3.6" y1="12.4" x2="12.4" y2="3.6" stroke="#E53935" strokeWidth="1.4" strokeLinecap="round"/>
     </svg>
+  );
+}
+
+/* ── Animated counter outcome card ───────────────── */
+function OutcomeCard({ icon, prefix, count, suffix, label }: {
+  icon: React.ReactNode;
+  prefix: string;
+  count: number;
+  suffix: string;
+  label: string;
+}) {
+  const [displayed, setDisplayed] = useState(0);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) return;
+      obs.unobserve(el);
+      if (count === 0) { setDisplayed(0); return; }
+      const duration = 1200;
+      const start = performance.now();
+      const step = (now: number) => {
+        const t = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        setDisplayed(Math.round(eased * count));
+        if (t < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }, { threshold: 0.5 });
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [count]);
+
+  return (
+    <div className="cs-outcome-card" ref={ref}>
+      <span className="cs-outcome-card__icon">{icon}</span>
+      <strong className="cs-outcome-card__value">{prefix}{displayed}{suffix}</strong>
+      <p className="cs-outcome-card__label">{label}</p>
+    </div>
   );
 }
 
@@ -87,7 +155,15 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
         {/* ── HERO ────────────────────────────── */}
         <Reveal className="cs-hero">
           <p className="cs-breadcrumb">
-            Case study — <span className="cs-breadcrumb__brand">Carlofty</span>
+            Case study —{' '}
+            <a
+              href="https://www.carlofty.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="cs-breadcrumb__brand"
+            >
+              Carlofty
+            </a>
           </p>
           <h1 className="cs-hero__title">
             Designing Trust into a Broken Payment Experience For Cross-Border Car Sourcing
@@ -164,7 +240,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
           </p>
           <div className="cs-ban-list">
             {[
-              ['No Direct Payment Path', "Naira couldn't reach foreign auctions without a middleman"],
+              ["No Direct Payment Path", "Naira couldn't reach foreign auctions without a middleman"],
               ['Broker Exploitation', 'Hidden fees, no accountability, money lost with no recourse'],
               ['Zero Tracking', 'Once funds left the customer, visibility ended completely'],
               ['No Design Foundation', 'Inconsistent v1 with no system, no flows, no direction'],
@@ -253,10 +329,10 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
           </p>
           <div className="cs-audit-grid">
             {[
-              { icon:'📱', title:'Onboarding Dropped Users Before They Started', body:'The signup process asked for too much, too soon. Cognitive load was high and the time-to-value gap was wide. Most users quit before reaching the core product.' },
-              { icon:'💳', title:'Payment Had No Clear States', body:'Users couldn\'t tell what stage their payment was in, who was handling it, or what came next. The flow had no defined states between "paid" and "done."' },
-              { icon:'🎯', title:'Admin Had No Structured Overview', body:'The operations team had no clean way to manage dealer inventory or track auction statuses at scale. Everything relied on manual communication.' },
-              { icon:'✨', title:'No Design System To Build From', body:'Inconsistent components, undefined patterns, and no shared language between design and engineering meant every new screen was starting from scratch.' },
+              { icon:<UserX size={20}/>, title:'Onboarding Dropped Users Before They Started', body:'The signup process asked for too much, too soon. Cognitive load was high and the time-to-value gap was wide. Most users quit before reaching the core product.' },
+              { icon:<CreditCard size={20}/>, title:"Payment Had No Clear States", body:"Users couldn't tell what stage their payment was in, who was handling it, or what came next. The flow had no defined states between \"paid\" and \"done.\"" },
+              { icon:<LayoutDashboard size={20}/>, title:'Admin Had No Structured Overview', body:'The operations team had no clean way to manage dealer inventory or track auction statuses at scale. Everything relied on manual communication.' },
+              { icon:<Layers size={20}/>, title:'No Design System To Build From', body:'Inconsistent components, undefined patterns, and no shared language between design and engineering meant every new screen was starting from scratch.' },
             ].map(c => (
               <div key={c.title} className="cs-audit-card">
                 <span className="cs-audit-card__icon">{c.icon}</span>
@@ -343,25 +419,25 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
 
         {[
           {
-            icon: '✨',
+            icon: <Layers size={22}/>,
             title: 'Design System Built From The v1 Inconsistencies',
             body: 'Before any screen was redesigned, I audited the v1 and extracted what was working. From that I built a component library — tokens, patterns, and interaction states — that gave engineering a single source of truth. This alone reduced back-and-forth during handoff and gave the product a consistent visual language for the first time.',
             tags: ['Component Library','Tokens','Dev Handoff','Consistency'],
           },
           {
-            icon: '📱',
+            icon: <Smartphone size={22}/>,
             title: 'Progressive Onboarding — Collect Less, Convert More',
             body: "The research showed onboarding was the platform's biggest drop-off point. I redesigned it around progressive disclosure — gathering only what was needed at each stage, triggered by user intent and platform requirements. The signup experience went from feeling like a compliance task to feeling like a product worth committing to, while still maintaining compliance.",
             tags: ['Progressive Disclosure','Reduced cognitive load'],
           },
           {
-            icon: '💳',
+            icon: <CreditCard size={22}/>,
             title: 'Transparent Payment Flow — Naira In, Auction Confirmation Out',
             body: "I designed the core payment journey around the constraint that made Carlofty different: dealers fund in Naira, Carlofty handles FX and pays the auction in the dealer's name — across Copart, Manheim, and IAAI. The UI made every step of that process legible. Exchange rate, payment status, admin confirmation, and final receipt — each stage had a clear state, a clear message, and a clear next action. No dead ends. No uncertainty.",
             tags: ['Payment States','Status Tracking','Cross-Border UX'],
           },
           {
-            icon: '👤',
+            icon: <LayoutDashboard size={22}/>,
             title: 'Admin Inventory Dashboard — Operations At Scale',
             body: 'The operations team needed structure. I designed a management layer that gave them a clear view of every dealer, every vehicle, and every auction state — with the ability to act on any of it without leaving the dashboard. Manual communication dropped. Operational clarity went up.',
             tags: ['Inventory Management'],
@@ -396,18 +472,34 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
             what the platform has demonstrably achieved since the redesign shipped.
           </p>
           <div className="cs-outcome-grid">
-            {[
-              { icon:'📮', value:'$2M+', label:'In verified cross-border auction transactions facilitated' },
-              { icon:'⚡', value:'10 min', label:'Fastest Copart auction payment recorded on the platform' },
-              { icon:'⚡', value:'3 auctions', label:'Copart, Manheim & IAAI — one seamless payment flow' },
-              { icon:'🏛', value:'0 brokers', label:"Dealers transact directly, in their own name or Carlofty's Name." },
-            ].map(m => (
-              <div key={m.value + m.label} className="cs-outcome-card">
-                <span className="cs-outcome-card__icon">{m.icon}</span>
-                <strong className="cs-outcome-card__value">{m.value}</strong>
-                <p className="cs-outcome-card__label">{m.label}</p>
-              </div>
-            ))}
+            <OutcomeCard
+              icon={<TrendingUp size={20}/>}
+              prefix="$"
+              count={2}
+              suffix="M+"
+              label="In verified cross-border auction transactions facilitated"
+            />
+            <OutcomeCard
+              icon={<Zap size={20}/>}
+              prefix=""
+              count={10}
+              suffix=" min"
+              label="Fastest Copart auction payment recorded on the platform"
+            />
+            <OutcomeCard
+              icon={<Package size={20}/>}
+              prefix=""
+              count={3}
+              suffix=" auctions"
+              label="Copart, Manheim & IAAI — one seamless payment flow"
+            />
+            <OutcomeCard
+              icon={<ShieldCheck size={20}/>}
+              prefix=""
+              count={0}
+              suffix=" brokers"
+              label="Dealers transact directly, in their own name or Carlofty's Name."
+            />
           </div>
           <div className="cs-callout-gray">
             <p className="cs-callout-gray__label">WHAT THIS CASE STUDY DEMONSTRATES</p>
@@ -426,10 +518,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
 
         {/* ── Scroll to top ─────────────────────── */}
         <div className="cs-scroll-top-wrap">
-          <button
-            className="cs-scroll-top-btn"
-            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-          >
+          <button className="cs-scroll-top-btn" onClick={scrollToTopSmooth}>
             <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
               <path d="M7 11V3M7 3L3.5 6.5M7 3L10.5 6.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>

@@ -14,7 +14,7 @@
   padding-top: 80px;
   display: flex;
   flex-direction: column;
-  gap: 64px;
+  gap: 44px;
 }
 
 /* ── Scroll reveal ─────────────────────────────────── */
@@ -89,6 +89,8 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   border: 1px solid var(--color-border);
+  border-radius: 20px;
+  overflow: hidden;
 }
 
 .cs-meta-cell {
@@ -118,7 +120,7 @@
 /* ── Images & video ────────────────────────────────── */
 .cs-img {
   width: 100%;
-  border-radius: 8px;
+  border-radius: 20px;
   display: block;
 }
 
@@ -148,6 +150,7 @@
   text-decoration: underline;
   text-underline-offset: 2px;
   color: var(--color-text-primary);
+  cursor: pointer;
 }
 
 /* ── Section heading ───────────────────────────────── */
@@ -175,6 +178,7 @@
   font-size: 12px;
   font-weight: 500;
   color: var(--color-text-primary);
+  background: #F4F4F4;
   border: 1px solid var(--color-border);
   border-radius: 999px;
   padding: 4px 12px;
@@ -185,7 +189,7 @@
 .cs-callout-red {
   border-left: 3px solid #E53935;
   background: #FFF4F4;
-  border-radius: 0 4px 4px 0;
+  border-radius: 0 20px 20px 0;
   padding: 16px 20px;
 }
 [data-theme="dark"] .cs-callout-red {
@@ -202,27 +206,33 @@
 
 /* ── Gray callout (What I Found / Design Principle) ── */
 .cs-callout-gray {
-  background: var(--color-surface);
+  background: #F7F7F7;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 20px;
   padding: 24px;
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
+[data-theme="dark"] .cs-callout-gray {
+  background: #1C1C1C;
+}
 .cs-callout-gray__label {
   font-size: 10px;
-  font-weight: 700;
+  font-weight: 400;
   letter-spacing: 0.8px;
   text-transform: uppercase;
-  color: var(--color-text-secondary);
+  color: #777777;
   margin: 0;
 }
 .cs-callout-gray__body {
-  font-size: 14px;
-  line-height: 22px;
-  color: var(--color-text-body);
+  font-size: 16px;
+  line-height: 26px;
+  color: #2D2D2D;
   margin: 0;
+}
+[data-theme="dark"] .cs-callout-gray__body {
+  color: #C0C0C0;
 }
 
 /* ── Ban list ──────────────────────────────────────── */
@@ -230,7 +240,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
 }
 .cs-ban-item {
@@ -258,7 +268,7 @@
   display: flex;
   flex-direction: column;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
 }
 .cs-finding {
@@ -305,7 +315,7 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
 }
 .cs-audit-card {
@@ -347,7 +357,7 @@
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
 }
 .cs-goal-cell {
@@ -387,6 +397,7 @@
 .cs-solution__img {
   margin-top: 8px;
   border: 1px solid var(--color-border);
+  border-radius: 20px;
 }
 
 /* ── Outcome 2×2 card grid ─────────────────────────── */
@@ -396,7 +407,7 @@
   gap: 1px;
   background: var(--color-border);
   border: 1px solid var(--color-border);
-  border-radius: 8px;
+  border-radius: 20px;
   overflow: hidden;
 }
 .cs-outcome-card {
@@ -450,7 +461,7 @@
 
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 767px) {
-  .cs-content { padding-top: 72px; gap: 48px; }
+  .cs-content { padding-top: 72px; gap: 36px; }
 
   .cs-hero__title   { font-size: 22px; line-height: 30px; }
   .cs-heading       { font-size: 20px; line-height: 28px; }
