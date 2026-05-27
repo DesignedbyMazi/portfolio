@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  Layers, Smartphone, CreditCard, LayoutDashboard,
-  TrendingUp, Zap, Package, ShieldCheck,
-  UserX,
-} from 'lucide-react';
+  Stack, DeviceMobile, CreditCard, Browsers, UserMinus,
+  TrendUp, Lightning, Package, ShieldCheck,
+} from '@phosphor-icons/react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import carloftyHeroImg from '../assets/images/carlofty-landing.png';
@@ -136,9 +135,40 @@ function OutcomeCard({ icon, prefix, count, suffix, label }: {
 export default function CarloftyCaseStudy({ onBack }: Props) {
   useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
 
+  const handleNav = (page: string) => {
+    if (page === 'Home') onBack();
+  };
+
+  const solutions = [
+    {
+      icon: <Stack size={22} weight="fill" />,
+      title: 'Design System Built From The v1 Inconsistencies',
+      body: 'Before any screen was redesigned, I audited the v1 and extracted what was working. From that I built a component library — tokens, patterns, and interaction states — that gave engineering a single source of truth. This alone reduced back-and-forth during handoff and gave the product a consistent visual language for the first time.',
+      tags: ['Component Library', 'Tokens', 'Dev Handoff', 'Consistency'],
+    },
+    {
+      icon: <DeviceMobile size={22} weight="fill" />,
+      title: 'Progressive Onboarding — Collect Less, Convert More',
+      body: "The research showed onboarding was the platform's biggest drop-off point. I redesigned it around progressive disclosure — gathering only what was needed at each stage, triggered by user intent and platform requirements. The signup experience went from feeling like a compliance task to feeling like a product worth committing to, while still maintaining compliance.",
+      tags: ['Progressive Disclosure', 'Reduced cognitive load'],
+    },
+    {
+      icon: <CreditCard size={22} weight="fill" />,
+      title: 'Transparent Payment Flow — Naira In, Auction Confirmation Out',
+      body: "I designed the core payment journey around the constraint that made Carlofty different: dealers fund in Naira, Carlofty handles FX and pays the auction in the dealer's name — across Copart, Manheim, and IAAI. The UI made every step of that process legible. Exchange rate, payment status, admin confirmation, and final receipt — each stage had a clear state, a clear message, and a clear next action. No dead ends. No uncertainty.",
+      tags: ['Payment States', 'Status Tracking', 'Cross-Border UX'],
+    },
+    {
+      icon: <Browsers size={22} weight="fill" />,
+      title: 'Admin Inventory Dashboard — Operations At Scale',
+      body: 'The operations team needed structure. I designed a management layer that gave them a clear view of every dealer, every vehicle, and every auction state — with the ability to act on any of it without leaving the dashboard. Manual communication dropped. Operational clarity went up.',
+      tags: ['Inventory Management'],
+    },
+  ];
+
   return (
     <div className="cs-page">
-      <Navbar activePage="Work" />
+      <Navbar activePage="Work" onNavigate={handleNav} />
 
       <div className="cs-content">
 
@@ -329,10 +359,10 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
           </p>
           <div className="cs-audit-grid">
             {[
-              { icon:<UserX size={20}/>, title:'Onboarding Dropped Users Before They Started', body:'The signup process asked for too much, too soon. Cognitive load was high and the time-to-value gap was wide. Most users quit before reaching the core product.' },
-              { icon:<CreditCard size={20}/>, title:"Payment Had No Clear States", body:"Users couldn't tell what stage their payment was in, who was handling it, or what came next. The flow had no defined states between \"paid\" and \"done.\"" },
-              { icon:<LayoutDashboard size={20}/>, title:'Admin Had No Structured Overview', body:'The operations team had no clean way to manage dealer inventory or track auction statuses at scale. Everything relied on manual communication.' },
-              { icon:<Layers size={20}/>, title:'No Design System To Build From', body:'Inconsistent components, undefined patterns, and no shared language between design and engineering meant every new screen was starting from scratch.' },
+              { icon:<UserMinus size={20} weight="fill"/>, title:'Onboarding Dropped Users Before They Started', body:'The signup process asked for too much, too soon. Cognitive load was high and the time-to-value gap was wide. Most users quit before reaching the core product.' },
+              { icon:<CreditCard size={20} weight="fill"/>, title:'Payment Had No Clear States', body:"Users couldn't tell what stage their payment was in, who was handling it, or what came next. The flow had no defined states between \"paid\" and \"done.\"" },
+              { icon:<Browsers size={20} weight="fill"/>, title:'Admin Had No Structured Overview', body:'The operations team had no clean way to manage dealer inventory or track auction statuses at scale. Everything relied on manual communication.' },
+              { icon:<Stack size={20} weight="fill"/>, title:'No Design System To Build From', body:'Inconsistent components, undefined patterns, and no shared language between design and engineering meant every new screen was starting from scratch.' },
             ].map(c => (
               <div key={c.title} className="cs-audit-card">
                 <span className="cs-audit-card__icon">{c.icon}</span>
@@ -417,42 +447,22 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
           </p>
         </Reveal>
 
-        {[
-          {
-            icon: <Layers size={22}/>,
-            title: 'Design System Built From The v1 Inconsistencies',
-            body: 'Before any screen was redesigned, I audited the v1 and extracted what was working. From that I built a component library — tokens, patterns, and interaction states — that gave engineering a single source of truth. This alone reduced back-and-forth during handoff and gave the product a consistent visual language for the first time.',
-            tags: ['Component Library','Tokens','Dev Handoff','Consistency'],
-          },
-          {
-            icon: <Smartphone size={22}/>,
-            title: 'Progressive Onboarding — Collect Less, Convert More',
-            body: "The research showed onboarding was the platform's biggest drop-off point. I redesigned it around progressive disclosure — gathering only what was needed at each stage, triggered by user intent and platform requirements. The signup experience went from feeling like a compliance task to feeling like a product worth committing to, while still maintaining compliance.",
-            tags: ['Progressive Disclosure','Reduced cognitive load'],
-          },
-          {
-            icon: <CreditCard size={22}/>,
-            title: 'Transparent Payment Flow — Naira In, Auction Confirmation Out',
-            body: "I designed the core payment journey around the constraint that made Carlofty different: dealers fund in Naira, Carlofty handles FX and pays the auction in the dealer's name — across Copart, Manheim, and IAAI. The UI made every step of that process legible. Exchange rate, payment status, admin confirmation, and final receipt — each stage had a clear state, a clear message, and a clear next action. No dead ends. No uncertainty.",
-            tags: ['Payment States','Status Tracking','Cross-Border UX'],
-          },
-          {
-            icon: <LayoutDashboard size={22}/>,
-            title: 'Admin Inventory Dashboard — Operations At Scale',
-            body: 'The operations team needed structure. I designed a management layer that gave them a clear view of every dealer, every vehicle, and every auction state — with the ability to act on any of it without leaving the dashboard. Manual communication dropped. Operational clarity went up.',
-            tags: ['Inventory Management'],
-          },
-        ].map(s => (
-          <Reveal key={s.title} className="cs-solution">
-            <span className="cs-solution__icon">{s.icon}</span>
-            <strong className="cs-solution__title">{s.title}</strong>
-            <p className="cs-body">{s.body}</p>
-            <div className="cs-tags">
-              {s.tags.map(t => <span key={t} className="cs-tag">{t}</span>)}
+        {/* ── Stacking solution cards ───────────── */}
+        <div className="cs-solutions-stack">
+          {solutions.map((s, i) => (
+            <div key={s.title} className="cs-solution-sticky" style={{ zIndex: i + 1 }}>
+              <div className="cs-solution cs-solution-card">
+                <span className="cs-solution__icon">{s.icon}</span>
+                <strong className="cs-solution__title">{s.title}</strong>
+                <p className="cs-body">{s.body}</p>
+                <div className="cs-tags">
+                  {s.tags.map(t => <span key={t} className="cs-tag">{t}</span>)}
+                </div>
+                <img src={carloftyDashboardImg} alt={s.title} className="cs-img cs-solution__img"/>
+              </div>
             </div>
-            <img src={carloftyDashboardImg} alt={s.title} className="cs-img cs-solution__img"/>
-          </Reveal>
-        ))}
+          ))}
+        </div>
 
         <Reveal>
           <div className="cs-callout-red cs-callout-red--italic">
@@ -473,28 +483,28 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
           </p>
           <div className="cs-outcome-grid">
             <OutcomeCard
-              icon={<TrendingUp size={20}/>}
+              icon={<TrendUp size={20} weight="fill"/>}
               prefix="$"
               count={2}
               suffix="M+"
               label="In verified cross-border auction transactions facilitated"
             />
             <OutcomeCard
-              icon={<Zap size={20}/>}
+              icon={<Lightning size={20} weight="fill"/>}
               prefix=""
               count={10}
               suffix=" min"
               label="Fastest Copart auction payment recorded on the platform"
             />
             <OutcomeCard
-              icon={<Package size={20}/>}
+              icon={<Package size={20} weight="fill"/>}
               prefix=""
               count={3}
               suffix=" auctions"
               label="Copart, Manheim & IAAI — one seamless payment flow"
             />
             <OutcomeCard
-              icon={<ShieldCheck size={20}/>}
+              icon={<ShieldCheck size={20} weight="fill"/>}
               prefix=""
               count={0}
               suffix=" brokers"

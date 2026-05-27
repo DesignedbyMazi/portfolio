@@ -377,8 +377,20 @@
 .cs-goal-cell__body {
   font-size: 13px;
   line-height: 20px;
-  color: var(--color-text-body);
+  color: #777777;
   margin: 0;
+}
+
+/* ── Stacking solution cards ───────────────────────── */
+.cs-solutions-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.cs-solution-sticky {
+  position: sticky;
+  top: 52px; /* just below the 44px navbar */
 }
 
 /* ── Design solution item ──────────────────────────── */
@@ -387,7 +399,24 @@
   flex-direction: column;
   gap: 16px;
 }
-.cs-solution__icon { font-size: 22px; }
+
+.cs-solution-card {
+  background: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: 28px 24px;
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+}
+
+[data-theme="dark"] .cs-solution-card {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.3);
+}
+
+.cs-solution__icon {
+  display: flex;
+  align-items: center;
+  color: var(--color-text-primary);
+}
 .cs-solution__title {
   font-size: 18px;
   font-weight: 600;
@@ -480,6 +509,16 @@
   .cs-goal-cell:nth-child(2)    { border-bottom: 1px solid var(--color-border); }
 
   .cs-outcome-grid  { grid-template-columns: 1fr 1fr; }
+
+  .cs-outcome-card__value {
+    font-size: 18px;
+    font-weight: 700;
+    letter-spacing: -0.2px;
+  }
+  .cs-outcome-card__label {
+    font-size: 13px;
+    font-weight: 400;
+  }
 }
 
 @media (max-width: 480px) {

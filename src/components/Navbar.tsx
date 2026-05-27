@@ -5,9 +5,10 @@ const navLinks = ['Home', 'Work', 'Services', 'About Me'];
 
 interface NavbarProps {
   activePage?: string;
+  onNavigate?: (page: string) => void;
 }
 
-export default function Navbar({ activePage = 'Home' }: NavbarProps) {
+export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps) {
   const [atBottom, setAtBottom] = useState(false);
 
   useEffect(() => {
@@ -33,7 +34,13 @@ export default function Navbar({ activePage = 'Home' }: NavbarProps) {
               key={link}
               className={`navbar__link-wrap ${link === activePage ? 'navbar__link-wrap--active' : ''}`}
             >
-              <a href="#" className="navbar__link">{link}</a>
+              <a
+                href="#"
+                className="navbar__link"
+                onClick={(e) => { e.preventDefault(); onNavigate?.(link); }}
+              >
+                {link}
+              </a>
               <div className="navbar__underline" />
             </div>
           ))}
