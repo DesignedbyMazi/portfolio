@@ -205,12 +205,16 @@
     margin-bottom: 10px;
   }
 
-  /* Card subtext: 14px regular */
+  /* Card subtext: 14px regular, clamped to 2 lines */
   .case-card__desc {
     font-size: 14px;
     line-height: 22px;
     font-weight: 400;
     margin-bottom: 10px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .case-card__link {

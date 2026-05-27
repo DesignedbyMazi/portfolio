@@ -7,7 +7,6 @@ import IntroCopy from './components/IntroCopy';
 import SocialSection from './components/SocialSection';
 import UIExploration from './components/UIExploration';
 import SelectedProjects from './components/SelectedProjects';
-import BrandLogos from './components/BrandLogos';
 import Footer from './components/Footer';
 import './App.css';
 
@@ -83,10 +82,6 @@ function App() {
 
           <div data-animate>
             <SelectedProjects />
-          </div>
-
-          <div data-animate className="content__brands">
-            <BrandLogos />
           </div>
 
           <div data-animate>
