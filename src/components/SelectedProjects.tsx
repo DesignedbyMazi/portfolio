@@ -27,7 +27,6 @@ interface CaseStudy {
   title: string;
   description: string;
   image: string;
-  link?: string;
 }
 
 const caseStudies: CaseStudy[] = [
@@ -37,36 +36,35 @@ const caseStudies: CaseStudy[] = [
     description:
       "Global car auctions shouldn't require a middleman. Carlofty was designed to give Nigerian buyers direct, transparent access to Copart, Manheim, and IAAI — from a single platform they could actually trust.",
     image: carloftyImg,
-    link: '#',
   },
 ];
 
-function CaseStudyCard({ study, onReadCaseStudy }: { study: CaseStudy; onReadCaseStudy?: () => void }) {
+function CaseStudyCard({
+  study,
+  onReadCaseStudy,
+}: {
+  study: CaseStudy;
+  onReadCaseStudy?: () => void;
+}) {
   return (
-    <div className="case-card">
-      {/* Screenshot */}
+    <div
+      className="case-card"
+      onClick={onReadCaseStudy}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onReadCaseStudy?.(); }}
+      style={{ cursor: onReadCaseStudy ? 'pointer' : 'default' }}
+    >
       <div className="case-card__image">
         <img src={study.image} alt={study.title} className="case-card__img" />
       </div>
-      {/* Body */}
       <div className="case-card__body">
         <h3 className="case-card__title">{study.title}</h3>
         <p className="case-card__desc">{study.description}</p>
-        {study.link && (
-          <a
-            href={study.link}
-            className="case-card__link"
-            onClick={(e) => {
-              if (onReadCaseStudy) {
-                e.preventDefault();
-                onReadCaseStudy();
-              }
-            }}
-          >
-            <span>Read Case Study</span>
-            <ArrowUpRightIcon className="case-card__link-arrow" />
-          </a>
-        )}
+        <span className="case-card__link">
+          <span>Read Case Study</span>
+          <ArrowUpRightIcon className="case-card__link-arrow" />
+        </span>
       </div>
     </div>
   );
@@ -84,10 +82,6 @@ export default function SelectedProjects({ onReadCaseStudy }: SelectedProjectsPr
           <h2 className="selected-projects__heading">Selected Case Studies</h2>
           <p className="selected-projects__subheading">A record of my thoughtful process</p>
         </div>
-        <a href="#" className="selected-projects__view-all">
-          <span>View all</span>
-          <ArrowUpRightIcon className="selected-projects__arrow" />
-        </a>
       </div>
 
       <div className="selected-projects__list">
