@@ -1,41 +1,55 @@
+/* ============================================================
+   PORTFOLIO — GLOBAL STYLES
+   Edit this file to change colors, fonts, spacing, and layout.
+   All components read from these CSS variables.
+   ============================================================ */
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 @import './styles/animations.css';
 
+/* ────────────────────────────────────────────────────────────
+   1. RESET
+   ──────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* ────────────────────────────────────────────────────────────
+   2. DESIGN TOKENS  (LIGHT MODE)
+   Change values here to restyle the entire site at once.
+   ──────────────────────────────────────────────────────────── */
 :root {
-  /* ── Colors ──────────────────────────── */
-  --color-text-primary:    #2D2D2D;   /* headings, names, active nav, bold spans */
-  --color-text-body:       #5A5A5A;   /* body paragraphs, regular prose */
-  --color-text-secondary:  #5A5A5A;   /* alias used in components */
-  --color-text-muted:      #777777;   /* captions, labels, inactive nav, meta */
-  --color-border:          #EAEAEA;
-  --color-bg:              #FFFFFF;
-  --color-surface:         #F4F4F4;
-  --color-grey-150:        #DFDFDF;
-  --color-success:         #11AB2A;
-  --color-dark:            #2D2D2D;
 
-  /* ── Typography ──────────────────────── */
-  --font-family: 'Inter', sans-serif;
+  /* ── Colors ─────────────────────────────────────────────── */
+  --color-text-primary:   #2D2D2D;  /* headings, bold text, active nav */
+  --color-text-body:      #5A5A5A;  /* body paragraphs */
+  --color-text-secondary: #5A5A5A;  /* labels, meta text */
+  --color-text-muted:     #777777;  /* captions, inactive nav, timestamps */
+  --color-border:         #EAEAEA;  /* card borders, dividers */
+  --color-bg:             #FFFFFF;  /* page background */
+  --color-surface:        #F4F4F4;  /* card backgrounds, inputs */
+  --color-grey-150:       #DFDFDF;  /* separators */
+  --color-success:        #11AB2A;  /* green dot, available badge */
+  --color-dark:           #2D2D2D;  /* dark button backgrounds */
 
-  /* desktop scale */
+  /* ── Typography ─────────────────────────────────────────── */
+  --font-family:    'Inter', sans-serif;
+
+  /* font sizes */
   --text-xs:   12px;
   --text-sm:   14px;
-  --text-base: 16px;   /* ← 16px on desktop */
+  --text-base: 16px;
   --text-lg:   18px;
 
-  /* line-heights */
+  /* line heights */
   --leading-xs:   18px;
   --leading-sm:   20px;
-  --leading-base: 26px;   /* bumped for 16px body */
+  --leading-base: 26px;
   --leading-lg:   32px;
 
-  /* ── Spacing ─────────────────────────── */
+  /* ── Spacing scale ──────────────────────────────────────── */
   --space-xs:  4px;
   --space-sm:  8px;
   --space-md:  12px;
@@ -43,29 +57,52 @@
   --space-xl:  24px;
   --space-2xl: 32px;
   --space-3xl: 40px;
-  --space-4xl: 56px;
+  --space-4xl: 56px;  /* gap between homepage sections */
   --space-5xl: 72px;
   --space-6xl: 100px;
 
-  /* ── Radii ───────────────────────────── */
-  --radius-pill: 9999px;
-  --radius-card: 40px;
+  /* ── Radii ──────────────────────────────────────────────── */
+  --radius-pill: 9999px;  /* fully rounded buttons/badges */
+  --radius-card: 40px;    /* large card corners */
 
-  /* ── Layout ──────────────────────────── */
-  --content-width:   720px;
-  --page-width:      1440px;
-  --content-padding: 320px;   /* ← 320px on desktop */
+  /* ── Layout ─────────────────────────────────────────────── */
+  --page-width:      1440px;   /* max page width */
+  --content-width:   720px;    /* max text/content width */
+  --content-padding: 320px;    /* horizontal padding on desktop */
 }
 
-/* ── Mobile scale override ───────────── */
+/* ────────────────────────────────────────────────────────────
+   3. RESPONSIVE TOKEN OVERRIDES
+   ──────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) {
+  :root { --content-padding: 120px; }
+}
+
+@media (max-width: 1024px) {
+  :root { --content-padding: 60px; }
+}
+
 @media (max-width: 767px) {
   :root {
-    --text-base:    15px;
+    --content-padding: 24px;
+    --space-4xl: 44px;
+    --text-base: 15px;
     --leading-base: 24px;
   }
 }
 
-/* ── Dark mode token overrides ───────── */
+@media (max-width: 420px) {
+  :root {
+    --content-padding: 24px;
+    --space-4xl: 36px;
+  }
+}
+
+/* ────────────────────────────────────────────────────────────
+   4. DARK MODE TOKENS
+   Automatically active at night (6 pm – 6 am WAT).
+   Users can also toggle manually with the sun/moon button.
+   ──────────────────────────────────────────────────────────── */
 [data-theme="dark"] {
   --color-text-primary:   #F0F0F0;
   --color-text-body:      #959595;
@@ -75,13 +112,14 @@
   --color-bg:             #111111;
   --color-surface:        #1C1C1C;
   --color-grey-150:       #3A3A3A;
-  --color-dark:           #F0F0F0;   /* inverted — light button bg in dark mode */
-  --color-success:        #11AB2A;   /* green stays the same */
+  --color-dark:           #F0F0F0;  /* inverted: used as light button bg */
+  --color-success:        #11AB2A;  /* green stays the same */
 }
 
-
-/* ── Smooth theme transition ─────────── */
-/* Added/removed on <html> around each toggle click */
+/* ────────────────────────────────────────────────────────────
+   5. THEME TRANSITION
+   Smooth crossfade when toggling light ↔ dark.
+   ──────────────────────────────────────────────────────────── */
 .theme-transitioning,
 .theme-transitioning * {
   transition:
@@ -91,19 +129,22 @@
     box-shadow       0.35s ease !important;
 }
 
-/* ── Dark mode component overrides ──── */
+/* ────────────────────────────────────────────────────────────
+   6. DARK MODE COMPONENT OVERRIDES
+   Fine-tune specific components in dark mode here.
+   ──────────────────────────────────────────────────────────── */
 
-/* CV button: now light bg in dark mode, needs dark text */
+/* CV download button needs dark text when bg is light */
 [data-theme="dark"] .social-section__cv-btn {
   color: #111111;
 }
 
-/* Project card border — #1F1F1F at 30% opacity in dark mode */
+/* Project card border: softer at 50% opacity */
 [data-theme="dark"] .project-card {
   border-color: rgba(31, 31, 31, 0.5);
 }
 
-/* Project card placeholder checkerboard — darker in dark mode */
+/* Project card placeholder checkerboard → darker squares */
 [data-theme="dark"] .project-card__image {
   background-image:
     linear-gradient(45deg, #2a2a2a 25%, transparent 25%),
@@ -112,7 +153,9 @@
     linear-gradient(-45deg, transparent 75%, #2a2a2a 75%);
 }
 
-/* ── Base styles ─────────────────────── */
+/* ────────────────────────────────────────────────────────────
+   7. BASE / GLOBAL STYLES
+   ──────────────────────────────────────────────────────────── */
 html {
   scroll-behavior: smooth;
 }
