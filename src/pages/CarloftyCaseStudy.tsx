@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
-import carloftyLandingImg from '../assets/images/carlofty-landing.png';
+import Navbar from '../components/Navbar';
+import carloftyHeroImg from '../assets/images/carlofty-landing.png';
 import carloftyDashboardImg from '../assets/images/carlofty-dashboard.png';
 import carloftyRoleVideo from '../assets/videos/carlofty-role.mp4';
 import carloftyWaitlistVideo from '../assets/videos/carlofty-waitlist.mp4';
@@ -9,480 +10,351 @@ interface Props {
   onBack: () => void;
 }
 
-const solutionCards = [
-  {
-    number: '01',
-    title: 'Design System Built From The v1 Inconsistencies',
-    description:
-      'I audited every screen in v1, extracted all patterns, and built a token-based design system: buttons, inputs, badges, tables, navigation. This alone made the product feel 3× more consistent.',
-    tags: ['Design System', 'Tokens', 'Component Library'],
-    accentColor: 'rgba(255,255,255,0.15)',
-  },
-  {
-    number: '02',
-    title: 'Progressive Onboarding — Collect Less, Convert More',
-    description:
-      '8-step KYC before any value was killing conversion. I broke onboarding into progressive stages: browse first, verify only when ready to bid. Time-to-value dropped significantly.',
-    tags: ['Onboarding', 'UX Strategy', 'Conversion'],
-    accentColor: '#C0392B',
-  },
-  {
-    number: '03',
-    title: 'Real-Time Payment Rail With Trust Signals',
-    description:
-      'Every payment step now shows exactly where money goes, estimated time, what comes next. Wire receipts, exchange rate clarity, and status updates — all in context of the action.',
-    tags: ['Payment UX', 'Transparency', 'Trust'],
-    accentColor: 'rgba(255,255,255,0.15)',
-  },
-  {
-    number: '04',
-    title: 'Auction Intelligence Dashboard',
-    description:
-      'Dealers now manage bids, track won lots, review payments, and follow shipments from one view. One source of truth eliminated the main cause of dealer support tickets.',
-    tags: ['Dashboard', 'Data Viz', 'Dealer Tools'],
-    accentColor: '#C0392B',
-  },
-];
+/* ── Auto-play video when in view ─────────────────── */
+function VideoInView({
+  src,
+  className,
+}: {
+  src: string;
+  className?: string;
+}) {
+  const ref = useRef<HTMLVideoElement>(null);
 
-const truths = [
-  {
-    num: '01',
-    title: 'Trust is transactional',
-    body: 'Every time a dealer had to take a leap of faith — wire money, wait for updates, hope the car arrived — the product had failed them.',
-  },
-  {
-    num: '02',
-    title: 'Visibility is the product',
-    body: "Dealers didn't need more features. They needed to know what was happening at every step: bid status, payment receipt, shipment tracking.",
-  },
-  {
-    num: '03',
-    title: 'Complexity kills conversion',
-    body: 'An 8-step KYC process before a dealer could do anything meaningful was not a security feature — it was a churn factory.',
-  },
-  {
-    num: '04',
-    title: 'Consistency is credibility',
-    body: "Inconsistent UI patterns in v1 signalled an unfinished product. A design system wasn’t a nice-to-have — it was trust infrastructure.",
-  },
-];
+  useEffect(() => {
+    const video = ref.current;
+    if (!video) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          video.play().catch(() => {});
+        } else {
+          video.pause();
+        }
+      },
+      { threshold: 0.3 },
+    );
+    observer.observe(video);
+    return () => observer.disconnect();
+  }, []);
 
+  return (
+    <video
+      ref={ref}
+      src={src}
+      muted
+      loop
+      playsInline
+      className={className}
+    />
+  );
+}
+
+/* ── Scroll-reveal wrapper ────────────────────────── */
+function Reveal({ children, className }: { children: React.ReactNode; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add('cs-visible');
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.05, rootMargin: '0px 0px -24px 0px' },
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={ref} className={`cs-reveal${className ? ` ${className}` : ''}`}>
+      {children}
+    </div>
+  );
+}
+
+/* ── Eyebrow label ────────────────────────────────── */
+function Eyebrow({ text }: { text: string }) {
+  const parts = text.split(' — ');
+  return (
+    <p className="cs-eyebrow">
+      {parts[0]}
+      {parts[1] && (
+        <>
+          {' — '}
+          <span className="cs-eyebrow__brand">{parts[1]}</span>
+        </>
+      )}
+    </p>
+  );
+}
+
+/* ── Ban icon ─────────────────────────────────────── */
+function BanIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true" className="cs-ban-icon">
+      <circle cx="8" cy="8" r="6.5" stroke="#E53935" strokeWidth="1.5" />
+      <line x1="3.5" y1="12.5" x2="12.5" y2="3.5" stroke="#E53935" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+/* ── Main component ───────────────────────────────── */
 export default function CarloftyCaseStudy({ onBack }: Props) {
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const revealRefs = useRef<(HTMLDivElement | null)[]>([]);
-
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' });
   }, []);
 
-  useEffect(() => {
-    const els = revealRefs.current.filter(Boolean) as HTMLDivElement[];
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('cs-visible');
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { threshold: 0.08, rootMargin: '0px 0px -32px 0px' }
-    );
-    els.forEach((el) => observer.observe(el));
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const cards = cardRefs.current.filter(Boolean) as HTMLDivElement[];
-    if (cards.length < 2) return;
-    const observers: IntersectionObserver[] = [];
-    cards.forEach((card, i) => {
-      if (i === cards.length - 1) return;
-      const nextCard = cards[i + 1];
-      const obs = new IntersectionObserver(
-        ([entry]) => {
-          card.classList.toggle('is-covered', entry.isIntersecting);
-        },
-        { threshold: 0.2 }
-      );
-      obs.observe(nextCard);
-      observers.push(obs);
-    });
-    return () => observers.forEach((o) => o.disconnect());
-  }, []);
-
-  const ref = (i: number) => (el: HTMLDivElement | null) => {
-    revealRefs.current[i] = el;
-  };
-
   return (
     <div className="cs-page">
+      <Navbar activePage="Work" />
 
-      {/* ── Top Nav ── */}
-      <nav className="cs-nav">
-        <button className="cs-nav__back" onClick={onBack}>
-          ← Portfolio
-        </button>
-        <span className="cs-nav__title">Carlofty · Case Study</span>
-        <div className="cs-nav__spacer" />
-      </nav>
+      <div className="cs-content">
 
-      {/* ── Hero ── */}
-      <section className="cs-hero cs-center cs-reveal" ref={ref(0)}>
-        <span className="cs-eyebrow">Case Study</span>
-        <h1 className="cs-hero__h1">
-          Designing Trust into a Broken Payment Experience For Cross-border Car Sourcing.
-        </h1>
-        <p className="cs-hero__overview">
-          Carlofty is a B2B platform that gives Nigerian car dealers direct access to U.S.
-          wholesale auctions — Copart, Manheim, and IAAI — without a U.S. dealer license.
-          I led the end-to-end redesign: a trust-first marketing site, dealer onboarding,
-          payment flow, and a full auction dashboard.
-        </p>
-        <div className="cs-meta-strip">
-          <div className="cs-meta-item">
-            <span className="cs-meta-label">Company</span>
-            <span className="cs-meta-value">Carlofty</span>
-          </div>
-          <div className="cs-meta-divider" />
-          <div className="cs-meta-item">
-            <span className="cs-meta-label">Timeline</span>
-            <span className="cs-meta-value">Mar – Jun 2024</span>
-          </div>
-          <div className="cs-meta-divider" />
-          <div className="cs-meta-item">
-            <span className="cs-meta-label">Role</span>
-            <span className="cs-meta-value">Lead Product Designer</span>
-          </div>
+        {/* ── Go back ───────────────────────────────── */}
+        <div className="cs-back-row">
+          <button className="cs-back-btn" onClick={onBack}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+              <path d="M9 11.5L4.5 7L9 2.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Go back
+          </button>
         </div>
-      </section>
 
-      {/* ── Image 1 — before The Challenge ── */}
-      <div className="cs-center cs-img-block cs-reveal" ref={ref(1)}>
-        <img src={carloftyLandingImg} alt="Carlofty landing page" className="cs-media" />
-      </div>
-
-      {/* ── The Challenge ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(2)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">01 · Challenge</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">A Product People Wanted to Trust, But Couldn't.</h2>
-          <p className="cs-p">
-            Carlofty was solving a real, painful problem. But the product couldn't communicate
-            trust at the moments that mattered most. Dealers were being asked to wire money
-            internationally without visibility into what happened next.
+        {/* ── Hero ──────────────────────────────────── */}
+        <Reveal className="cs-hero">
+          <p className="cs-breadcrumb">
+            Case study — <span className="cs-breadcrumb__brand">Carlofty</span>
           </p>
-          <div className="cs-numbered-list">
+          <h1 className="cs-hero__title">
+            Designing Trust into a Broken Payment Experience For Cross-Border Car Sourcing
+          </h1>
+          <p className="cs-hero__overview">
+            How I established design direction, built a product from v1, and helped facilitate
+            thousands of dollars in auction transactions — including a record 10-minute Copart
+            payment.
+          </p>
+
+          {/* 2×2 meta grid */}
+          <div className="cs-meta-grid">
+            <div className="cs-meta-cell">
+              <span className="cs-meta-label">Year</span>
+              <span className="cs-meta-value">2026</span>
+            </div>
+            <div className="cs-meta-cell cs-meta-cell--border-left">
+              <span className="cs-meta-label">My Role</span>
+              <span className="cs-meta-value">Lead Product Designer</span>
+            </div>
+            <div className="cs-meta-cell cs-meta-cell--border-top">
+              <span className="cs-meta-label">Team</span>
+              <span className="cs-meta-value">1 Designer, 1 PM, 3 Engineers</span>
+            </div>
+            <div className="cs-meta-cell cs-meta-cell--border-top cs-meta-cell--border-left">
+              <span className="cs-meta-label">Deliverables</span>
+              <span className="cs-meta-value">
+                Design system, Auction Flow, Payment Flow, Admin Dashboard, Dealer + Buyer
+                Experience.
+              </span>
+            </div>
+          </div>
+        </Reveal>
+
+        {/* ── Hero image ────────────────────────────── */}
+        <Reveal>
+          <img src={carloftyHeroImg} alt="Carlofty landing page" className="cs-img" />
+        </Reveal>
+
+        {/* ── MY ROLE ───────────────────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="MY ROLE — Carlofty" />
+          <h2 className="cs-heading">Lead Product Designer</h2>
+          <p className="cs-body">
+            I was responsible for design direction, system, flows, and handoff. I worked directly
+            with the PM and engineers to translate user pain and business goals into a product that
+            actually worked.
+          </p>
+          <div className="cs-tags">
+            {['UX Research', 'Competitor Analysis', 'Design System', 'User Flows', 'Prototyping', 'Dev Handoff'].map((t) => (
+              <span key={t} className="cs-tag">{t}</span>
+            ))}
+          </div>
+        </Reveal>
+
+        <Reveal>
+          <VideoInView src={carloftyRoleVideo} className="cs-img cs-img--video" />
+        </Reveal>
+
+        {/* ── THE CHALLENGE ─────────────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="THE CHALLENGE — Carlofty" />
+          <h2 className="cs-heading">Trust Was The Missing Feature.</h2>
+          <p className="cs-body">
+            Sourcing cars from foreign auctions is common practice for Nigerian dealers and buyers.
+            The barrier isn't knowledge — it's infrastructure. You cannot pay Copart, Manheim, or
+            IAAI directly in Naira, from Nigeria, in your own name.
+          </p>
+          <p className="cs-body">
+            That gap created a broker economy with no accountability. Money changed hands
+            informally. Tracking didn't exist. And when things went wrong, there was no recourse.
+          </p>
+          <div className="cs-callout cs-callout--red">
+            <p className="cs-callout__text">You sent money. Then you waited. And hoped.</p>
+          </div>
+          <p className="cs-body">
+            The v1 product existed but had no clear direction — inconsistent components, undefined
+            flows, and no structured path through the core transaction. Both dealers and buyers were
+            underserved.
+          </p>
+          <div className="cs-ban-list">
             {[
-              'No real-time visibility into bids, payments, or shipment status.',
-              'Dealers had to wire money internationally before seeing any confirmation.',
-              'Onboarding required too many documents before a dealer could do anything meaningful.',
-              'V1 had inconsistent UI patterns that made the product feel unpolished and unfinished.',
-            ].map((text, i) => (
-              <div key={i} className="cs-numbered-item">
-                <span className="cs-numbered-item__num">{String(i + 1).padStart(2, '0')}</span>
-                <span className="cs-numbered-item__text">{text}</span>
+              ['No Direct Payment Path', "Naira couldn’t reach foreign auctions without a middleman"],
+              ['Broker Exploitation', 'Hidden fees, no accountability, money lost with no recourse'],
+              ['Zero Tracking', 'Once funds left the customer, visibility ended completely'],
+              ['No Design Foundation', 'Inconsistent v1 with no system, no flows, no direction'],
+            ].map(([bold, rest]) => (
+              <div key={bold} className="cs-ban-item">
+                <BanIcon />
+                <p className="cs-ban-item__text">
+                  <strong>{bold}</strong> — {rest}
+                </p>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </Reveal>
 
-      {/* ── Trust Was The Missing Feature — Image 2 ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(3)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">02 · Discovery</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">Trust Was The Missing Feature.</h2>
-          <p className="cs-p">
-            Every friction point in the experience mapped back to one thing: trust.
-            Dealers didn't understand where their money went. They couldn't track their cars.
-            They weren't sure Carlofty was legitimate. The design problem wasn't the workflow
-            — it was credibility at every touchpoint.
-          </p>
-        </div>
-        <div className="cs-img-block">
-          <img src={carloftyDashboardImg} alt="Carlofty dealer dashboard" className="cs-media" />
-        </div>
-      </section>
+        <Reveal>
+          <img src={carloftyDashboardImg} alt="Carlofty dealer dashboard" className="cs-img" />
+        </Reveal>
 
-      {/* ── My Role + Video 1 ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(4)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">03 · Role</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">Lead Product Designer.</h2>
-          <p className="cs-p">
-            I was the sole designer on this project. I owned the full design process — from
-            discovery through delivery — working directly with the founder, engineering lead,
-            and operations team. My scope covered the marketing site, dealer onboarding,
-            auction browsing, payment flow, and the dealer dashboard.
+        {/* ── RESEARCH ──────────────────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="RESEARCH — Carlofty" />
+          <h2 className="cs-heading">Understanding The Problem Before Opening Figma</h2>
+          <p className="cs-body">
+            I ran three layers of research before touching any UI — competitor analysis, user
+            interviews with dealers and buyers, and a full product audit. Due to an NDA, specific
+            findings are kept at the level of insight rather than detail.
           </p>
-        </div>
-        <div className="cs-img-block">
-          <video
-            src={carloftyRoleVideo}
-            controls
-            playsInline
-            muted
-            className="cs-media cs-media--video"
-          />
-        </div>
-      </section>
+        </Reveal>
 
-      {/* ── Understanding The Problem ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(5)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">04 · Research</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">Understanding The Problem Before Opening Figma.</h2>
-          <p className="cs-p">
-            Before designing anything, I spent two weeks in discovery. I reviewed the existing
-            product, interviewed 6 dealers, and analysed 3 months of support tickets. The
-            goal was to understand what the product was failing at — not just what it was
-            missing.
+        {/* ── 1. COMPETITOR ANALYSIS ────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="1. COMPETITOR ANALYSIS — Carlofty" />
+          <h2 className="cs-heading">Three Platforms. Three Different Approach. One Clear Gap.</h2>
+          <p className="cs-body">
+            I mapped Carlofty against existing players in the cross-border vehicle sourcing space
+            — looking at target audience, inventory quality, financing models, and core
+            differentiation.
           </p>
-          <p className="cs-p">
-            Three consistent failure patterns emerged across every conversation:
-            money went in and silence came out; dealers didn't know if their bids were
-            competitive; and the onboarding complexity meant many never reached the
-            point of placing a bid.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Four Truths ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(6)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">05 · Insight</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">Those Four Truths Informed The Approach: One Clear Step.</h2>
-          <p className="cs-p">
-            Each interview revealed the same themes in different words. The product had
-            four structural trust problems, and each one had a direct design solution.
-          </p>
-          <div className="cs-truths-grid">
-            {truths.map((t) => (
-              <div key={t.num} className="cs-truth-card">
-                <span className="cs-truth-card__num">{t.num}</span>
-                <strong className="cs-truth-card__title">{t.title}</strong>
-                <p className="cs-truth-card__body">{t.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── Dealers Know What They Needed ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(7)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">06 · Framing</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">Dealers Know What They Needed. The Product Wasn't Delivering It.</h2>
-          <p className="cs-p">
-            The dealers I spoke to were not confused about what they wanted — they were
-            frustrated that a product this ambitious couldn't do the basics right. They wanted
-            to trust Carlofty. They just couldn't.
-          </p>
-          <div className="cs-callout">
-            <p className="cs-callout__text">
-              "What if the trust trigger is missing from the most important page — the one where
-              they decide to wire money?"
+          <div className="cs-what-found">
+            <p className="cs-what-found__label">WHAT I FOUND</p>
+            <p className="cs-what-found__body">
+              Competitors either served individual buyers with mixed-quality inventory, or importers
+              working with salvage cars. None were serving professional dealers with a quality
+              guarantee and financing infrastructure. That gap was Carlofty's advantage — and the
+              design had to make it legible at every touchpoint.
             </p>
           </div>
-          <p className="cs-p">
-            This became the design north star. Every decision, from the marketing site
-            restructure to the payment confirmation screen, was evaluated against it.
+        </Reveal>
+
+        {/* ── 2. USER RESEARCH ──────────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="2. USER RESEARCH — Carlofty" />
+          <h2 className="cs-heading">Dealers Knew What They Needed. The Product Wasn't Delivering It.</h2>
+          <p className="cs-body">
+            I mapped the needs, goals, and frustrations of both dealers and buyers through user
+            stories and pain point analysis. Three consistent themes emerged across both user types.
           </p>
-        </div>
-      </section>
-
-      {/* ── The 4-Step Email Incident ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(8)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">07 · Diagnosis</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">The 4-Step Email Incident: The Execution Created Frictions At Every Step.</h2>
-          <div className="cs-two-col">
-            <div className="cs-two-col__left">
-              <p className="cs-p">
-                The v1 onboarding required dealers to complete a 4-step email verification
-                sequence before accessing any part of the product. By the time they reached
-                the dashboard, many had already lost confidence.
-              </p>
-              <p className="cs-p">
-                This wasn't a feature — it was attrition by design. Each extra step was a
-                moment where a dealer asked themselves whether this was worth it.
-              </p>
-            </div>
-            <div className="cs-two-col__right">
-              <div className="cs-incident-steps">
-                {[
-                  'Sign up form — email, password, phone',
-                  'Verify email — check inbox, click link',
-                  'Complete profile — business info, documents',
-                  'Wait for admin approval — no ETA given',
-                ].map((step, i) => (
-                  <div key={i} className="cs-incident-step">
-                    <span className="cs-incident-step__num">Step {i + 1}</span>
-                    <span className="cs-incident-step__text">{step}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Waitlist Landing Page Redesign + Video 2 ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(9)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">08 · Execution</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">My Waitlist Landing Page Redesign.</h2>
-          <p className="cs-p">
-            Before rebuilding the product, I redesigned the marketing site. The goal was to
-            convert skeptical dealers from the first scroll — using social proof, transparent
-            pricing, and a frictionless sign-up that felt like a handshake, not a gate.
-          </p>
-        </div>
-        <div className="cs-img-block">
-          <video
-            src={carloftyWaitlistVideo}
-            controls
-            playsInline
-            muted
-            className="cs-media cs-media--video"
-          />
-        </div>
-      </section>
-
-      {/* ── Full-width Banner ── */}
-      <div className="cs-banner">
-        <div className="cs-banner__inner">
-          <h2 className="cs-banner__h2">
-            Buy Clean-Title U.S. Cars.<br />
-            Pay in Naira. Ship to Lagos.
-          </h2>
-          <p className="cs-banner__sub">
-            Redesigning the moment a dealer decides to trust Carlofty with their money.
-          </p>
-        </div>
-      </div>
-
-      {/* ── Design Solution ── */}
-      <section className="cs-solutions-intro cs-center cs-reveal" ref={ref(10)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">09 · Design Solution</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">Four Questions That Shaped The Design Decisions.</h2>
-          <p className="cs-p">
-            Each decision targeted a specific trust gap identified in research. Together,
-            they turned a fragile experience into one that earns dealer confidence from
-            the first interaction.
-          </p>
-        </div>
-      </section>
-
-      {/* ── Two Users ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(11)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">Your Reality</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">Two Users.</h2>
-          <div className="cs-users-row">
-            <div className="cs-user-card">
-              <span className="cs-user-card__role">Dealer</span>
-              <p className="cs-user-card__desc">
-                Nigerian car dealer. Wants to source U.S. vehicles at auction prices without
-                a U.S. license. Needs to feel confident enough to wire money internationally.
-              </p>
-              <div className="cs-user-card__tags">
-                <span>Bid on auctions</span>
-                <span>Track payments</span>
-                <span>Follow shipments</span>
-              </div>
-            </div>
-            <div className="cs-user-card">
-              <span className="cs-user-card__role">Admin</span>
-              <p className="cs-user-card__desc">
-                Carlofty operations team. Manages dealer verification, auction bids, payment
-                confirmations, and shipment coordination across multiple ongoing transactions.
-              </p>
-              <div className="cs-user-card__tags">
-                <span>Verify dealers</span>
-                <span>Manage bids</span>
-                <span>Process payments</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Sticky Scroll Cards ── */}
-      <div className="cs-solutions-track cs-center">
-        {solutionCards.map((card, i) => (
-          <div key={card.number} className="cs-solution-item">
-            <div
-              className="cs-solution-card"
-              style={{ zIndex: i + 1 }}
-              ref={(el) => { cardRefs.current[i] = el; }}
-            >
-              <div
-                className="cs-solution-card__accent"
-                style={{ background: card.accentColor }}
-              />
-              <div className="cs-solution-card__header">
-                <h3 className="cs-solution-card__title">{card.title}</h3>
-                <span className="cs-solution-card__num">{card.number}</span>
-              </div>
-              <p className="cs-solution-card__desc">{card.description}</p>
-              <div className="cs-solution-card__tags">
-                {card.tags.map((tag) => (
-                  <span key={tag} className="cs-tag">{tag}</span>
-                ))}
-              </div>
-              <div className="cs-solution-card__mock">
-                <div className="cs-mock-dots">
-                  <span /><span /><span />
-                </div>
-                <div className="cs-mock-body">
-                  <div className="cs-mock-line cs-mock-line--lg" />
-                  <div className="cs-mock-line cs-mock-line--md" />
-                  <div className="cs-mock-line cs-mock-line--sm" />
-                  <div className="cs-mock-line cs-mock-line--md" style={{ marginTop: 16 }} />
-                  <div className="cs-mock-line cs-mock-line--lg" />
+          <div className="cs-findings">
+            {[
+              {
+                num: '01',
+                title: 'Visibility was missing',
+                body: 'Users needed to see what was happening at every stage — auction activity, payment status, order progress. The v1 gave them almost none of this. Decisions were being made without inclusion.',
+              },
+              {
+                num: '02',
+                title: 'Trust had to be earned through the UI',
+                body: "Sending significant money to a platform for a car they hadn't physically seen required a level of confidence the product wasn't building. Every unclear step eroded that confidence further.",
+              },
+              {
+                num: '03',
+                title: 'Complexity was being dumped on the user',
+                body: "The backend process of cross-border payment and sourcing is genuinely complex. Users didn't need to understand all of it — they needed the product to absorb that complexity and surface only what mattered.",
+              },
+            ].map((f) => (
+              <div key={f.num} className="cs-finding">
+                <span className="cs-finding__num">{f.num}</span>
+                <div className="cs-finding__body">
+                  <strong className="cs-finding__title">{f.title}</strong>
+                  <p className="cs-finding__text">{f.body}</p>
                 </div>
               </div>
-            </div>
+            ))}
           </div>
-        ))}
-      </div>
+          <div className="cs-callout cs-callout--red">
+            <p className="cs-callout__text">
+              Money moved. Nothing else did. That one insight shaped every design decision that
+              followed.
+            </p>
+          </div>
+        </Reveal>
 
-      {/* ── The Product Metrics ── */}
-      <section className="cs-section cs-center cs-reveal" ref={ref(12)}>
-        <div className="cs-section-label">
-          <span className="cs-eyebrow">10 · Impact</span>
-        </div>
-        <div className="cs-section-body">
-          <h2 className="cs-h2">The Product Metrics: The Numbers Show It.</h2>
-          <p className="cs-p">
-            The redesigned platform launched to early dealers in Q2 2024. Onboarding
-            completion increased, dealer confusion support tickets dropped, and the
-            platform began scaling deal volume month over month.
+        {/* ── 3. PRODUCT AUDIT ──────────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="3. PRODUCT AUDIT — Carlofty" />
+          <h2 className="cs-heading">The 4-Step Email Incident: Friction At Every Step.</h2>
+          <p className="cs-body">
+            The v1 onboarding required dealers to complete a 4-step email verification sequence
+            before accessing any part of the product. By the time they reached the dashboard, many
+            had already lost confidence.
           </p>
-          <div className="cs-stats-grid">
+          <p className="cs-body">
+            This wasn't a feature — it was attrition by design. Each extra step was a moment where
+            a dealer asked themselves whether this was worth it.
+          </p>
+          <div className="cs-steps">
+            {[
+              'Sign up form — email, password, phone',
+              'Verify email — check inbox, click link',
+              'Complete profile — business info, documents',
+              'Wait for admin approval — no ETA given',
+            ].map((step, i) => (
+              <div key={i} className="cs-step">
+                <span className="cs-step__num">Step {i + 1}</span>
+                <span className="cs-step__text">{step}</span>
+              </div>
+            ))}
+          </div>
+        </Reveal>
+
+        {/* ── EXECUTION ─────────────────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="EXECUTION — Carlofty" />
+          <h2 className="cs-heading">My Waitlist Landing Page Redesign.</h2>
+          <p className="cs-body">
+            Before rebuilding the product, I redesigned the marketing site. The goal was to convert
+            skeptical dealers from the first scroll — using social proof, transparent pricing, and
+            a frictionless sign-up that felt like a handshake, not a gate.
+          </p>
+        </Reveal>
+
+        <Reveal>
+          <VideoInView src={carloftyWaitlistVideo} className="cs-img cs-img--video" />
+        </Reveal>
+
+        {/* ── IMPACT ────────────────────────────────── */}
+        <Reveal className="cs-section">
+          <Eyebrow text="IMPACT — Carlofty" />
+          <h2 className="cs-heading">The Numbers Show It.</h2>
+          <p className="cs-body">
+            The redesigned platform launched to early dealers and began scaling deal volume month
+            over month. Onboarding completion increased, dealer confusion support tickets dropped.
+          </p>
+          <div className="cs-stats">
             {[
               { value: '$9M+', label: 'In deals completed' },
               { value: '200+', label: 'Accessible auctions' },
@@ -495,29 +367,21 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </Reveal>
 
-      {/* ── Final product image ── */}
-      <div className="cs-center cs-img-block cs-reveal" ref={ref(13)}>
-        <img src={carloftyLandingImg} alt="Carlofty final design" className="cs-media" />
+        <Reveal>
+          <img src={carloftyHeroImg} alt="Carlofty final design" className="cs-img" />
+        </Reveal>
+
+        {/* ── Footer ────────────────────────────────── */}
+        <footer className="cs-footer">
+          <p className="cs-footer__text">designedbyuche@gmail.com</p>
+          <button className="cs-back-btn" onClick={onBack}>
+            ← Back to portfolio
+          </button>
+        </footer>
+
       </div>
-
-      {/* ── Scroll to Top ── */}
-      <div className="cs-top-wrap">
-        <button
-          className="cs-scroll-top"
-          onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-        >
-          ↑ Back to Top
-        </button>
-      </div>
-
-      {/* ── Footer ── */}
-      <footer className="cs-footer cs-center">
-        <p className="cs-footer__text">designedbyuche@gmail.com</p>
-      </footer>
-
     </div>
   );
 }

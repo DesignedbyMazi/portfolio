@@ -3,7 +3,11 @@ import './Navbar.css';
 
 const navLinks = ['Home', 'Work', 'Services', 'About Me'];
 
-export default function Navbar() {
+interface NavbarProps {
+  activePage?: string;
+}
+
+export default function Navbar({ activePage = 'Home' }: NavbarProps) {
   const [atBottom, setAtBottom] = useState(false);
 
   useEffect(() => {
@@ -27,7 +31,7 @@ export default function Navbar() {
           {navLinks.map((link) => (
             <div
               key={link}
-              className={`navbar__link-wrap ${link === 'Home' ? 'navbar__link-wrap--active' : ''}`}
+              className={`navbar__link-wrap ${link === activePage ? 'navbar__link-wrap--active' : ''}`}
             >
               <a href="#" className="navbar__link">{link}</a>
               <div className="navbar__underline" />
