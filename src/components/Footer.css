@@ -21,7 +21,7 @@
 .footer__email-row {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
 }
 
 .footer__label {
@@ -30,7 +30,6 @@
   font-weight: 400;
   color: var(--color-text-secondary);
   white-space: nowrap;
-  min-width: 48px;
 }
 
 .footer__email-link-wrap {
@@ -171,7 +170,8 @@
   .footer__email-row {
     flex-direction: row;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+    justify-content: flex-start;
   }
 
   .footer__label {
