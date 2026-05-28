@@ -62,46 +62,60 @@ function useWelcomeConfetti() {
 
 function App() {
   const [currentView, setCurrentView] = useState<'home' | 'carlofty'>('home');
+  // Once Carlofty is visited it stays mounted (hidden behind display:none when on home)
+  // so navigating back to home is always instant.
+  const [carloftyMounted, setCarloftyMounted] = useState(false);
   useAnimations();
   useWelcomeConfetti();
 
-  useEffect(() => {
-    if (currentView === 'carlofty') {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    }
-  }, [currentView]);
+  const goToCarlofty = () => {
+    setCarloftyMounted(true);
+    setCurrentView('carlofty');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
 
-  if (currentView === 'carlofty') {
-    return <CarloftyCaseStudy onBack={() => setCurrentView('home')} />;
-  }
+  const goHome = () => {
+    setCurrentView('home');
+    window.scrollTo({ top: 0, behavior: 'instant' });
+  };
 
   return (
-    <div className="page">
-      <Navbar />
-      <main className="main">
+    <>
+      {/* ── Home ─────────────────────────────────────────── */}
+      <div className="page" style={{ display: currentView === 'home' ? undefined : 'none' }}>
+        <Navbar />
+        <main className="main">
 
-        {/* Full-width carousel — sits right below the navbar, outside content padding */}
-        <UIExploration />
+          {/* Full-width carousel — sits right below the navbar, outside content padding */}
+          <UIExploration />
 
-        <div className="content">
-          <Hero />
+          <div className="content">
+            <Hero />
 
-          <IntroCopy />
+            <IntroCopy />
 
-          <div data-animate>
-            <SocialSection />
+            <div data-animate>
+              <SocialSection />
+            </div>
+
+            <div data-animate>
+              <SelectedProjects onReadCaseStudy={goToCarlofty} />
+            </div>
+
+            <div data-animate>
+              <Footer />
+            </div>
           </div>
+        </main>
+      </div>
 
-          <div data-animate>
-            <SelectedProjects onReadCaseStudy={() => setCurrentView('carlofty')} />
-          </div>
-
-          <div data-animate>
-            <Footer />
-          </div>
+      {/* ── Carlofty — lazy-mounted, never unmounted after first visit ── */}
+      {carloftyMounted && (
+        <div style={{ display: currentView === 'carlofty' ? undefined : 'none' }}>
+          <CarloftyCaseStudy onBack={goHome} />
         </div>
-      </main>
-    </div>
+      )}
+    </>
   );
 }
 
