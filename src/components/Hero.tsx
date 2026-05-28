@@ -1,5 +1,6 @@
 import profileImg from '../assets/images/profile.jpg';
 import { useRef, useEffect } from 'react';
+import TextType from './TextType';
 import './Hero.css';
 
 /* ── Constants ───────────────────────────────────────── */
@@ -206,8 +207,34 @@ export default function Hero() {
       </div>
       <div className="hero__info">
         <div className="hero__text">
-          <p className="hero__name" data-animate>Godswill Uche</p>
-          <p className="hero__role" data-animate>Product Designer</p>
+          <p className="hero__name" data-animate>
+            <TextType
+              text="Godswill Uche"
+              as="span"
+              typingSpeed={70}
+              initialDelay={300}
+              loop={false}
+              showCursor={false}
+            />
+          </p>
+          <p className="hero__role" data-animate>
+            <TextType
+              text={[
+                'Product Designer',
+                'UX Designer',
+                'Design Systems',
+                'Visual Designer',
+              ]}
+              as="span"
+              typingSpeed={65}
+              deletingSpeed={35}
+              pauseDuration={2200}
+              initialDelay={1400}
+              showCursor={true}
+              cursorCharacter="|"
+              cursorClassName="hero__cursor"
+            />
+          </p>
         </div>
         <button className="hero__cta" data-animate>View works</button>
       </div>
