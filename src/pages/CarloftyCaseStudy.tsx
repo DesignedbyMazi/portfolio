@@ -451,7 +451,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
         <div className="cs-solutions-stack">
           {solutions.map((s, i) => (
             <div key={s.title} className="cs-solution-sticky" style={{ zIndex: i + 1 }}>
-              <div className="cs-solution cs-solution-card">
+              <div className="cs-solution">
                 <span className="cs-solution__icon">{s.icon}</span>
                 <strong className="cs-solution__title">{s.title}</strong>
                 <p className="cs-body">{s.body}</p>

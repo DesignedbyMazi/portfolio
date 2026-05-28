@@ -388,58 +388,48 @@
 .cs-goal-cell__body {
   font-size: 13px;
   line-height: 20px;
-  color: #777777;
+  color: #2D2D2D;
   margin: 0;
 }
+[data-theme="dark"] .cs-goal-cell__body {
+  color: #959595;
+}
 
-/* ── Stacking solution cards ───────────────────────── */
+/* ── Stacking solution sections ────────────────────── */
 /*
-   Each card is position:sticky with a slightly different top offset.
-   Cards 2–4 have increasing top values (8px apart) so the previous
-   card peeks out from behind — and a higher z-index so later cards
-   always sit visually on top.
+   The sticky wrapper gets a solid background so it visually covers
+   the section below as it stacks. No border or shadow — the content
+   looks exactly like the rest of the page, just with the scroll-stack
+   behaviour layered on top.
 */
 .cs-solutions-stack {
-  display: block; /* block so sticky children behave predictably */
+  display: block;
 }
 
 .cs-solution-sticky {
   position: sticky;
+  /* Solid page background covers content below when stacking */
+  background: var(--color-bg);
+  /* Padding-bottom = breathing room / scroll dwell before next section stacks */
+  padding-bottom: 44px;
 }
 
-/* Stack offsets — each card peeks 8px above the next */
-.cs-solution-sticky:nth-child(1) { top: 52px;  z-index: 1; }
-.cs-solution-sticky:nth-child(2) { top: 60px;  z-index: 2; }
-.cs-solution-sticky:nth-child(3) { top: 68px;  z-index: 3; }
-.cs-solution-sticky:nth-child(4) { top: 76px;  z-index: 4; }
+.cs-solution-sticky:last-child {
+  padding-bottom: 0;
+}
+
+/* Desktop stack offsets (8 px peek per card) */
+.cs-solution-sticky:nth-child(1) { top: 52px; z-index: 1; }
+.cs-solution-sticky:nth-child(2) { top: 60px; z-index: 2; }
+.cs-solution-sticky:nth-child(3) { top: 68px; z-index: 3; }
+.cs-solution-sticky:nth-child(4) { top: 76px; z-index: 4; }
 
 /* ── Design solution item ──────────────────────────── */
 .cs-solution {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.cs-solution-card {
-  background: var(--color-bg);
-  border: 1px solid var(--color-border);
-  border-radius: 24px;
-  padding: 28px 24px;
-  /* Space below each card = scroll distance before next card stacks */
-  margin-bottom: 20px;
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.04),
-    0 8px 32px rgba(0, 0, 0, 0.07);
-}
-
-.cs-solution-sticky:last-child .cs-solution-card {
-  margin-bottom: 0;
-}
-
-[data-theme="dark"] .cs-solution-card {
-  box-shadow:
-    0 2px 8px rgba(0, 0, 0, 0.2),
-    0 8px 32px rgba(0, 0, 0, 0.35);
+  /* No card border, no shadow — plain page content */
 }
 
 .cs-solution__icon {
@@ -522,20 +512,13 @@
   padding-top: 0;
 }
 
-/* ── Tablet ────────────────────────────────────────── */
-@media (max-width: 1024px) {
-  .cs-solution-sticky:nth-child(1) { top: 52px; }
-  .cs-solution-sticky:nth-child(2) { top: 60px; }
-  .cs-solution-sticky:nth-child(3) { top: 68px; }
-  .cs-solution-sticky:nth-child(4) { top: 76px; }
-}
-
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 767px) {
   .cs-content { padding-top: 72px; gap: 36px; }
 
   .cs-hero__title   { font-size: 22px; line-height: 30px; }
   .cs-heading       { font-size: 20px; line-height: 28px; }
+  .cs-body          { font-size: 15px; line-height: 24px; }
 
   .cs-meta-grid     { grid-template-columns: 1fr; }
   .cs-meta-cell--bl { border-left: none; border-top: 1px solid var(--color-border); }
@@ -551,27 +534,17 @@
   .cs-goal-cell:nth-child(2)    { border-bottom: 1px solid var(--color-border); }
 
   .cs-outcome-grid  { grid-template-columns: 1fr 1fr; }
+  .cs-outcome-card__value  { font-size: 18px; font-weight: 700; letter-spacing: -0.2px; }
+  .cs-outcome-card__label  { font-size: 13px; font-weight: 400; }
 
-  .cs-outcome-card__value {
-    font-size: 18px;
-    font-weight: 700;
-    letter-spacing: -0.2px;
-  }
-  .cs-outcome-card__label {
-    font-size: 13px;
-    font-weight: 400;
-  }
-
-  /* Mobile body text */
-  .cs-body { font-size: 15px; line-height: 24px; }
-
-  /* Mobile sticky offsets — smaller since navbar goes to bottom */
-  .cs-solution-sticky:nth-child(1) { top: 16px; }
-  .cs-solution-sticky:nth-child(2) { top: 24px; }
-  .cs-solution-sticky:nth-child(3) { top: 32px; }
-  .cs-solution-sticky:nth-child(4) { top: 40px; }
-
-  .cs-solution-card { padding: 20px 18px; }
+  /* Solution stack: tighter spacing + lower sticky offsets on mobile
+     (navbar collapses to bottom after scrolling, so top clearance is small) */
+  .cs-solution-sticky          { padding-bottom: 36px; }
+  .cs-solution-sticky:last-child { padding-bottom: 0; }
+  .cs-solution-sticky:nth-child(1) { top: 12px; }
+  .cs-solution-sticky:nth-child(2) { top: 20px; }
+  .cs-solution-sticky:nth-child(3) { top: 28px; }
+  .cs-solution-sticky:nth-child(4) { top: 36px; }
 }
 
 @media (max-width: 480px) {
