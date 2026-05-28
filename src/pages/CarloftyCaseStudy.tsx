@@ -7,8 +7,10 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import carloftyHeroImg from '../assets/images/carlofty-landing.png';
 import carloftyDashboardImg from '../assets/images/carlofty-dashboard.png';
+import carloftyChallengeImg from '../assets/images/carlofty-challenge.png';
 import carloftyRoleVideo from '../assets/videos/carlofty-role.mp4';
 import carloftyWaitlistVideo from '../assets/videos/carlofty-waitlist.mp4';
+import carloftyOutcomeVideo from '../assets/videos/carlofty-outcome.mp4';
 import './CarloftyCaseStudy.css';
 
 interface Props { onBack: () => void; }
@@ -250,7 +252,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
         {/* ── 2. THE CHALLENGE ────────────────── */}
         <Reveal className="cs-section">
           <Eyebrow text="THE CHALLENGE — Carlofty"/>
-          <h2 className="cs-heading">Trust Was The Missing Feature.</h2>
+          <h2 className="cs-heading">Dealers send money to people they've never met, for cars they haven't seen, with no way to track either.</h2>
           <p className="cs-body">
             Sourcing cars from foreign auctions is common practice for Nigerian dealers and buyers.
             The barrier isn't knowledge — it's infrastructure. You cannot pay Copart, Manheim, or
@@ -284,7 +286,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
         </Reveal>
 
         <Reveal>
-          <img src={carloftyDashboardImg} alt="Carlofty dealer dashboard" className="cs-img"/>
+          <img src={carloftyChallengeImg} alt="Carlofty dealer dashboard" className="cs-img"/>
         </Reveal>
 
         {/* ── RESEARCH intro ───────────────────── */}
@@ -523,7 +525,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
         </Reveal>
 
         <Reveal>
-          <img src={carloftyHeroImg} alt="Carlofty final design" className="cs-img"/>
+          <VideoInView src={carloftyOutcomeVideo} className="cs-img cs-video"/>
         </Reveal>
 
         {/* ── Scroll to top ─────────────────────── */}

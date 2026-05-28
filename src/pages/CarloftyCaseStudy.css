@@ -360,7 +360,7 @@
   font-size: 14px;
   font-weight: 500;
   color: var(--color-text-primary);
-  margin-bottom: -40px;
+  margin-bottom: 20px;
 }
 
 /* ── Goals 4-column grid ───────────────────────────── */
@@ -537,14 +537,13 @@
   .cs-outcome-card__value  { font-size: 18px; font-weight: 700; letter-spacing: -0.2px; }
   .cs-outcome-card__label  { font-size: 13px; font-weight: 400; }
 
-  /* Solution stack: tighter spacing + lower sticky offsets on mobile
-     (navbar collapses to bottom after scrolling, so top clearance is small) */
-  .cs-solution-sticky          { padding-bottom: 36px; }
+  /* Solution stack: 64px breathing room above and below each section */
+  .cs-solution-sticky          { padding-top: 64px; padding-bottom: 64px; }
   .cs-solution-sticky:last-child { padding-bottom: 0; }
-  .cs-solution-sticky:nth-child(1) { top: 12px; }
-  .cs-solution-sticky:nth-child(2) { top: 20px; }
-  .cs-solution-sticky:nth-child(3) { top: 28px; }
-  .cs-solution-sticky:nth-child(4) { top: 36px; }
+  .cs-solution-sticky:nth-child(1) { top: 0px; }
+  .cs-solution-sticky:nth-child(2) { top: 8px;  }
+  .cs-solution-sticky:nth-child(3) { top: 16px; }
+  .cs-solution-sticky:nth-child(4) { top: 24px; }
 }
 
 @media (max-width: 480px) {
