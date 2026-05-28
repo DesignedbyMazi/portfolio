@@ -375,8 +375,8 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
           </div>
         </Reveal>
 
-        <div className="cs-video-label">My waitlist Landing Page Redesign:</div>
         <Reveal>
+          <div className="cs-video-label">My waitlist Landing Page Redesign:</div>
           <VideoInView src={carloftyWaitlistVideo} className="cs-img cs-video"/>
         </Reveal>
 
