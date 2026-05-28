@@ -134,7 +134,7 @@
 .cs-section {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 20px;
 }
 
 /* ── Eyebrow ───────────────────────────────────────── */
@@ -143,6 +143,7 @@
   font-weight: 400;
   color: #777777;
   margin: 0;
+  margin-bottom: -12px;
 }
 .cs-eyebrow__brand {
   font-size: 14px;
@@ -518,6 +519,9 @@
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 767px) {
   .cs-content { padding-top: 72px; gap: 56px; }
+
+  .cs-section       { gap: 24px; }
+  .cs-eyebrow       { margin-bottom: -16px; }
 
   .cs-hero__title   { font-size: 22px; line-height: 30px; }
   .cs-heading       { font-size: 20px; line-height: 28px; }
