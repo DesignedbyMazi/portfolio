@@ -521,7 +521,7 @@
   .cs-content { padding-top: 72px; gap: 56px; }
 
   .cs-section       { gap: 24px; }
-  .cs-eyebrow       { margin-bottom: -16px; }
+  .cs-eyebrow       { font-size: 12px; margin-bottom: -16px; }
 
   .cs-hero__title   { font-size: 22px; line-height: 30px; }
   .cs-heading       { font-size: 20px; line-height: 28px; }
