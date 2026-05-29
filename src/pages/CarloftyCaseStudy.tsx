@@ -9,6 +9,7 @@ import carloftyHeroImg from '../assets/images/carlofty-landing.png';
 import carloftyDashboardImg from '../assets/images/carlofty-dashboard.png';
 import carloftyChallengeImg from '../assets/images/carlofty-challenge.png';
 import carloftyRoleVideo from '../assets/videos/carlofty-role.mp4';
+import carloftyDesignSystemVideo from '../assets/videos/carlofty-design-system.mp4';
 import carloftyWaitlistVideo from '../assets/videos/carlofty-waitlist.mp4';
 import carloftyOutcomeVideo from '../assets/videos/carlofty-outcome.mp4';
 import './CarloftyCaseStudy.css';
@@ -147,6 +148,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
       title: 'Design System Built From The v1 Inconsistencies',
       body: 'Before any screen was redesigned, I audited the v1 and extracted what was working. From that I built a component library — tokens, patterns, and interaction states — that gave engineering a single source of truth. This alone reduced back-and-forth during handoff and gave the product a consistent visual language for the first time.',
       tags: ['Component Library', 'Tokens', 'Dev Handoff', 'Consistency'],
+      video: carloftyDesignSystemVideo,
     },
     {
       icon: <DeviceMobile size={22} weight="fill" />,
@@ -460,7 +462,10 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
                 <div className="cs-tags">
                   {s.tags.map(t => <span key={t} className="cs-tag">{t}</span>)}
                 </div>
-                <img src={carloftyDashboardImg} alt={s.title} className="cs-img cs-solution__img"/>
+                {'video' in s
+                  ? <VideoInView src={s.video!} className="cs-img cs-solution__img cs-video" />
+                  : <img src={carloftyDashboardImg} alt={s.title} className="cs-img cs-solution__img"/>
+                }
               </div>
             </div>
           ))}
