@@ -100,11 +100,23 @@
   flex-shrink: 0;
 }
 
-/* ── Right column — GlareHover wrapper ─────────────── */
-.svc-glare-wrap {
+/* ── GlareHover on the title text ───────────────────── */
+/* Override the component's grid display so the title stays
+   in the normal flex flow of the service row */
+.svc-title-glare {
+  display: flex !important;
+  align-items: center;
+  /* Let the element be as wide as the text inside */
+  width: fit-content !important;
+}
+
+/* ── Right column — plain container for future video ── */
+.svc-visual {
   width: 430px;
   height: 466px;
   flex-shrink: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
 }
 
 /* ── Footer ─────────────────────────────────────────── */
@@ -137,7 +149,7 @@
 
 /* ── Tablet ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .svc-glare-wrap {
+  .svc-visual {
     width: 340px;
     height: 380px;
   }
@@ -166,7 +178,7 @@
     letter-spacing: -0.4px;
   }
 
-  .svc-glare-wrap {
+  .svc-visual {
     width: 100%;
     height: 240px;
   }

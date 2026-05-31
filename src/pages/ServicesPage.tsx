@@ -99,7 +99,25 @@ export default function ServicesPage({ onBack, onNavigate }: ServicesPageProps) 
                   onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') setActiveIdx(i); }}
                   aria-pressed={isActive}
                 >
-                  <span className="svc-title">{s.title}</span>
+                  {/* Glare sweeps across the title text only on the active item */}
+                  <GlareHover
+                    width="fit-content"
+                    height="auto"
+                    background="transparent"
+                    borderRadius="0"
+                    borderColor="transparent"
+                    glareColor="#ffffff"
+                    glareOpacity={0.5}
+                    glareAngle={-30}
+                    glareSize={280}
+                    transitionDuration={800}
+                    playOnce={false}
+                    triggerGlare={isActive && glareTriggered}
+                    className="svc-title-glare"
+                  >
+                    <span className="svc-title">{s.title}</span>
+                  </GlareHover>
+
                   <span
                     className="svc-meta"
                     aria-hidden={!metaShown}
@@ -112,23 +130,8 @@ export default function ServicesPage({ onBack, onNavigate }: ServicesPageProps) 
             })}
           </ul>
 
-          {/* Right — GlareHover image frame */}
-          <div className="svc-glare-wrap" aria-hidden="true">
-            <GlareHover
-              width="100%"
-              height="100%"
-              background="var(--color-surface)"
-              borderRadius="0"
-              borderColor="var(--color-border)"
-              glareColor="#ffffff"
-              glareOpacity={0.35}
-              glareAngle={-30}
-              glareSize={300}
-              transitionDuration={800}
-              playOnce={false}
-              triggerGlare={glareTriggered}
-            />
-          </div>
+          {/* Right — plain container, will carry a video */}
+          <div className="svc-visual" aria-hidden="true" />
 
         </div>
       </div>
