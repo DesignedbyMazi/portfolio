@@ -98,13 +98,11 @@
   flex-shrink: 0;
 }
 
-/* ── Right column — image placeholder ──────────────── */
-.svc-visual {
+/* ── Right column — GlareHover wrapper ─────────────── */
+.svc-glare-wrap {
   width: 430px;
   height: 466px;
   flex-shrink: 0;
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
 }
 
 /* ── Footer ─────────────────────────────────────────── */
@@ -137,7 +135,7 @@
 
 /* ── Tablet ──────────────────────────────────────────── */
 @media (max-width: 1024px) {
-  .svc-visual {
+  .svc-glare-wrap {
     width: 340px;
     height: 380px;
   }
@@ -166,7 +164,7 @@
     letter-spacing: -0.4px;
   }
 
-  .svc-visual {
+  .svc-glare-wrap {
     width: 100%;
     height: 240px;
   }
