@@ -10,6 +10,7 @@ import SelectedProjects from './components/SelectedProjects';
 import Footer from './components/Footer';
 import CarloftyCaseStudy from './pages/CarloftyCaseStudy';
 import WorksPage from './pages/WorksPage';
+import ServicesPage from './pages/ServicesPage';
 import './App.css';
 
 /* ── Welcome confetti — fires on every page load ── */
@@ -32,11 +33,12 @@ function useWelcomeConfetti() {
   }, []);
 }
 
-type View = 'home' | 'works' | 'carlofty';
+type View = 'home' | 'works' | 'services' | 'carlofty';
 
 function App() {
-  const [view, setView]                     = useState<View>('home');
-  const [worksMounted,   setWorksMounted]   = useState(false);
+  const [view, setView]                       = useState<View>('home');
+  const [worksMounted,    setWorksMounted]    = useState(false);
+  const [servicesMounted, setServicesMounted] = useState(false);
   const [carloftyMounted, setCarloftyMounted] = useState(false);
   // Tracks which view to return to when leaving Carlofty
   const [carloftyReturn, setCarloftyReturn] = useState<'home' | 'works'>('home');
@@ -49,24 +51,28 @@ function App() {
     setView(to);
   };
 
-  const goHome    = () => nav('home');
-  const goWorks   = () => { setWorksMounted(true);    nav('works'); };
+  const goHome     = () => nav('home');
+  const goWorks    = () => { setWorksMounted(true);    nav('works');    };
+  const goServices = () => { setServicesMounted(true); nav('services'); };
   const goCarlofty = (returnTo: 'home' | 'works' = 'works') => {
     setCarloftyMounted(true);
     setCarloftyReturn(returnTo);
     nav('carlofty');
   };
-  const goBack    = () => nav(carloftyReturn);
+  const goBack = () => nav(carloftyReturn);
 
-  /* Navbar handlers per page */
-  const homeNav   = (page: string) => { if (page === 'Work') goWorks(); };
-  const worksNav  = (page: string) => { if (page === 'Home') goHome(); };
+  /* Shared cross-page nav handler */
+  const handleNav = (page: string) => {
+    if (page === 'Home')     goHome();
+    if (page === 'Work')     goWorks();
+    if (page === 'Services') goServices();
+  };
 
   return (
     <>
       {/* ── Home ─────────────────────────────────────────── */}
       <div className="page" style={{ display: view === 'home' ? undefined : 'none' }}>
-        <Navbar onNavigate={homeNav} />
+        <Navbar onNavigate={handleNav} />
         <main className="main">
           <UIExploration />
           <div className="content">
@@ -81,18 +87,25 @@ function App() {
         </main>
       </div>
 
-      {/* ── Works — lazy-mounted, kept alive after first visit ── */}
+      {/* ── Works ─────────────────────────────────────────── */}
       {worksMounted && (
         <div style={{ display: view === 'works' ? undefined : 'none' }}>
           <WorksPage
             onBack={goHome}
             onReadCaseStudy={() => goCarlofty('works')}
-            onNavigate={worksNav}
+            onNavigate={handleNav}
           />
         </div>
       )}
 
-      {/* ── Carlofty — lazy-mounted, kept alive after first visit ── */}
+      {/* ── Services ──────────────────────────────────────── */}
+      {servicesMounted && (
+        <div style={{ display: view === 'services' ? undefined : 'none' }}>
+          <ServicesPage onBack={goHome} onNavigate={handleNav} />
+        </div>
+      )}
+
+      {/* ── Carlofty ──────────────────────────────────────── */}
       {carloftyMounted && (
         <div style={{ display: view === 'carlofty' ? undefined : 'none' }}>
           <CarloftyCaseStudy onBack={goBack} />

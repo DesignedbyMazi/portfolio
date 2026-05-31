@@ -1,0 +1,177 @@
+/* ─────────────────────────────────────────────────────
+   Services Page
+───────────────────────────────────────────────────── */
+
+.svc-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Content container ──────────────────────────────── */
+.svc-content {
+  flex: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 80px 24px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── "Services I Offer" tag ─────────────────────────── */
+.svc-tag {
+  display: inline-flex;
+  align-self: flex-start;
+  font-size: 14px;
+  line-height: 20px;
+  letter-spacing: 0.15px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  padding: 8px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+/* ── Two-column body ────────────────────────────────── */
+.svc-body {
+  display: flex;
+  align-items: flex-start;
+  gap: 40px;
+}
+
+/* ── Service list (left column) ─────────────────────── */
+.svc-list {
+  flex: 1;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.svc-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  user-select: none;
+  padding: 2px 0;
+}
+
+/* ── Service title ──────────────────────────────────── */
+.svc-title {
+  font-size: 32px;
+  line-height: 40px;
+  letter-spacing: -0.8px;
+  font-weight: 500;
+  color: #EAEAEA;
+  transition: color 0.2s ease-out;
+  white-space: nowrap;
+}
+
+.svc-item--active .svc-title {
+  color: #2D2D2D;
+}
+
+/* Hover on inactive — slightly reveal without going fully active */
+.svc-item:not(.svc-item--active):hover .svc-title {
+  color: #BBBBBB;
+}
+
+/* ── Meta / supporting text ─────────────────────────── */
+.svc-meta {
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0.25px;
+  font-weight: 400;
+  color: #959595;
+  /* Align with the cap-height of the large title */
+  padding-top: 6px;
+  /* Fixed narrow width so text wraps to two lines */
+  max-width: 64px;
+  transition: opacity 0.2s ease-out;
+  flex-shrink: 0;
+}
+
+/* ── Right column — image placeholder ──────────────── */
+.svc-visual {
+  width: 430px;
+  height: 466px;
+  flex-shrink: 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+}
+
+/* ── Footer ─────────────────────────────────────────── */
+.svc-footer-wrap {
+  max-width: 800px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 0 24px;
+  margin-top: 80px;
+  border-top: 1px dashed var(--color-border);
+}
+
+/* ── Dark mode ──────────────────────────────────────── */
+[data-theme="dark"] .svc-title {
+  /* Inactive: barely visible against dark bg */
+  color: #2C2C2C;
+}
+
+[data-theme="dark"] .svc-item--active .svc-title {
+  color: #F0F0F0;
+}
+
+[data-theme="dark"] .svc-item:not(.svc-item--active):hover .svc-title {
+  color: #444444;
+}
+
+[data-theme="dark"] .svc-meta {
+  color: #777777;
+}
+
+/* ── Tablet ──────────────────────────────────────────── */
+@media (max-width: 1024px) {
+  .svc-visual {
+    width: 340px;
+    height: 380px;
+  }
+
+  .svc-body {
+    gap: 32px;
+  }
+}
+
+/* ── Mobile ──────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .svc-content {
+    padding: 72px 20px 0;
+    gap: 16px;
+  }
+
+  /* Stack: list on top, image below */
+  .svc-body {
+    flex-direction: column;
+    gap: 32px;
+  }
+
+  .svc-title {
+    font-size: 24px;
+    line-height: 32px;
+    letter-spacing: -0.4px;
+  }
+
+  .svc-visual {
+    width: 100%;
+    height: 240px;
+  }
+
+  .svc-footer-wrap {
+    margin-top: 48px;
+  }
+}
