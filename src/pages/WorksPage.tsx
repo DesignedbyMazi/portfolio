@@ -1,6 +1,8 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+
+/* ── Images ─────────────────────────────────────────── */
 import carloftyImg    from '../assets/images/carlofty-case-study.png';
 import pay4meImg      from '../assets/images/pay4me-card.png';
 import dashboardImg   from '../assets/images/dashboard-card.png';
@@ -8,9 +10,17 @@ import balanceeImg    from '../assets/images/balancee-card.png';
 import barakaImg      from '../assets/images/baraka-card.jpg';
 import karsaImg       from '../assets/images/karsa-card.png';
 import cryptoImg      from '../assets/images/crypto-wallet-card.png';
+
+/* ── Videos ─────────────────────────────────────────── */
+import carloftyVideo  from '../assets/videos/carlofty-outcome.mp4';
+import pay4meVideo    from '../assets/videos/pay4me-demo.mp4';
+import dashboardVideo from '../assets/videos/dashboard-demo.mp4';
+import balanceeVideo  from '../assets/videos/balancee-demo.mp4';
+import barakaVideo    from '../assets/videos/baraka-demo.mp4';
+
 import './WorksPage.css';
 
-/* ── Icons ─────────────────────────────────────────────── */
+/* ── Icons ──────────────────────────────────────────── */
 function ArrowUpRight() {
   return (
     <svg width="13" height="13" viewBox="0 0 14 14" fill="none" aria-hidden>
@@ -30,13 +40,15 @@ function LockIcon() {
   );
 }
 
-/* ── Data ───────────────────────────────────────────────── */
+/* ── Data ───────────────────────────────────────────── */
 type Tab = 'live' | 'cases';
 
 interface LiveProject {
-  id:    string;
-  title: string;
-  image: string;
+  id:     string;
+  title:  string;
+  image:  string;
+  video?: string;
+  href?:  string;
 }
 
 interface CaseStudy {
@@ -48,13 +60,13 @@ interface CaseStudy {
 }
 
 const liveProjects: LiveProject[] = [
-  { id: 'carlofty',   title: 'Carlofty',             image: carloftyImg  },
-  { id: 'pay4me',     title: 'Pay4Me',               image: pay4meImg    },
-  { id: 'dashboard',  title: 'Dashboard',            image: dashboardImg },
-  { id: 'balancee',   title: 'Balancee',             image: balanceeImg  },
-  { id: 'baraka',     title: 'Baraka',               image: barakaImg    },
-  { id: 'karsa',      title: 'Karsa',                image: karsaImg     },
-  { id: 'crypto',     title: 'Crypto Wallet',        image: cryptoImg    },
+  { id: 'carlofty',   title: 'Carlofty',      image: carloftyImg,  video: carloftyVideo,  href: 'https://www.carlofty.com/' },
+  { id: 'pay4me',     title: 'Pay4Me',        image: pay4meImg,    video: pay4meVideo    },
+  { id: 'dashboard',  title: 'Dashboard',     image: dashboardImg, video: dashboardVideo },
+  { id: 'balancee',   title: 'Balancee',      image: balanceeImg,  video: balanceeVideo  },
+  { id: 'baraka',     title: 'Baraka',        image: barakaImg,    video: barakaVideo    },
+  { id: 'karsa',      title: 'Karsa',         image: karsaImg                           },
+  { id: 'crypto',     title: 'Crypto Wallet', image: cryptoImg                          },
 ];
 
 const caseStudies: CaseStudy[] = [
@@ -79,14 +91,65 @@ const caseStudies: CaseStudy[] = [
   },
 ];
 
-/* ── Props ──────────────────────────────────────────────── */
+/* ── Grid card — handles hover video playback ────────── */
+function GridCard({ project }: { project: LiveProject }) {
+  const videoRef  = useRef<HTMLVideoElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const handleEnter = () => {
+    setHovered(true);
+    videoRef.current?.play().catch(() => {});
+  };
+
+  const handleLeave = () => {
+    setHovered(false);
+    const v = videoRef.current;
+    if (v) { v.pause(); v.currentTime = 0; }
+  };
+
+  const handleClick = () => {
+    if (project.href) window.open(project.href, '_blank', 'noopener,noreferrer');
+  };
+
+  return (
+    <div
+      className={`works-grid-card${hovered ? ' works-grid-card--hovered' : ''}${project.href ? ' works-grid-card--link' : ''}`}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      onClick={handleClick}
+      role={project.href ? 'link' : undefined}
+      tabIndex={project.href ? 0 : undefined}
+      onKeyDown={(e) => { if (project.href && (e.key === 'Enter' || e.key === ' ')) handleClick(); }}
+      aria-label={project.href ? `Visit ${project.title}` : project.title}
+    >
+      <img
+        src={project.image}
+        alt={project.title}
+        className="works-grid-img"
+      />
+      {project.video && (
+        <video
+          ref={videoRef}
+          src={project.video}
+          className="works-grid-video"
+          muted
+          loop
+          playsInline
+          preload="metadata"
+        />
+      )}
+    </div>
+  );
+}
+
+/* ── Props ──────────────────────────────────────────── */
 interface WorksPageProps {
   onBack:          () => void;
   onReadCaseStudy: () => void;
   onNavigate:      (page: string) => void;
 }
 
-/* ── Page ───────────────────────────────────────────────── */
+/* ── Page ───────────────────────────────────────────── */
 export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: WorksPageProps) {
   const [tab, setTab] = useState<Tab>('live');
 
@@ -101,7 +164,7 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
 
       <div className="works-content">
 
-        {/* ── Toggle ──────────────────────────────────────── */}
+        {/* ── Toggle ──────────────────────────────────── */}
         <div className="works-toggle-row">
           <div className="works-toggle" role="tablist">
             <button
@@ -123,18 +186,16 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
           </div>
         </div>
 
-        {/* ── Live / Exploration grid ──────────────────────── */}
+        {/* ── Live / Exploration grid ──────────────────── */}
         {tab === 'live' && (
           <div className="works-grid" role="tabpanel">
             {liveProjects.map((p) => (
-              <div key={p.id} className="works-grid-card">
-                <img src={p.image} alt={p.title} className="works-grid-img" />
-              </div>
+              <GridCard key={p.id} project={p} />
             ))}
           </div>
         )}
 
-        {/* ── Case studies list ────────────────────────────── */}
+        {/* ── Case studies list ────────────────────────── */}
         {tab === 'cases' && (
           <div className="works-cases" role="tabpanel">
             {caseStudies.map((cs) => (
@@ -174,7 +235,7 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
           </div>
         )}
 
-        {/* ── Footer ──────────────────────────────────────── */}
+        {/* ── Footer ──────────────────────────────────── */}
         <div className="works-footer-wrap">
           <Footer />
         </div>
