@@ -71,7 +71,7 @@
 .works-grid-card {
   position: relative;
   aspect-ratio: 392 / 261;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -151,7 +151,7 @@
 /* ── Case image ─────────────────────────────────────────── */
 .works-case-img-wrap {
   width: 100%;
-  border-radius: 16px;
+  border-radius: 0;
   overflow: hidden;
   border: 1px solid var(--color-border);
   transition: opacity 0.2s;
@@ -255,7 +255,7 @@
   }
 
   .works-grid-card {
-    border-radius: 12px;
+    border-radius: 0;
   }
 
   .works-cases {
@@ -263,7 +263,7 @@
   }
 
   .works-case-img-wrap {
-    border-radius: 12px;
+    border-radius: 0;
   }
 
   .works-case-body {

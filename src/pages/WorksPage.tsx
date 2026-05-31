@@ -64,7 +64,7 @@ const liveProjects: LiveProject[] = [
   { id: 'pay4me',     title: 'Pay4Me',        image: pay4meImg,    video: pay4meVideo    },
   { id: 'dashboard',  title: 'Dashboard',     image: dashboardImg, video: dashboardVideo },
   { id: 'balancee',   title: 'Balancee',      image: balanceeImg,  video: balanceeVideo  },
-  { id: 'baraka',     title: 'Baraka',        image: barakaImg,    video: barakaVideo    },
+  { id: 'baraka',     title: 'Baraka',        image: barakaImg,    video: barakaVideo,   href: 'https://www.barakaredesign.framer.com' },
   { id: 'karsa',      title: 'Karsa',         image: karsaImg                           },
   { id: 'crypto',     title: 'Crypto Wallet', image: cryptoImg                          },
 ];
