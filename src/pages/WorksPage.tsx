@@ -56,6 +56,7 @@ interface CaseStudy {
   image:       string;
   title:       string;
   description: string;
+  video?:      string;
   comingSoon?: boolean;
 }
 
@@ -72,6 +73,7 @@ const liveProjects: LiveProject[] = [
 const caseStudies: CaseStudy[] = [
   {
     id: 'carlofty',
+    video: carloftyVideo,
     image: carloftyImg,
     title:
       'Designing Trust into a Broken Payment Experience For Cross-border Car Sourcing.',
@@ -90,6 +92,83 @@ const caseStudies: CaseStudy[] = [
     comingSoon: true,
   },
 ];
+
+/* ── Case study card — handles hover video on the image ─ */
+function CaseCard({
+  cs,
+  onReadCaseStudy,
+}: {
+  cs: CaseStudy;
+  onReadCaseStudy: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const handleEnter = () => {
+    if (!cs.video) return;
+    setHovered(true);
+    videoRef.current?.play().catch(() => {});
+  };
+
+  const handleLeave = () => {
+    if (!cs.video) return;
+    setHovered(false);
+    const v = videoRef.current;
+    if (v) { v.pause(); v.currentTime = 0; }
+  };
+
+  return (
+    <div className={`works-case${cs.comingSoon ? ' works-case--locked' : ''}`}>
+      {cs.comingSoon && (
+        <p className="works-coming-soon">
+          <span>Coming soon</span>
+          <LockIcon />
+        </p>
+      )}
+
+      {/* Image / video frame */}
+      <div
+        className="works-case-img-wrap"
+        onMouseEnter={handleEnter}
+        onMouseLeave={handleLeave}
+      >
+        <img
+          src={cs.image}
+          alt={cs.title}
+          className={`works-case-img${hovered ? ' works-case-img--hidden' : ''}`}
+        />
+        {cs.video && (
+          <video
+            ref={videoRef}
+            src={cs.video}
+            className={`works-case-video${hovered ? ' works-case-video--visible' : ''}`}
+            muted
+            loop
+            playsInline
+            preload="metadata"
+          />
+        )}
+      </div>
+
+      <div className="works-case-body">
+        <h3 className="works-case-title">{cs.title}</h3>
+        <p className="works-case-desc">{cs.description}</p>
+        <span
+          className="works-case-cta"
+          role={cs.comingSoon ? undefined : 'button'}
+          tabIndex={cs.comingSoon ? -1 : 0}
+          onClick={cs.comingSoon ? undefined : onReadCaseStudy}
+          onKeyDown={(e) => {
+            if (!cs.comingSoon && (e.key === 'Enter' || e.key === ' ')) onReadCaseStudy();
+          }}
+        >
+          <span>Read Case Study</span>
+          <ArrowUpRight />
+        </span>
+      </div>
+    </div>
+  );
+}
 
 /* ── Grid card — handles hover video playback ────────── */
 function GridCard({ project }: { project: LiveProject }) {
@@ -199,38 +278,7 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
         {tab === 'cases' && (
           <div className="works-cases" role="tabpanel">
             {caseStudies.map((cs) => (
-              <div
-                key={cs.id}
-                className={`works-case${cs.comingSoon ? ' works-case--locked' : ''}`}
-              >
-                {cs.comingSoon && (
-                  <p className="works-coming-soon">
-                    <span>Coming soon</span>
-                    <LockIcon />
-                  </p>
-                )}
-
-                <div className="works-case-img-wrap">
-                  <img src={cs.image} alt={cs.title} className="works-case-img" />
-                </div>
-
-                <div className="works-case-body">
-                  <h3 className="works-case-title">{cs.title}</h3>
-                  <p className="works-case-desc">{cs.description}</p>
-                  <span
-                    className="works-case-cta"
-                    role={cs.comingSoon ? undefined : 'button'}
-                    tabIndex={cs.comingSoon ? -1 : 0}
-                    onClick={cs.comingSoon ? undefined : onReadCaseStudy}
-                    onKeyDown={(e) => {
-                      if (!cs.comingSoon && (e.key === 'Enter' || e.key === ' ')) onReadCaseStudy();
-                    }}
-                  >
-                    <span>Read Case Study</span>
-                    <ArrowUpRight />
-                  </span>
-                </div>
-              </div>
+              <CaseCard key={cs.id} cs={cs} onReadCaseStudy={onReadCaseStudy} />
             ))}
           </div>
         )}

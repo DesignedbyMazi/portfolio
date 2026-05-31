@@ -150,19 +150,36 @@
 
 /* ── Case image ─────────────────────────────────────────── */
 .works-case-img-wrap {
+  position: relative;
   width: 100%;
   border-radius: 0;
   overflow: hidden;
   border: 1px solid var(--color-border);
-  transition: opacity 0.2s;
+  aspect-ratio: 800 / 420;
 }
 
-.works-case-img {
+.works-case-img,
+.works-case-video {
+  position: absolute;
+  inset: 0;
   width: 100%;
+  height: 100%;
   display: block;
-  aspect-ratio: 800 / 420;
   object-fit: cover;
   object-position: top center;
+  transition: opacity 0.35s ease;
+}
+
+.works-case-img--hidden {
+  opacity: 0;
+}
+
+.works-case-video {
+  opacity: 0;
+}
+
+.works-case-video--visible {
+  opacity: 1;
 }
 
 /* ── Case body ──────────────────────────────────────────── */
