@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import GlareHover from '../components/GlareHover';
@@ -7,14 +7,14 @@ import './ServicesPage.css';
 /* ── Service data ───────────────────────────────────── */
 interface Service {
   title: string;
-  meta:  string;
+  meta:  ReactNode;
 }
 
 const SERVICES: Service[] = [
-  { title: 'Website Design', meta: 'Product Designer' },
-  { title: 'No-Code Dev',    meta: 'Framer Developer' },
-  { title: 'Graphics',       meta: 'In Progress'      },
-  { title: 'Brand Identity', meta: 'In Progress'      },
+  { title: 'Website Design', meta: <>Product<br/>Designer</>  },
+  { title: 'No-Code Dev',    meta: <>Framer<br/>Developer</>  },
+  { title: 'Graphics',       meta: <>In<br/>Progress</>       },
+  { title: 'Brand Identity', meta: <>In<br/>Progress</>       },
 ];
 
 /* Delay before the glare sweeps in — feels intentional, not jittery */
