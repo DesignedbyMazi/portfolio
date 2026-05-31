@@ -9,12 +9,12 @@ import UIExploration from './components/UIExploration';
 import SelectedProjects from './components/SelectedProjects';
 import Footer from './components/Footer';
 import CarloftyCaseStudy from './pages/CarloftyCaseStudy';
+import WorksPage from './pages/WorksPage';
 import './App.css';
 
 /* ── Welcome confetti — fires on every page load ── */
 function useWelcomeConfetti() {
   useEffect(() => {
-    // Small delay so the page is visually settled
     const tid = setTimeout(() => {
       const count = 120;
       const defaults = {
@@ -22,97 +22,80 @@ function useWelcomeConfetti() {
         zIndex: 9999,
         colors: ['#11AB2A', '#4ADE80', '#A3E635', '#FFFFFF', '#D1FAE5'],
       };
-
-      // Left burst
-      confetti({
-        ...defaults,
-        particleCount: Math.floor(count * 0.6),
-        spread: 70,
-        startVelocity: 45,
-        origin: { x: 0.15, y: 0.55 },
-        angle: 60,
-      });
-
-      // Right burst
-      confetti({
-        ...defaults,
-        particleCount: Math.floor(count * 0.6),
-        spread: 70,
-        startVelocity: 45,
-        origin: { x: 0.85, y: 0.55 },
-        angle: 120,
-      });
-
-      // Center drift
+      confetti({ ...defaults, particleCount: Math.floor(count * 0.6), spread: 70, startVelocity: 45, origin: { x: 0.15, y: 0.55 }, angle: 60 });
+      confetti({ ...defaults, particleCount: Math.floor(count * 0.6), spread: 70, startVelocity: 45, origin: { x: 0.85, y: 0.55 }, angle: 120 });
       setTimeout(() => {
-        confetti({
-          ...defaults,
-          particleCount: Math.floor(count * 0.4),
-          spread: 100,
-          startVelocity: 25,
-          gravity: 0.6,
-          origin: { x: 0.5, y: 0.4 },
-        });
+        confetti({ ...defaults, particleCount: Math.floor(count * 0.4), spread: 100, startVelocity: 25, gravity: 0.6, origin: { x: 0.5, y: 0.4 } });
       }, 200);
     }, 600);
-
     return () => clearTimeout(tid);
   }, []);
 }
 
+type View = 'home' | 'works' | 'carlofty';
+
 function App() {
-  const [currentView, setCurrentView] = useState<'home' | 'carlofty'>('home');
-  // Once Carlofty is visited it stays mounted (hidden behind display:none when on home)
-  // so navigating back to home is always instant.
+  const [view, setView]                     = useState<View>('home');
+  const [worksMounted,   setWorksMounted]   = useState(false);
   const [carloftyMounted, setCarloftyMounted] = useState(false);
+  // Tracks which view to return to when leaving Carlofty
+  const [carloftyReturn, setCarloftyReturn] = useState<'home' | 'works'>('home');
+
   useAnimations();
   useWelcomeConfetti();
 
-  const goToCarlofty = () => {
-    setCarloftyMounted(true);
-    setCurrentView('carlofty');
+  const nav = (to: View) => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+    setView(to);
   };
 
-  const goHome = () => {
-    setCurrentView('home');
-    window.scrollTo({ top: 0, behavior: 'instant' });
+  const goHome    = () => nav('home');
+  const goWorks   = () => { setWorksMounted(true);    nav('works'); };
+  const goCarlofty = (returnTo: 'home' | 'works' = 'works') => {
+    setCarloftyMounted(true);
+    setCarloftyReturn(returnTo);
+    nav('carlofty');
   };
+  const goBack    = () => nav(carloftyReturn);
+
+  /* Navbar handlers per page */
+  const homeNav   = (page: string) => { if (page === 'Work') goWorks(); };
+  const worksNav  = (page: string) => { if (page === 'Home') goHome(); };
 
   return (
     <>
       {/* ── Home ─────────────────────────────────────────── */}
-      <div className="page" style={{ display: currentView === 'home' ? undefined : 'none' }}>
-        <Navbar />
+      <div className="page" style={{ display: view === 'home' ? undefined : 'none' }}>
+        <Navbar onNavigate={homeNav} />
         <main className="main">
-
-          {/* Full-width carousel — sits right below the navbar, outside content padding */}
           <UIExploration />
-
           <div className="content">
             <Hero />
-
             <IntroCopy />
-
+            <div data-animate><SocialSection /></div>
             <div data-animate>
-              <SocialSection />
+              <SelectedProjects onReadCaseStudy={() => goCarlofty('home')} />
             </div>
-
-            <div data-animate>
-              <SelectedProjects onReadCaseStudy={goToCarlofty} />
-            </div>
-
-            <div data-animate>
-              <Footer />
-            </div>
+            <div data-animate><Footer /></div>
           </div>
         </main>
       </div>
 
-      {/* ── Carlofty — lazy-mounted, never unmounted after first visit ── */}
+      {/* ── Works — lazy-mounted, kept alive after first visit ── */}
+      {worksMounted && (
+        <div style={{ display: view === 'works' ? undefined : 'none' }}>
+          <WorksPage
+            onBack={goHome}
+            onReadCaseStudy={() => goCarlofty('works')}
+            onNavigate={worksNav}
+          />
+        </div>
+      )}
+
+      {/* ── Carlofty — lazy-mounted, kept alive after first visit ── */}
       {carloftyMounted && (
-        <div style={{ display: currentView === 'carlofty' ? undefined : 'none' }}>
-          <CarloftyCaseStudy onBack={goHome} />
+        <div style={{ display: view === 'carlofty' ? undefined : 'none' }}>
+          <CarloftyCaseStudy onBack={goBack} />
         </div>
       )}
     </>
