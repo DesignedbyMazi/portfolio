@@ -110,13 +110,13 @@ function CaseCard({
   const [hovered, setHovered] = useState(false);
 
   const handleEnter = () => {
-    if (!cs.video || isTouchDevice()) return;
+    if (!cs.video) return;
     setHovered(true);
     videoRef.current?.play().catch(() => {});
   };
 
   const handleLeave = () => {
-    if (!cs.video || isTouchDevice()) return;
+    if (!cs.video) return;
     setHovered(false);
     const v = videoRef.current;
     if (v) { v.pause(); v.currentTime = 0; }
@@ -181,13 +181,11 @@ function GridCard({ project }: { project: LiveProject }) {
   const [hovered, setHovered] = useState(false);
 
   const handleEnter = () => {
-    if (isTouchDevice()) return;
     setHovered(true);
     videoRef.current?.play().catch(() => {});
   };
 
   const handleLeave = () => {
-    if (isTouchDevice()) return;
     setHovered(false);
     const v = videoRef.current;
     if (v) { v.pause(); v.currentTime = 0; }

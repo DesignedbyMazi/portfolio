@@ -126,7 +126,6 @@ function UICard({ card }: { card: UICardData }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleEnter = () => {
-    if (isTouchDevice()) return;   // images only on mobile — no video
     setHovered(true);
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
@@ -135,7 +134,6 @@ function UICard({ card }: { card: UICardData }) {
   };
 
   const handleLeave = () => {
-    if (isTouchDevice()) return;
     setHovered(false);
     if (videoRef.current) videoRef.current.pause();
   };
