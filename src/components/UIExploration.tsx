@@ -134,27 +134,29 @@ function UICard({
   card: UICardData;
   onFocusCard: (card: UICardData) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hovered,   setHovered]   = useState(false);
+  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  /* Desktop hover: inline preview */
+  const clearHoverTimer = () => {
+    if (hoverTimer.current) { clearTimeout(hoverTimer.current); hoverTimer.current = null; }
+  };
+
+  /* Desktop: hover for 140ms → expand overlay */
   const handleEnter = () => {
-    if (isTouchDevice()) return;
     setHovered(true);
-    if (videoRef.current) { videoRef.current.currentTime = 0; videoRef.current.play().catch(() => {}); }
-  };
-  const handleLeave = () => {
-    if (isTouchDevice()) return;
-    setHovered(false);
-    if (videoRef.current) videoRef.current.pause();
+    if (card.video && !isTouchDevice()) {
+      hoverTimer.current = setTimeout(() => onFocusCard(card), 140);
+    }
   };
 
-  /* Click (desktop + mobile): stop inline preview and open focused overlay */
-  const handleClick = () => {
-    if (!card.video) return;
+  const handleLeave = () => {
     setHovered(false);
-    if (videoRef.current) videoRef.current.pause();
-    onFocusCard(card);
+    clearHoverTimer();   // cancel if user moved away before timer fired
+  };
+
+  /* Mobile: tap → overlay */
+  const handleClick = () => {
+    if (card.video && isTouchDevice()) onFocusCard(card);
   };
 
   const hasRealAssets = Boolean(card.image || card.video);
@@ -175,23 +177,10 @@ function UICard({
               alt={card.title}
               loading="lazy"
               decoding="async"
-              className={`ui-card__img${hovered && card.video ? ' ui-card__img--hidden' : ''}`}
+              className="ui-card__img"   /* always visible — no inline video */
             />
           )}
-          {card.video && (
-            <video
-              ref={videoRef}
-              src={card.video}
-              muted loop playsInline
-              className={`ui-card__video${hovered ? ' ui-card__video--visible' : ''}`}
-            />
-          )}
-          {hovered && (
-            <div className="ui-card__play-badge">
-              <span className="ui-card__sparkle-icon">✦</span>
-              <span>Playing</span>
-            </div>
-          )}
+          {/* inline video removed — overlay handles all playback */}
         </div>
       ) : (
         <>
@@ -218,22 +207,24 @@ function UICard({
 
 /* ── Section ─────────────────────────────────────────── */
 export default function UIExploration() {
-  const [paused,      setPaused]      = useState(false);
+  const [mouseOver,   setMouseOver]   = useState(false);
   const [focusedCard, setFocusedCard] = useState<UICardData | null>(null);
+
+  /* Carousel pauses when mouse is over it OR an overlay is open */
+  const paused = mouseOver || focusedCard !== null;
 
   const handleFocusCard = useCallback((card: UICardData) => {
     setFocusedCard(card);
-    setPaused(true);
   }, []);
 
   const handleDismissOverlay = useCallback(() => {
     setFocusedCard(null);
-    setPaused(false);
+    /* carousel resumes automatically if mouse has left; stays paused if still over */
   }, []);
 
-  /* Desktop: pause carousel on hover */
-  const handleCarouselEnter = () => { if (!isTouchDevice()) setPaused(true); };
-  const handleCarouselLeave = () => { if (!isTouchDevice()) setPaused(false); };
+  /* Desktop only: pause while mouse is inside the carousel strip */
+  const handleCarouselEnter = () => { if (!isTouchDevice()) setMouseOver(true); };
+  const handleCarouselLeave = () => { if (!isTouchDevice()) setMouseOver(false); };
 
   const allCards = [...CARDS, ...CARDS];
 
