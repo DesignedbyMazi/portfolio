@@ -136,7 +136,7 @@ function OutcomeCard({ icon, prefix, count, suffix, label }: {
 
 /* ────────────────────────────────────────────────── */
 export default function CarloftyCaseStudy({ onBack }: Props) {
-  useEffect(() => { window.scrollTo({ top: 0, behavior: 'instant' }); }, []);
+  // Scroll is handled by App.tsx nav() before this mounts — no double-scroll needed
 
   const handleNav = (page: string) => {
     if (page === 'Home') onBack();
@@ -228,7 +228,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
         </Reveal>
 
         <Reveal>
-          <img src={carloftyHeroImg} alt="Carlofty landing page" className="cs-img"/>
+          <img src={carloftyHeroImg} alt="Carlofty landing page" className="cs-img" loading="lazy" decoding="async" />
         </Reveal>
 
         {/* ── 1. MY ROLE ──────────────────────── */}
@@ -288,7 +288,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
         </Reveal>
 
         <Reveal>
-          <img src={carloftyChallengeImg} alt="Carlofty dealer dashboard" className="cs-img"/>
+          <img src={carloftyChallengeImg} alt="Carlofty dealer dashboard" className="cs-img" loading="lazy" decoding="async" />
         </Reveal>
 
         {/* ── RESEARCH intro ───────────────────── */}
@@ -464,7 +464,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
                 </div>
                 {'video' in s
                   ? <VideoInView src={s.video!} className="cs-img cs-solution__img cs-video" />
-                  : <img src={carloftyDashboardImg} alt={s.title} className="cs-img cs-solution__img"/>
+                  : <img src={carloftyDashboardImg} alt={s.title} className="cs-img cs-solution__img" loading="lazy" decoding="async" />
                 }
               </div>
             </div>

@@ -157,6 +157,8 @@ function UICard({ card }: { card: UICardData }) {
             <img
               src={card.image}
               alt={card.title}
+              loading="lazy"
+              decoding="async"
               className={`ui-card__img${hovered && card.video ? ' ui-card__img--hidden' : ''}`}
             />
           )}

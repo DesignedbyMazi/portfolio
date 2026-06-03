@@ -2,27 +2,93 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>portfolio</title>
-    <!-- Apply theme before first paint: saved preference, else auto WAT time-based -->
+
+    <!-- ── Primary SEO ─────────────────────────────────────── -->
+    <title>Godswill Uche — Product & UX Designer</title>
+    <meta name="description" content="Product & UX Designer from Nigeria specialising in design systems, fintech, and SaaS products. Available for freelance and full-time roles." />
+    <meta name="keywords" content="product designer, UX designer, UI designer, design systems, Figma, Nigeria, portfolio, fintech design, SaaS design, product design Nigeria, UX designer Nigeria, Godswill Uche" />
+    <meta name="author" content="Godswill Uche" />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://designedbyuche.com/" />
+
+    <!-- ── Open Graph / Facebook ───────────────────────────── -->
+    <meta property="og:type"        content="website" />
+    <meta property="og:url"         content="https://designedbyuche.com/" />
+    <meta property="og:title"       content="Godswill Uche — Product & UX Designer" />
+    <meta property="og:description" content="Product & UX Designer from Nigeria specialising in design systems, fintech, and SaaS products. View case studies and live projects." />
+    <meta property="og:image"       content="https://designedbyuche.com/og-image.jpg" />
+    <meta property="og:image:width"  content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:site_name"   content="Godswill Uche Portfolio" />
+    <meta property="og:locale"      content="en_NG" />
+
+    <!-- ── Twitter / X Card ───────────────────────────────── -->
+    <meta name="twitter:card"        content="summary_large_image" />
+    <meta name="twitter:title"       content="Godswill Uche — Product & UX Designer" />
+    <meta name="twitter:description" content="Product & UX Designer from Nigeria. Design systems, fintech, SaaS. Available for work." />
+    <meta name="twitter:image"       content="https://designedbyuche.com/og-image.jpg" />
+
+    <!-- ── Theme color (address bar on mobile) ────────────── -->
+    <meta name="theme-color" content="#111111" />
+
+    <!-- ── Favicon ────────────────────────────────────────── -->
+    <link rel="icon"             type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest"         href="/manifest.json" />
+
+    <!-- ── Google Fonts — preconnect then load ────────────── -->
+    <!-- preconnect removes the DNS + TLS round-trips, making font
+         load non-blocking and significantly faster than @import -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+
+    <!-- ── Structured data — Google Person card ───────────── -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Godswill Uche",
+      "url": "https://designedbyuche.com",
+      "email": "designedbyuche@gmail.com",
+      "jobTitle": "Product Designer",
+      "description": "Product & UX Designer from Nigeria specialising in design systems, fintech, and SaaS products. Previously lead designer at Carlofty.",
+      "image": "https://designedbyuche.com/og-image.jpg",
+      "sameAs": [
+        "mailto:designedbyuche@gmail.com"
+      ],
+      "knowsAbout": [
+        "Product Design",
+        "UX Design",
+        "UI Design",
+        "Design Systems",
+        "User Research",
+        "Figma",
+        "Prototyping",
+        "No-Code Development",
+        "Visual Design"
+      ],
+      "nationality": {
+        "@type": "Country",
+        "name": "Nigeria"
+      }
+    }
+    </script>
+
+    <!-- ── Theme: default DARK, honour saved user preference ─
+         Runs synchronously before first paint so there is no
+         flash of wrong colour mode.                          -->
     <script>
-      (function(){
+      (function () {
         try {
-          var t = localStorage.getItem('portfolio-theme');
-          if (t) {
-            document.documentElement.setAttribute('data-theme', t);
-          } else {
-            // No saved preference — auto: 6 pm–6 am WAT = dark
-            var hour = parseInt(
-              new Date().toLocaleString('en-GB', {
-                hour: 'numeric', hour12: false, timeZone: 'Africa/Lagos'
-              }), 10);
-            if (hour >= 18 || hour < 6) {
-              document.documentElement.setAttribute('data-theme', 'dark');
-            }
-          }
-        } catch(e){}
+          var saved = localStorage.getItem('portfolio-theme');
+          // Honour an explicit saved preference; otherwise always dark
+          document.documentElement.setAttribute(
+            'data-theme',
+            saved || 'dark'
+          );
+        } catch (e) {}
       })();
     </script>
   </head>

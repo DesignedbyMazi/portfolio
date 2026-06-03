@@ -203,7 +203,7 @@ export default function Hero() {
   return (
     <div className="hero">
       <div className="hero__avatar" ref={avatarRef} data-animate>
-        <img src={profileImg} alt="Godswill Uche" className="hero__avatar-img" />
+        <img src={profileImg} alt="Godswill Uche — Product & UX Designer" className="hero__avatar-img" loading="eager" fetchPriority="high" />
       </div>
       <div className="hero__info">
         <div className="hero__text">

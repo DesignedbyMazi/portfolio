@@ -4,7 +4,7 @@
    All components read from these CSS variables.
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+/* Google Fonts is loaded via <link> in index.html with preconnect — non-blocking */
 @import './styles/animations.css';
 
 /* ────────────────────────────────────────────────────────────
