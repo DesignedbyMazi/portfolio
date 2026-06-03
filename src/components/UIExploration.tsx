@@ -76,7 +76,7 @@ function VideoOverlay({ card, onDismiss }: { card: UICardData; onDismiss: () => 
     if (dismissed.current) return;
     dismissed.current = true;
     setLeaving(true);
-    setTimeout(onDismiss, 270);
+    setTimeout(onDismiss, 190);
   }, [onDismiss]);
 
   /* Autoplay as soon as overlay mounts */
@@ -137,9 +137,9 @@ function UICard({
   const [hovered, setHovered] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  /* Desktop: inline hover-to-play */
+  /* Desktop hover: inline preview */
   const handleEnter = () => {
-    if (isTouchDevice()) return;  // mobile uses overlay instead
+    if (isTouchDevice()) return;
     setHovered(true);
     if (videoRef.current) { videoRef.current.currentTime = 0; videoRef.current.play().catch(() => {}); }
   };
@@ -149,9 +149,12 @@ function UICard({
     if (videoRef.current) videoRef.current.pause();
   };
 
-  /* Mobile: tap opens focused overlay */
+  /* Click (desktop + mobile): stop inline preview and open focused overlay */
   const handleClick = () => {
-    if (card.video && isTouchDevice()) onFocusCard(card);
+    if (!card.video) return;
+    setHovered(false);
+    if (videoRef.current) videoRef.current.pause();
+    onFocusCard(card);
   };
 
   const hasRealAssets = Boolean(card.image || card.video);

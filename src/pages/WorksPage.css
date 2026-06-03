@@ -65,7 +65,14 @@
 .works-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  column-gap: 16px;
+  row-gap: 36px;   /* extra room for the info row below each card */
+}
+
+/* Wrapper: card frame + info row */
+.works-grid-item {
+  display: flex;
+  flex-direction: column;
 }
 
 .works-grid-card {
@@ -75,12 +82,8 @@
   overflow: hidden;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
-  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1),
-              box-shadow 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.works-grid-card--link {
-  cursor: pointer;
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .works-grid-card--hovered {
@@ -91,6 +94,58 @@
 [data-theme="dark"] .works-grid-card--hovered {
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
 }
+
+/* ── Info row ───────────────────────────────────────────── */
+.works-grid-info {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.works-grid-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.works-grid-label {
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 22px;
+  color: var(--color-text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.works-grid-year {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: var(--color-text-muted);
+  margin: 0;
+}
+
+.works-grid-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding-top: 2px;   /* optical alignment with label */
+  transition: opacity 0.15s;
+}
+
+.works-grid-cta:hover { opacity: 0.6; }
 
 /* Image — fills the card, fades out when video plays */
 .works-grid-img {
@@ -268,12 +323,15 @@
 
   .works-grid {
     grid-template-columns: 1fr 1fr;
-    gap: 12px;
+    column-gap: 12px;
+    row-gap: 28px;
   }
 
-  .works-grid-card {
-    border-radius: 0;
-  }
+  .works-grid-card    { border-radius: 0; }
+  .works-grid-info    { margin-top: 12px; }
+  .works-grid-label   { font-size: 13px; }
+  .works-grid-year    { font-size: 12px; }
+  .works-grid-cta     { font-size: 12px; }
 
   .works-cases {
     gap: 48px;

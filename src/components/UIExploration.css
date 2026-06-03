@@ -284,46 +284,49 @@
   position: fixed;
   inset: 0;
   z-index: 9000;
-  background: rgba(0, 0, 0, 0.90);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: rgba(0, 0, 0, 0.86);
+  /* Reduced blur for GPU perf; still gives depth */
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   gap: 20px;
   padding: 24px;
-  animation: uiOverlayIn 0.28s ease both;
+  animation: uiOverlayIn 0.18s ease both;
+  will-change: opacity;
 }
 
 .ui-overlay--leaving {
-  animation: uiOverlayOut 0.27s ease both;
+  animation: uiOverlayOut 0.18s ease both;
   pointer-events: none;
 }
 
-@keyframes uiOverlayIn  { from { opacity:0 }         to { opacity:1 }         }
-@keyframes uiOverlayOut { from { opacity:1 }         to { opacity:0 }         }
+@keyframes uiOverlayIn  { from { opacity:0 } to { opacity:1 } }
+@keyframes uiOverlayOut { from { opacity:1 } to { opacity:0 } }
 
 .ui-overlay__card {
-  width: min(88vw, 440px);
+  width: min(88vw, 460px);
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
-  animation: uiCardIn 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+  box-shadow: 0 20px 56px rgba(0, 0, 0, 0.5);
+  animation: uiCardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity;
 }
 
 .ui-overlay__card--leaving {
-  animation: uiCardOut 0.22s ease both;
+  animation: uiCardOut 0.18s ease both;
 }
 
 @keyframes uiCardIn {
-  from { transform: scale(0.84) translateY(28px); opacity: 0; }
+  from { transform: scale(0.88) translateY(20px); opacity: 0; }
   to   { transform: scale(1)    translateY(0);    opacity: 1; }
 }
 
 @keyframes uiCardOut {
   from { transform: scale(1);    opacity: 1; }
-  to   { transform: scale(0.88); opacity: 0; }
+  to   { transform: scale(0.92); opacity: 0; }
 }
 
 .ui-overlay__video {

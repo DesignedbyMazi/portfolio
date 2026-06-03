@@ -45,10 +45,12 @@ type Tab = 'live' | 'cases';
 
 interface LiveProject {
   id:     string;
-  title:  string;
+  title:  string;    // full project name (used as img alt)
+  label:  string;    // short label shown in info row header
+  year:   string;    // e.g. "2026 - Present"
   image:  string;
   video?: string;
-  href?:  string;
+  href?:  string;    // used by "Visit site" CTA only, not card click
 }
 
 interface CaseStudy {
@@ -61,13 +63,13 @@ interface CaseStudy {
 }
 
 const liveProjects: LiveProject[] = [
-  { id: 'carlofty',   title: 'Carlofty',      image: carloftyImg,  video: carloftyVideo,  href: 'https://www.carlofty.com/' },
-  { id: 'pay4me',     title: 'Pay4Me',        image: pay4meImg,    video: pay4meVideo    },
-  { id: 'dashboard',  title: 'Dashboard',     image: dashboardImg, video: dashboardVideo },
-  { id: 'balancee',   title: 'Balancee',      image: balanceeImg,  video: balanceeVideo  },
-  { id: 'baraka',     title: 'Baraka',        image: barakaImg,    video: barakaVideo,   href: 'https://barakaredesign.framer.website/' },
-  { id: 'karsa',      title: 'Karsa',         image: karsaImg                           },
-  { id: 'crypto',     title: 'Crypto Wallet', image: cryptoImg                          },
+  { id:'carlofty',  label:'Carlofty.com',    year:'2026 - Present', title:'Carlofty',      image:carloftyImg,  video:carloftyVideo,  href:'https://www.carlofty.com/'               },
+  { id:'pay4me',    label:'Pay4Me',          year:'2025',           title:'Pay4Me',        image:pay4meImg,    video:pay4meVideo                                                   },
+  { id:'dashboard', label:'Dashboard',       year:'2024',           title:'Dashboard',     image:dashboardImg, video:dashboardVideo                                                },
+  { id:'balancee',  label:'Balancee',        year:'2025',           title:'Balancee',      image:balanceeImg,  video:balanceeVideo                                                 },
+  { id:'baraka',    label:'Baraka',          year:'2024',           title:'Baraka',        image:barakaImg,    video:barakaVideo,    href:'https://barakaredesign.framer.website/'   },
+  { id:'karsa',     label:'Karsa',           year:'2024',           title:'Karsa',         image:karsaImg                                                                         },
+  { id:'crypto',    label:'Crypto Wallet',   year:'2024',           title:'Crypto Wallet', image:cryptoImg                                                                        },
 ];
 
 const caseStudies: CaseStudy[] = [
@@ -170,7 +172,7 @@ function CaseCard({
   );
 }
 
-/* ── Grid card — handles hover video playback ────────── */
+/* ── Grid card — video only, no redirect on click ───── */
 function GridCard({ project }: { project: LiveProject }) {
   const videoRef  = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
@@ -186,24 +188,18 @@ function GridCard({ project }: { project: LiveProject }) {
     if (v) { v.pause(); v.currentTime = 0; }
   };
 
-  const handleClick = () => {
-    if (project.href) window.open(project.href, '_blank', 'noopener,noreferrer');
-  };
-
   return (
     <div
-      className={`works-grid-card${hovered ? ' works-grid-card--hovered' : ''}${project.href ? ' works-grid-card--link' : ''}`}
+      className={`works-grid-card${hovered ? ' works-grid-card--hovered' : ''}`}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
-      onClick={handleClick}
-      role={project.href ? 'link' : undefined}
-      tabIndex={project.href ? 0 : undefined}
-      onKeyDown={(e) => { if (project.href && (e.key === 'Enter' || e.key === ' ')) handleClick(); }}
-      aria-label={project.href ? `Visit ${project.title}` : project.title}
+      aria-label={project.title}
     >
       <img
         src={project.image}
         alt={project.title}
+        loading="lazy"
+        decoding="async"
         className="works-grid-img"
       />
       {project.video && (
@@ -211,12 +207,42 @@ function GridCard({ project }: { project: LiveProject }) {
           ref={videoRef}
           src={project.video}
           className="works-grid-video"
-          muted
-          loop
-          playsInline
+          muted loop playsInline
           preload="metadata"
         />
       )}
+    </div>
+  );
+}
+
+/* ── Grid item = card + info row ─────────────────────── */
+function GridItem({ project }: { project: LiveProject }) {
+  return (
+    <div className="works-grid-item">
+      <GridCard project={project} />
+
+      {/* Info row — 16px below the card frame */}
+      <div className="works-grid-info">
+        {/* Left: project label + year */}
+        <div className="works-grid-text">
+          <p className="works-grid-label">{project.label}</p>
+          <p className="works-grid-year">{project.year}</p>
+        </div>
+
+        {/* Right: "Visit site" CTA — only shown when href exists */}
+        {project.href && (
+          <a
+            href={project.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="works-grid-cta"
+            aria-label={`Visit ${project.label}`}
+          >
+            <span>Visit site</span>
+            <ArrowUpRight />
+          </a>
+        )}
+      </div>
     </div>
   );
 }
@@ -269,7 +295,7 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
         {tab === 'live' && (
           <div className="works-grid" role="tabpanel">
             {liveProjects.map((p) => (
-              <GridCard key={p.id} project={p} />
+              <GridItem key={p.id} project={p} />
             ))}
           </div>
         )}
