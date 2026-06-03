@@ -20,11 +20,6 @@ import barakaVideo    from '../assets/videos/baraka-demo.mp4';
 
 import './WorksPage.css';
 
-/* ── Touch detection ─────────────────────────────────── */
-function isTouchDevice(): boolean {
-  return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
-}
-
 /* ── Icons ──────────────────────────────────────────── */
 function ArrowUpRight() {
   return (
