@@ -11,6 +11,12 @@ import cryptoWalletImg from '../assets/images/crypto-wallet-card.png';
 import karsaImg from '../assets/images/karsa-card.png';
 import './UIExploration.css';
 
+/* ── Touch detection ─────────────────────────────────── */
+/** True on phones/tablets that have no hover capability */
+function isTouchDevice(): boolean {
+  return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
 /* ── Card data ──────────────────────────────── */
 interface UICardData {
   id: number;
@@ -19,12 +25,9 @@ interface UICardData {
   bg: string;
   accentColor: string;
   tag: string;
-  /** Real image asset — shown idle */
   image?: string;
-  /** Real video asset — plays on hover */
   video?: string;
-  /** Optional link — opens in new tab on click */
-  href?: string;
+  /** href intentionally removed from all video cards — tap focus is the video */
 }
 
 const CARDS: UICardData[] = [
@@ -47,7 +50,7 @@ const CARDS: UICardData[] = [
     tag: 'Investing',
     image: barakaImg,
     video: barakaVideo,
-    href: 'https://barakaredesign.framer.website/',
+    /* href removed — hover plays video, no redirect */
   },
   {
     id: 3,
@@ -89,7 +92,7 @@ const CARDS: UICardData[] = [
   },
 ];
 
-/* ── Browser chrome mock (cards without real assets) ── */
+/* ── Browser chrome mock ─────────────────────── */
 function BrowserMock({ accentColor, screenBg, isPlaying }: { accentColor: string; screenBg: string; isPlaying: boolean }) {
   return (
     <div className={`ui-card__browser${isPlaying ? ' ui-card__browser--playing' : ''}`} style={{ background: screenBg }}>
@@ -123,66 +126,58 @@ function UICard({ card }: { card: UICardData }) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const handleEnter = () => {
+    if (isTouchDevice()) return;   // images only on mobile — no video
     setHovered(true);
     if (videoRef.current) {
       videoRef.current.currentTime = 0;
-      videoRef.current.play().catch(() => {/* autoplay blocked */});
+      videoRef.current.play().catch(() => {});
     }
   };
 
   const handleLeave = () => {
+    if (isTouchDevice()) return;
     setHovered(false);
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
+    if (videoRef.current) videoRef.current.pause();
   };
 
-  const handleClick = () => {
-    if (card.href) window.open(card.href, '_blank', 'noreferrer');
-  };
+  /* No click handler — links removed from all video cards */
 
   const hasRealAssets = Boolean(card.image || card.video);
 
   return (
     <div
-      className={`ui-card${hovered ? ' ui-card--hovered' : ''}${card.href ? ' ui-card--linked' : ''}`}
+      className={`ui-card${hovered ? ' ui-card--hovered' : ''}`}
       style={{ backgroundColor: card.bg }}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
-      onClick={handleClick}
     >
       {hasRealAssets ? (
-        /* ── Real asset card (Pay4Me) ── */
-        <>
-          <div className="ui-card__media">
-            {card.image && (
-              <img
-                src={card.image}
-                alt={card.title}
-                className={`ui-card__img${hovered && card.video ? ' ui-card__img--hidden' : ''}`}
-              />
-            )}
-            {card.video && (
-              <video
-                ref={videoRef}
-                src={card.video}
-                muted
-                loop
-                playsInline
-                className={`ui-card__video${hovered ? ' ui-card__video--visible' : ''}`}
-              />
-            )}
-            {/* Playing badge */}
-            {hovered && (
-              <div className="ui-card__play-badge">
-                <span className="ui-card__sparkle-icon">✦</span>
-                <span>Playing</span>
-              </div>
-            )}
-          </div>
-        </>
+        <div className="ui-card__media">
+          {card.image && (
+            <img
+              src={card.image}
+              alt={card.title}
+              className={`ui-card__img${hovered && card.video ? ' ui-card__img--hidden' : ''}`}
+            />
+          )}
+          {card.video && (
+            <video
+              ref={videoRef}
+              src={card.video}
+              muted
+              loop
+              playsInline
+              className={`ui-card__video${hovered ? ' ui-card__video--visible' : ''}`}
+            />
+          )}
+          {hovered && (
+            <div className="ui-card__play-badge">
+              <span className="ui-card__sparkle-icon">✦</span>
+              <span>Playing</span>
+            </div>
+          )}
+        </div>
       ) : (
-        /* ── Mock asset card (Baraka, Learnbeta) ── */
         <>
           <div className="ui-card__head">
             <span className="ui-card__tag" style={{ color: card.accentColor, borderColor: `${card.accentColor}40`, background: `${card.accentColor}12` }}>
@@ -201,7 +196,6 @@ function UICard({ card }: { card: UICardData }) {
         </>
       )}
 
-      {/* Hover lift glow */}
       <div className="ui-card__glow" style={{ background: `radial-gradient(ellipse at 50% 100%, ${card.accentColor}1A 0%, transparent 70%)` }} />
     </div>
   );
@@ -211,20 +205,24 @@ function UICard({ card }: { card: UICardData }) {
 export default function UIExploration() {
   const [paused, setPaused] = useState(false);
 
-  const handleEnter = () => {
+  const handleCarouselEnter = () => {
+    if (isTouchDevice()) return;  // never pause carousel on touch devices
     setPaused(true);
   };
 
-  // Duplicate cards for seamless infinite loop
+  const handleCarouselLeave = () => {
+    if (isTouchDevice()) return;
+    setPaused(false);
+  };
+
   const allCards = [...CARDS, ...CARDS];
 
   return (
     <section className="ui-exploration">
-      {/* Carousel only — no header */}
       <div
         className="ui-exploration__carousel"
-        onMouseEnter={handleEnter}
-        onMouseLeave={() => setPaused(false)}
+        onMouseEnter={handleCarouselEnter}
+        onMouseLeave={handleCarouselLeave}
       >
         <div className={`ui-exploration__track${paused ? ' ui-exploration__track--paused' : ''}`}>
           {allCards.map((card, i) => (

@@ -20,6 +20,11 @@ import barakaVideo    from '../assets/videos/baraka-demo.mp4';
 
 import './WorksPage.css';
 
+/* ── Touch detection ─────────────────────────────────── */
+function isTouchDevice(): boolean {
+  return window.matchMedia('(hover: none) and (pointer: coarse)').matches;
+}
+
 /* ── Icons ──────────────────────────────────────────── */
 function ArrowUpRight() {
   return (
@@ -105,13 +110,13 @@ function CaseCard({
   const [hovered, setHovered] = useState(false);
 
   const handleEnter = () => {
-    if (!cs.video) return;
+    if (!cs.video || isTouchDevice()) return;
     setHovered(true);
     videoRef.current?.play().catch(() => {});
   };
 
   const handleLeave = () => {
-    if (!cs.video) return;
+    if (!cs.video || isTouchDevice()) return;
     setHovered(false);
     const v = videoRef.current;
     if (v) { v.pause(); v.currentTime = 0; }
@@ -176,11 +181,13 @@ function GridCard({ project }: { project: LiveProject }) {
   const [hovered, setHovered] = useState(false);
 
   const handleEnter = () => {
+    if (isTouchDevice()) return;
     setHovered(true);
     videoRef.current?.play().catch(() => {});
   };
 
   const handleLeave = () => {
+    if (isTouchDevice()) return;
     setHovered(false);
     const v = videoRef.current;
     if (v) { v.pause(); v.currentTime = 0; }
