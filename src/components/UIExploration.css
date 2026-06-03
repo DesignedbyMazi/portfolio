@@ -279,6 +279,91 @@
   letter-spacing: 0.3px;
 }
 
+/* ── Video focus overlay (mobile) ──────────────────── */
+.ui-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9000;
+  background: rgba(0, 0, 0, 0.90);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px;
+  animation: uiOverlayIn 0.28s ease both;
+}
+
+.ui-overlay--leaving {
+  animation: uiOverlayOut 0.27s ease both;
+  pointer-events: none;
+}
+
+@keyframes uiOverlayIn  { from { opacity:0 }         to { opacity:1 }         }
+@keyframes uiOverlayOut { from { opacity:1 }         to { opacity:0 }         }
+
+.ui-overlay__card {
+  width: min(88vw, 440px);
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.55);
+  animation: uiCardIn 0.34s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.ui-overlay__card--leaving {
+  animation: uiCardOut 0.22s ease both;
+}
+
+@keyframes uiCardIn {
+  from { transform: scale(0.84) translateY(28px); opacity: 0; }
+  to   { transform: scale(1)    translateY(0);    opacity: 1; }
+}
+
+@keyframes uiCardOut {
+  from { transform: scale(1);    opacity: 1; }
+  to   { transform: scale(0.88); opacity: 0; }
+}
+
+.ui-overlay__video {
+  width: 100%;
+  height: auto;
+  display: block;
+  max-height: 58vh;
+  object-fit: cover;
+}
+
+.ui-overlay__info {
+  padding: 14px 18px 18px;
+}
+
+.ui-overlay__title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #FFFFFF;
+  margin: 0 0 5px;
+  line-height: 20px;
+}
+
+.ui-overlay__subtitle {
+  font-size: 11.5px;
+  color: rgba(255, 255, 255, 0.5);
+  margin: 0;
+  line-height: 17px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.ui-overlay__hint {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  letter-spacing: 0.2px;
+  text-align: center;
+}
+
 /* ── Mobile ─────────────────────────── */
 @media (max-width: 767px) {
   .ui-card {
