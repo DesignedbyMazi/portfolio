@@ -140,7 +140,7 @@ function VideoOverlay({
         </div>
       </div>
 
-      <p className="ui-overlay__hint">Tap anywhere to close</p>
+      <p className="ui-overlay__hint">Click anywhere to close</p>
     </div>
   );
 }
@@ -174,11 +174,12 @@ function UICard({
   };
 
   /*
-   * MOBILE — tap triggers fullscreen overlay (video cards only).
-   * Cards without a video: no action, no cursor change.
+   * CLICK / TAP — opens fullscreen overlay on both desktop and mobile
+   * (video cards only). Desktop already shows inline hover-play; clicking
+   * elevates to the focused overlay view. Cards without a video: no action.
    */
   const handleClick = () => {
-    if (card.video && isTouchDevice()) onFocusCard(card);
+    if (card.video) onFocusCard(card);
   };
 
   const hasRealAssets = Boolean(card.image || card.video);
