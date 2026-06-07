@@ -12,7 +12,8 @@
   position: relative;
   overflow: hidden;
   width: 100%;
-  padding: 0;
+  /* Vertical padding gives scaled cards room to breathe without clipping */
+  padding: 14px 0;
   cursor: default;
 }
 
@@ -44,12 +45,15 @@
   overflow: hidden;
   flex-shrink: 0;
   cursor: pointer;
-  transition: box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Desktop: card scales up on hover revealing inline video */
 .ui-card--hovered {
-  /* No lift — video/play effect is the only hover indicator */
-  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+  transform: scale(1.06);
+  z-index: 10;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.32);
 }
 
 .ui-card--linked {

@@ -1,14 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import pay4meImg      from '../assets/images/pay4me-card.png';
-import pay4meVideo    from '../assets/videos/pay4me-demo.mp4';
-import barakaImg      from '../assets/images/baraka-card.jpg';
-import barakaVideo    from '../assets/videos/baraka-demo.mp4';
-import dashboardImg   from '../assets/images/dashboard-card.png';
-import dashboardVideo from '../assets/videos/dashboard-demo.mp4';
-import balanceeImg    from '../assets/images/balancee-card.png';
-import balanceeVideo  from '../assets/videos/balancee-demo.mp4';
+import pay4meImg       from '../assets/images/pay4me-card.png';
+import pay4meVideo     from '../assets/videos/pay4me-demo.mp4';
+import barakaImg       from '../assets/images/baraka-card.jpg';
+import barakaVideo     from '../assets/videos/baraka-demo.mp4';
+import dashboardImg    from '../assets/images/dashboard-card.png';
+import dashboardVideo  from '../assets/videos/dashboard-demo.mp4';
+import balanceeImg     from '../assets/images/balancee-card.png';
+import balanceeVideo   from '../assets/videos/balancee-demo.mp4';
 import cryptoWalletImg from '../assets/images/crypto-wallet-card.png';
-import karsaImg       from '../assets/images/karsa-card.png';
+import karsaImg        from '../assets/images/karsa-card.png';
 import './UIExploration.css';
 
 /* ── Touch detection ─────────────────────────────────── */
@@ -29,30 +29,43 @@ interface UICardData {
 }
 
 const CARDS: UICardData[] = [
-  { id:1, title:'Pay4Me Redesign',           subtitle:'The easiest and fastest way to pay tuition and fees to educational institutions worldwide.',           bg:'#1B3A2D', accentColor:'#4ADE80', tag:'Fintech',     image:pay4meImg,      video:pay4meVideo    },
-  { id:2, title:'Baraka Landing Redesign',   subtitle:'Grow your wealth the smart way with auto-invest in US stocks & ETFs.',                                bg:'#0C0C14', accentColor:'#A78BFA', tag:'Investing',   image:barakaImg,      video:barakaVideo    },
-  { id:3, title:'Project Management Dashboard', subtitle:'Designed for efficiency, the dashboard effectively highlights crucial project data.',               bg:'#1E2A78', accentColor:'#818CF8', tag:'Productivity', image:dashboardImg,  video:dashboardVideo },
-  { id:4, title:'Balanceé Feature',          subtitle:'Streamlined Vehicle Repair and Maintenance Services with customer-focused features.',                  bg:'#0D7C7C', accentColor:'#5EEAD4', tag:'FinTech',     image:balanceeImg,    video:balanceeVideo  },
-  { id:5, title:'Crypto Wallet App',         subtitle:'Transfer assets from wallet to your preferred destination with ease.',                                 bg:'#3B0FA0', accentColor:'#A78BFA', tag:'Web3',        image:cryptoWalletImg                     },
-  { id:6, title:'Karsa — Spend Anywhere',    subtitle:'Transfer money globally with ease. Additional support for US transfers.',                              bg:'#111111', accentColor:'#6EE7B7', tag:'Finance',     image:karsaImg                            },
+  { id:1, title:'Pay4Me Redesign',              subtitle:'The easiest and fastest way to pay tuition and fees to educational institutions worldwide.',     bg:'#1B3A2D', accentColor:'#4ADE80', tag:'Fintech',     image:pay4meImg,      video:pay4meVideo    },
+  { id:2, title:'Baraka Landing Redesign',      subtitle:'Grow your wealth the smart way with auto-invest in US stocks & ETFs.',                          bg:'#0C0C14', accentColor:'#A78BFA', tag:'Investing',   image:barakaImg,      video:barakaVideo    },
+  { id:3, title:'Project Management Dashboard', subtitle:'Designed for efficiency, the dashboard effectively highlights crucial project data.',             bg:'#1E2A78', accentColor:'#818CF8', tag:'Productivity', image:dashboardImg,  video:dashboardVideo },
+  { id:4, title:'Balanceé Feature',             subtitle:'Streamlined Vehicle Repair and Maintenance Services with customer-focused features.',             bg:'#0D7C7C', accentColor:'#5EEAD4', tag:'FinTech',     image:balanceeImg,    video:balanceeVideo  },
+  { id:5, title:'Crypto Wallet App',            subtitle:'Transfer assets from wallet to your preferred destination with ease.',                           bg:'#3B0FA0', accentColor:'#A78BFA', tag:'Web3',        image:cryptoWalletImg                     },
+  { id:6, title:'Karsa — Spend Anywhere',       subtitle:'Transfer money globally with ease. Additional support for US transfers.',                        bg:'#111111', accentColor:'#6EE7B7', tag:'Finance',     image:karsaImg                            },
 ];
 
 /* ── Browser chrome mock ─────────────────────────────── */
-function BrowserMock({ accentColor, screenBg, isPlaying }: { accentColor:string; screenBg:string; isPlaying:boolean }) {
+function BrowserMock({
+  accentColor,
+  screenBg,
+  isPlaying,
+}: {
+  accentColor: string;
+  screenBg:    string;
+  isPlaying:   boolean;
+}) {
   return (
-    <div className={`ui-card__browser${isPlaying ? ' ui-card__browser--playing' : ''}`} style={{ background: screenBg }}>
+    <div
+      className={`ui-card__browser${isPlaying ? ' ui-card__browser--playing' : ''}`}
+      style={{ background: screenBg }}
+    >
       <div className="ui-card__browser-bar">
-        <span className="ui-card__dot" style={{ background:'#FF5F57' }} />
-        <span className="ui-card__dot" style={{ background:'#FEBC2E' }} />
-        <span className="ui-card__dot" style={{ background:'#28C840' }} />
-        <div className="ui-card__url-bar"><span className="ui-card__url-text">app.design</span></div>
+        <span className="ui-card__dot" style={{ background: '#FF5F57' }} />
+        <span className="ui-card__dot" style={{ background: '#FEBC2E' }} />
+        <span className="ui-card__dot" style={{ background: '#28C840' }} />
+        <div className="ui-card__url-bar">
+          <span className="ui-card__url-text">app.design</span>
+        </div>
       </div>
       <div className="ui-card__mock-body">
-        <div className="ui-card__mock-hero" style={{ background:`${accentColor}14` }}>
-          <div className="ui-card__mock-line ui-card__mock-line--lg" style={{ background:accentColor }} />
-          <div className="ui-card__mock-line ui-card__mock-line--md" style={{ background:`${accentColor}80` }} />
-          <div className="ui-card__mock-line ui-card__mock-line--sm" style={{ background:`${accentColor}40` }} />
-          <div className="ui-card__mock-btn" style={{ background:accentColor, color:screenBg }}>Get started</div>
+        <div className="ui-card__mock-hero" style={{ background: `${accentColor}14` }}>
+          <div className="ui-card__mock-line ui-card__mock-line--lg" style={{ background: accentColor }} />
+          <div className="ui-card__mock-line ui-card__mock-line--md" style={{ background: `${accentColor}80` }} />
+          <div className="ui-card__mock-line ui-card__mock-line--sm" style={{ background: `${accentColor}40` }} />
+          <div className="ui-card__mock-btn" style={{ background: accentColor, color: screenBg }}>Get started</div>
         </div>
       </div>
       {isPlaying && (
@@ -65,13 +78,19 @@ function BrowserMock({ accentColor, screenBg, isPlaying }: { accentColor:string;
   );
 }
 
-/* ── Focused video overlay (mobile) ─────────────────── */
-function VideoOverlay({ card, onDismiss }: { card: UICardData; onDismiss: () => void }) {
-  const videoRef   = useRef<HTMLVideoElement>(null);
-  const dismissed  = useRef(false);
+/* ── Video focus overlay (mobile tap) ────────────────── */
+function VideoOverlay({
+  card,
+  onDismiss,
+}: {
+  card:      UICardData;
+  onDismiss: () => void;
+}) {
+  const videoRef  = useRef<HTMLVideoElement>(null);
+  const dismissed = useRef(false);
   const [leaving, setLeaving] = useState(false);
 
-  /* Guard: call once even if triggered by multiple sources */
+  /* Call once even if triggered by multiple sources */
   const dismiss = useCallback(() => {
     if (dismissed.current) return;
     dismissed.current = true;
@@ -84,10 +103,10 @@ function VideoOverlay({ card, onDismiss }: { card: UICardData; onDismiss: () => 
     videoRef.current?.play().catch(() => {});
   }, []);
 
-  /* Dismiss when user scrolls the page */
+  /* Dismiss on page scroll */
   useEffect(() => {
     const onScroll = () => dismiss();
-    window.addEventListener('scroll', onScroll, { passive:true, once:true });
+    window.addEventListener('scroll', onScroll, { passive: true, once: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, [dismiss]);
 
@@ -111,6 +130,7 @@ function VideoOverlay({ card, onDismiss }: { card: UICardData; onDismiss: () => 
           src={card.video}
           muted
           playsInline
+          preload="metadata"
           className="ui-overlay__video"
           onEnded={dismiss}
         />
@@ -120,7 +140,6 @@ function VideoOverlay({ card, onDismiss }: { card: UICardData; onDismiss: () => 
         </div>
       </div>
 
-      {/* Tap-anywhere hint */}
       <p className="ui-overlay__hint">Tap anywhere to close</p>
     </div>
   );
@@ -131,30 +150,33 @@ function UICard({
   card,
   onFocusCard,
 }: {
-  card: UICardData;
+  card:        UICardData;
   onFocusCard: (card: UICardData) => void;
 }) {
-  const [hovered,   setHovered]   = useState(false);
-  const hoverTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hovered, setHovered] = useState(false);
 
-  const clearHoverTimer = () => {
-    if (hoverTimer.current) { clearTimeout(hoverTimer.current); hoverTimer.current = null; }
-  };
-
-  /* Desktop: hover for 140ms → expand overlay */
+  /*
+   * DESKTOP — hover immediately expands card + plays inline video.
+   * Touch devices don't fire mouseenter so these are no-ops on mobile.
+   */
   const handleEnter = () => {
+    if (!card.video || isTouchDevice()) return;
     setHovered(true);
-    if (card.video && !isTouchDevice()) {
-      hoverTimer.current = setTimeout(() => onFocusCard(card), 140);
-    }
+    videoRef.current?.play().catch(() => {});
   };
 
   const handleLeave = () => {
+    if (!card.video || isTouchDevice()) return;
     setHovered(false);
-    clearHoverTimer();   // cancel if user moved away before timer fired
+    const v = videoRef.current;
+    if (v) { v.pause(); v.currentTime = 0; }
   };
 
-  /* Mobile: tap → overlay */
+  /*
+   * MOBILE — tap triggers fullscreen overlay (video cards only).
+   * Cards without a video: no action, no cursor change.
+   */
   const handleClick = () => {
     if (card.video && isTouchDevice()) onFocusCard(card);
   };
@@ -164,7 +186,10 @@ function UICard({
   return (
     <div
       className={`ui-card${hovered ? ' ui-card--hovered' : ''}`}
-      style={{ backgroundColor: card.bg }}
+      style={{
+        backgroundColor: card.bg,
+        cursor: card.video ? 'pointer' : 'default',
+      }}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
       onClick={handleClick}
@@ -177,15 +202,33 @@ function UICard({
               alt={card.title}
               loading="lazy"
               decoding="async"
-              className="ui-card__img"   /* always visible — no inline video */
+              className={`ui-card__img${hovered ? ' ui-card__img--hidden' : ''}`}
             />
           )}
-          {/* inline video removed — overlay handles all playback */}
+          {/* Inline video — desktop hover reveals this; mobile uses overlay instead */}
+          {card.video && (
+            <video
+              ref={videoRef}
+              src={card.video}
+              className={`ui-card__video${hovered ? ' ui-card__video--visible' : ''}`}
+              muted
+              loop
+              playsInline
+              preload="metadata"
+            />
+          )}
         </div>
       ) : (
         <>
           <div className="ui-card__head">
-            <span className="ui-card__tag" style={{ color:card.accentColor, borderColor:`${card.accentColor}40`, background:`${card.accentColor}12` }}>
+            <span
+              className="ui-card__tag"
+              style={{
+                color:        card.accentColor,
+                borderColor:  `${card.accentColor}40`,
+                background:   `${card.accentColor}12`,
+              }}
+            >
               {card.tag}
             </span>
             <p className="ui-card__title">{card.title}</p>
@@ -200,7 +243,12 @@ function UICard({
           </div>
         </>
       )}
-      <div className="ui-card__glow" style={{ background:`radial-gradient(ellipse at 50% 100%, ${card.accentColor}1A 0%, transparent 70%)` }} />
+      <div
+        className="ui-card__glow"
+        style={{
+          background: `radial-gradient(ellipse at 50% 100%, ${card.accentColor}1A 0%, transparent 70%)`,
+        }}
+      />
     </div>
   );
 }
@@ -210,7 +258,7 @@ export default function UIExploration() {
   const [mouseOver,   setMouseOver]   = useState(false);
   const [focusedCard, setFocusedCard] = useState<UICardData | null>(null);
 
-  /* Carousel pauses when mouse is over it OR an overlay is open */
+  /* Carousel pauses when mouse is over (desktop) OR overlay is open (mobile) */
   const paused = mouseOver || focusedCard !== null;
 
   const handleFocusCard = useCallback((card: UICardData) => {
@@ -219,19 +267,20 @@ export default function UIExploration() {
 
   const handleDismissOverlay = useCallback(() => {
     setFocusedCard(null);
-    /* carousel resumes automatically if mouse has left; stays paused if still over */
+    /* carousel resumes automatically once focusedCard is null */
   }, []);
 
-  /* Desktop only: pause while mouse is inside the carousel strip */
-  const handleCarouselEnter = () => { if (!isTouchDevice()) setMouseOver(true); };
+  /* Desktop only: pause carousel while mouse is inside the strip */
+  const handleCarouselEnter = () => { if (!isTouchDevice()) setMouseOver(true);  };
   const handleCarouselLeave = () => { if (!isTouchDevice()) setMouseOver(false); };
 
+  /* Duplicate cards for infinite loop */
   const allCards = [...CARDS, ...CARDS];
 
   return (
     <section className="ui-exploration">
 
-      {/* Focused overlay — renders above everything on mobile tap */}
+      {/* Mobile overlay — mounts on top of everything */}
       {focusedCard && (
         <VideoOverlay card={focusedCard} onDismiss={handleDismissOverlay} />
       )}
@@ -241,9 +290,15 @@ export default function UIExploration() {
         onMouseEnter={handleCarouselEnter}
         onMouseLeave={handleCarouselLeave}
       >
-        <div className={`ui-exploration__track${paused ? ' ui-exploration__track--paused' : ''}`}>
+        <div
+          className={`ui-exploration__track${paused ? ' ui-exploration__track--paused' : ''}`}
+        >
           {allCards.map((card, i) => (
-            <UICard key={`${card.id}-${i}`} card={card} onFocusCard={handleFocusCard} />
+            <UICard
+              key={`${card.id}-${i}`}
+              card={card}
+              onFocusCard={handleFocusCard}
+            />
           ))}
         </div>
       </div>

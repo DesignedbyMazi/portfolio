@@ -177,12 +177,15 @@ function GridCard({ project }: { project: LiveProject }) {
   const videoRef  = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
 
+  /* No interaction for static image cards (no video) */
   const handleEnter = () => {
+    if (!project.video) return;
     setHovered(true);
     videoRef.current?.play().catch(() => {});
   };
 
   const handleLeave = () => {
+    if (!project.video) return;
     setHovered(false);
     const v = videoRef.current;
     if (v) { v.pause(); v.currentTime = 0; }
@@ -191,6 +194,7 @@ function GridCard({ project }: { project: LiveProject }) {
   return (
     <div
       className={`works-grid-card${hovered ? ' works-grid-card--hovered' : ''}`}
+      style={{ cursor: project.video ? 'pointer' : 'default' }}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
       aria-label={project.title}
