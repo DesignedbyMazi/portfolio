@@ -153,33 +153,30 @@ function UICard({
   card:        UICardData;
   onFocusCard: (card: UICardData) => void;
 }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
 
   /*
-   * DESKTOP — hover immediately expands card + plays inline video.
-   * Touch devices don't fire mouseenter so these are no-ops on mobile.
+   * DESKTOP — mouseenter on a video card opens the overlay immediately.
+   * No inline play; the overlay handles playback. Cards without a video
+   * get no interaction at all (early return keeps cursor:default intact).
    */
   const handleEnter = () => {
     if (!card.video || isTouchDevice()) return;
     setHovered(true);
-    videoRef.current?.play().catch(() => {});
+    onFocusCard(card);
   };
 
   const handleLeave = () => {
     if (!card.video || isTouchDevice()) return;
     setHovered(false);
-    const v = videoRef.current;
-    if (v) { v.pause(); v.currentTime = 0; }
+    /* Overlay stays open — it has its own dismiss (click-outside / scroll / end) */
   };
 
   /*
-   * CLICK / TAP — opens fullscreen overlay on both desktop and mobile
-   * (video cards only). Desktop already shows inline hover-play; clicking
-   * elevates to the focused overlay view. Cards without a video: no action.
+   * MOBILE — tap opens the overlay (video cards only).
    */
   const handleClick = () => {
-    if (card.video) onFocusCard(card);
+    if (card.video && isTouchDevice()) onFocusCard(card);
   };
 
   const hasRealAssets = Boolean(card.image || card.video);
@@ -203,21 +200,10 @@ function UICard({
               alt={card.title}
               loading="lazy"
               decoding="async"
-              className={`ui-card__img${hovered ? ' ui-card__img--hidden' : ''}`}
+              className="ui-card__img"
             />
           )}
-          {/* Inline video — desktop hover reveals this; mobile uses overlay instead */}
-          {card.video && (
-            <video
-              ref={videoRef}
-              src={card.video}
-              className={`ui-card__video${hovered ? ' ui-card__video--visible' : ''}`}
-              muted
-              loop
-              playsInline
-              preload="metadata"
-            />
-          )}
+          {/* Playback is handled by the overlay — no inline video element needed */}
         </div>
       ) : (
         <>
