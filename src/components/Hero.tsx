@@ -196,7 +196,11 @@ function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
 }
 
 /* ── Component ───────────────────────────────────────── */
-export default function Hero() {
+interface HeroProps {
+  onViewWorks: () => void;
+}
+
+export default function Hero({ onViewWorks }: HeroProps) {
   const avatarRef = useRef<HTMLDivElement>(null);
   useDragMagnify(avatarRef);
 
@@ -236,7 +240,7 @@ export default function Hero() {
             />
           </p>
         </div>
-        <button className="hero__cta" data-animate>View works</button>
+        <button className="hero__cta" data-animate onClick={onViewWorks}>View works</button>
       </div>
     </div>
   );

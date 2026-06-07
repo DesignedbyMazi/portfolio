@@ -76,7 +76,7 @@ function App() {
         <main className="main">
           <UIExploration />
           <div className="content">
-            <Hero />
+            <Hero onViewWorks={goWorks} />
             <IntroCopy />
             <div data-animate><SocialSection /></div>
             <div data-animate>

@@ -77,7 +77,7 @@ export default function SocialSection() {
         </div>
       </div>
       <a
-        href="https://flowcv.com/resume/3nwi95uqw41q"
+        href="https://flowcv.com/resume/tf81naw4piwc"
         target="_blank"
         rel="noreferrer"
         className="social-section__cv-btn"
