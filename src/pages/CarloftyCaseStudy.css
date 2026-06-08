@@ -38,13 +38,31 @@
   display: block;
   background: none;
   border: none;
-  padding: 0;
+  padding: 2px 0;            /* slight hit-area padding */
   text-align: left;
   cursor: pointer;
+  width: 100%;
+}
+
+/* Hover — lighten inactive items slightly */
+.cs-sidebar__item:not(.cs-sidebar__item--active):hover .cs-sidebar__label {
+  color: #6e6e6e;
+}
+
+[data-theme="dark"] .cs-sidebar__item:not(.cs-sidebar__item--active):hover .cs-sidebar__label {
+  color: #999999;
+}
+
+/* Keyboard focus ring */
+.cs-sidebar__item:focus-visible {
+  outline: 2px solid #850909;
+  outline-offset: 3px;
+  border-radius: 3px;
 }
 
 .cs-sidebar__glare {
   display: block !important;
+  pointer-events: none;      /* prevent GlareHover consuming its own mouse events */
 }
 
 .cs-sidebar__label {
@@ -55,7 +73,10 @@
   font-weight: 500;
   color: #959595;
   display: block;
-  transition: color 0.2s ease;
+  transition: color 0.18s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .cs-sidebar__item--active .cs-sidebar__label {

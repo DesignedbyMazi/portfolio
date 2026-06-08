@@ -17,18 +17,19 @@ import './CarloftyCaseStudy.css';
 
 interface Props { onBack: () => void; }
 
-/* ── Sidebar nav items ───────────────────────────────── */
+/* ── Sidebar nav items (must match DOM order) ────────── */
 const NAV_ITEMS = [
-  { label: 'Case Study',          id: 'cs-sec-top'         },
-  { label: 'The Challenge',       id: 'cs-sec-challenge'   },
-  { label: 'My Role',             id: 'cs-sec-role'        },
-  { label: 'Research',            id: 'cs-sec-research'    },
-  { label: 'User Research',       id: 'cs-sec-user-research' },
-  { label: 'Product Audit',       id: 'cs-sec-audit'       },
-  { label: 'Product Improvement', id: 'cs-sec-improvement' },
-  { label: 'Goals',               id: 'cs-sec-goals'       },
-  { label: 'Solutions',           id: 'cs-sec-solutions'   },
-  { label: 'Outcome',             id: 'cs-sec-outcome'     },
+  { label: 'Case Study',          id: 'cs-sec-top'          },
+  { label: 'My Role',             id: 'cs-sec-role'         },
+  { label: 'The Challenge',       id: 'cs-sec-challenge'    },
+  { label: 'Research',            id: 'cs-sec-research'     },
+  { label: 'Competitor Analysis', id: 'cs-sec-competitor'   },
+  { label: 'User Research',       id: 'cs-sec-user-research'},
+  { label: 'Product Audit',       id: 'cs-sec-audit'        },
+  { label: 'Product Improvement', id: 'cs-sec-improvement'  },
+  { label: 'Goals',               id: 'cs-sec-goals'        },
+  { label: 'Solutions',           id: 'cs-sec-solutions'    },
+  { label: 'Outcome',             id: 'cs-sec-outcome'      },
 ];
 
 /* ── Custom eased smooth scroll ──────────────────────── */
@@ -78,24 +79,30 @@ function CSSidebar({ activeId }: { activeId: string }) {
               className={`cs-sidebar__item${isActive ? ' cs-sidebar__item--active' : ''}`}
               onClick={() => scrollToSection(item.id)}
               aria-current={isActive ? 'location' : undefined}
+              title={item.label}
             >
-              <GlareHover
-                width="fit-content"
-                height="auto"
-                background="transparent"
-                borderRadius="0"
-                borderColor="transparent"
-                glareColor="#ffffff"
-                glareOpacity={0.45}
-                glareAngle={-30}
-                glareSize={220}
-                transitionDuration={700}
-                playOnce={false}
-                triggerGlare={isActive}
-                className="cs-sidebar__glare"
-              >
+              {isActive ? (
+                /* Glare sweep only fires on the active label */
+                <GlareHover
+                  width="fit-content"
+                  height="auto"
+                  background="transparent"
+                  borderRadius="0"
+                  borderColor="transparent"
+                  glareColor="#ffffff"
+                  glareOpacity={0.5}
+                  glareAngle={-30}
+                  glareSize={200}
+                  transitionDuration={700}
+                  playOnce={false}
+                  triggerGlare={true}
+                  className="cs-sidebar__glare"
+                >
+                  <span className="cs-sidebar__label">{item.label}</span>
+                </GlareHover>
+              ) : (
                 <span className="cs-sidebar__label">{item.label}</span>
-              </GlareHover>
+              )}
             </button>
           );
         })}
@@ -425,6 +432,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
           </div>
 
           {/* ── COMPETITOR ANALYSIS ──────────────── */}
+          <div id="cs-sec-competitor">
           <Reveal className="cs-section">
             <Eyebrow text="1. COMPETITOR ANALYSIS — Carlofty"/>
             <h2 className="cs-heading">Three Platforms. Three Different Approach. One Clear Gap.</h2>
@@ -443,6 +451,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
               </p>
             </div>
           </Reveal>
+          </div>{/* end cs-sec-competitor */}
 
           {/* ── USER RESEARCH ────────────────────── */}
           <div id="cs-sec-user-research">
