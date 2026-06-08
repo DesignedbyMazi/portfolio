@@ -7,11 +7,77 @@
   background: var(--color-bg);
 }
 
-.cs-content {
-  max-width: 720px;
+/* ── Two-column outer wrapper ──────────────────────── */
+.cs-outer {
+  display: flex;
+  align-items: flex-start;
+  gap: 88px;
+  max-width: 1000px;       /* 126px sidebar + 88px gap + 760px article + breathing room */
   margin: 0 auto;
-  padding: 0 24px 80px;
-  padding-top: 80px;
+  padding: 80px 32px 0;
+}
+
+/* ── Sticky sidebar ────────────────────────────────── */
+.cs-sidebar {
+  width: 126px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 80px;               /* clears the navbar */
+  padding-top: 56px;       /* align with article start (back btn height ~36px + 20px gap) */
+  display: flex;
+  flex-direction: column;
+}
+
+.cs-sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.cs-sidebar__item {
+  display: block;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.cs-sidebar__glare {
+  display: block !important;
+}
+
+.cs-sidebar__label {
+  font-family: 'Inter', sans-serif;
+  font-size: 12px;
+  line-height: 18px;
+  letter-spacing: 0.15px;
+  font-weight: 500;
+  color: #959595;
+  display: block;
+  transition: color 0.2s ease;
+}
+
+.cs-sidebar__item--active .cs-sidebar__label {
+  font-weight: 600;
+  color: #850909;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+[data-theme="dark"] .cs-sidebar__label {
+  color: #666666;
+}
+
+[data-theme="dark"] .cs-sidebar__item--active .cs-sidebar__label {
+  color: #cc3333;
+}
+
+/* ── Article column ────────────────────────────────── */
+.cs-content {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 80px;
   display: flex;
   flex-direction: column;
   gap: 44px;
@@ -516,9 +582,21 @@
   padding-top: 0;
 }
 
+/* ── Tablet: hide sidebar, keep single column ──────── */
+@media (max-width: 1023px) {
+  .cs-outer {
+    display: block;
+    max-width: 760px;
+    padding: 80px 24px 0;
+  }
+  .cs-sidebar { display: none; }
+  .cs-content { padding-bottom: 80px; }
+}
+
 /* ── Mobile ────────────────────────────────────────── */
 @media (max-width: 767px) {
-  .cs-content { padding-top: 72px; gap: 56px; }
+  .cs-outer   { padding-top: 72px; }
+  .cs-content { gap: 56px; }
 
   .cs-section       { gap: 24px; }
   .cs-eyebrow       { font-size: 12px; margin-bottom: -16px; }
