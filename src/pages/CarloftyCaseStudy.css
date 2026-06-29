@@ -603,6 +603,19 @@
   padding-top: 0;
 }
 
+/* ── Section anchor wrappers ───────────────────────── */
+/*
+   The <div id="cs-sec-*"> elements added for scrollspy need their own
+   flex column so the spacing between sibling <Reveal> elements inside
+   each section is preserved (the parent .cs-content gap only separates
+   the wrapper divs from each other, not the Reveals inside them).
+*/
+.cs-content > div[id] {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+}
+
 /* ── Tablet: hide sidebar, keep single column ──────── */
 @media (max-width: 1023px) {
   .cs-outer {
@@ -618,6 +631,8 @@
 @media (max-width: 767px) {
   .cs-outer   { padding-top: 72px; }
   .cs-content { gap: 56px; }
+  /* Match mobile gap for section wrappers */
+  .cs-content > div[id] { gap: 56px; }
 
   .cs-section       { gap: 24px; }
   .cs-eyebrow       { font-size: 12px; margin-bottom: -16px; }

@@ -147,7 +147,7 @@ function CaseCard({
             muted
             loop
             playsInline
-            preload="metadata"
+            preload="none"
           />
         )}
       </div>
@@ -212,7 +212,7 @@ function GridCard({ project }: { project: LiveProject }) {
           src={project.video}
           className="works-grid-video"
           muted loop playsInline
-          preload="metadata"
+          preload="none"
         />
       )}
     </div>

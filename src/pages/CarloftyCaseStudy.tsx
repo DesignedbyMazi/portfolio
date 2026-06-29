@@ -124,7 +124,7 @@ function VideoInView({ src, className }: { src: string; className?: string }) {
     obs.observe(video);
     return () => obs.disconnect();
   }, []);
-  return <video ref={ref} src={src} muted loop playsInline className={className} />;
+  return <video ref={ref} src={src} muted loop playsInline preload="none" className={className} />;
 }
 
 /* ── One-shot scroll reveal ──────────────────────── */
@@ -433,25 +433,25 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
 
           {/* ── COMPETITOR ANALYSIS ──────────────── */}
           <div id="cs-sec-competitor">
-          <Reveal className="cs-section">
-            <Eyebrow text="1. COMPETITOR ANALYSIS — Carlofty"/>
-            <h2 className="cs-heading">Three Platforms. Three Different Approach. One Clear Gap.</h2>
-            <p className="cs-body">
-              I mapped Carlofty against existing players in the cross-border vehicle sourcing space
-              — looking at target audience, inventory quality, financing models, and core
-              differentiation.
-            </p>
-            <div className="cs-callout-gray">
-              <p className="cs-callout-gray__label">WHAT I FOUND</p>
-              <p className="cs-callout-gray__body">
-                Competitors either served individual buyers with mixed-quality inventory, or importers
-                working with salvage cars. None were serving professional dealers with a quality
-                guarantee and financing infrastructure. That gap was Carlofty's advantage — and the
-                design had to make it legible at every touchpoint.
+            <Reveal className="cs-section">
+              <Eyebrow text="1. COMPETITOR ANALYSIS — Carlofty"/>
+              <h2 className="cs-heading">Three Platforms. Three Different Approach. One Clear Gap.</h2>
+              <p className="cs-body">
+                I mapped Carlofty against existing players in the cross-border vehicle sourcing space
+                — looking at target audience, inventory quality, financing models, and core
+                differentiation.
               </p>
-            </div>
-          </Reveal>
-          </div>{/* end cs-sec-competitor */}
+              <div className="cs-callout-gray">
+                <p className="cs-callout-gray__label">WHAT I FOUND</p>
+                <p className="cs-callout-gray__body">
+                  Competitors either served individual buyers with mixed-quality inventory, or importers
+                  working with salvage cars. None were serving professional dealers with a quality
+                  guarantee and financing infrastructure. That gap was Carlofty's advantage — and the
+                  design had to make it legible at every touchpoint.
+                </p>
+              </div>
+            </Reveal>
+          </div>
 
           {/* ── USER RESEARCH ────────────────────── */}
           <div id="cs-sec-user-research">
