@@ -14,25 +14,21 @@
   width: 100%;
   /* Vertical padding gives scaled cards room to breathe without clipping */
   padding: 14px 0;
-  cursor: default;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
-/* ── Infinite scroll animation ──────── */
-@keyframes ui-scroll {
-  0%   { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+.ui-exploration__carousel:active {
+  cursor: grabbing;
 }
 
+/* ── Scroll track — position is driven by rAF in JS ── */
 .ui-exploration__track {
   display: flex;
   gap: 16px;
   width: max-content;
-  animation: ui-scroll 28s linear infinite;
   will-change: transform;
-}
-
-.ui-exploration__track--paused {
-  animation-play-state: paused;
 }
 
 

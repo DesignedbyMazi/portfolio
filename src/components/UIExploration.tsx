@@ -37,6 +37,9 @@ const CARDS: UICardData[] = [
   { id:6, title:'Karsa — Spend Anywhere',       subtitle:'Transfer money globally with ease. Additional support for US transfers.',                        bg:'#111111', accentColor:'#6EE7B7', tag:'Finance',     image:karsaImg                            },
 ];
 
+/* ── Scroll speed (px per 60fps frame ≈ 30 px/s) ───── */
+const SCROLL_SPEED = 0.5;
+
 /* ── Browser chrome mock ─────────────────────────────── */
 function BrowserMock({
   accentColor,
@@ -78,7 +81,7 @@ function BrowserMock({
   );
 }
 
-/* ── Video focus overlay (mobile tap) ────────────────── */
+/* ── Video focus overlay ─────────────────────────────── */
 function VideoOverlay({
   card,
   onDismiss,
@@ -90,7 +93,6 @@ function VideoOverlay({
   const dismissed = useRef(false);
   const [leaving, setLeaving] = useState(false);
 
-  /* Call once even if triggered by multiple sources */
   const dismiss = useCallback(() => {
     if (dismissed.current) return;
     dismissed.current = true;
@@ -98,12 +100,10 @@ function VideoOverlay({
     setTimeout(onDismiss, 190);
   }, [onDismiss]);
 
-  /* Autoplay as soon as overlay mounts */
   useEffect(() => {
     videoRef.current?.play().catch(() => {});
   }, []);
 
-  /* Dismiss on page scroll */
   useEffect(() => {
     const onScroll = () => dismiss();
     window.addEventListener('scroll', onScroll, { passive: true, once: true });
@@ -149,21 +149,22 @@ function VideoOverlay({
 function UICard({
   card,
   onFocusCard,
+  isDragging,
 }: {
   card:        UICardData;
   onFocusCard: (card: UICardData) => void;
+  isDragging:  () => boolean;
 }) {
   const [hovered, setHovered] = useState(false);
 
   /*
-   * DESKTOP — mouseenter on a video card opens the overlay immediately.
-   * No inline play; the overlay handles playback. Cards without a video
-   * get no interaction at all (early return keeps cursor:default intact).
+   * DESKTOP — mouseenter opens overlay immediately, but only
+   * when the user isn't mid-drag (moved > 6px threshold).
    */
-  /* Desktop hover: scale effect only — no overlay */
   const handleEnter = () => {
-    if (!card.video || isTouchDevice()) return;
+    if (!card.video || isTouchDevice() || isDragging()) return;
     setHovered(true);
+    onFocusCard(card);
   };
 
   const handleLeave = () => {
@@ -171,9 +172,12 @@ function UICard({
     setHovered(false);
   };
 
-  /* Click/tap opens the overlay on all devices */
+  /*
+   * MOBILE — tap opens overlay. Guard isDragging() so a
+   * swipe-and-release doesn't accidentally trigger the overlay.
+   */
   const handleClick = () => {
-    if (card.video) onFocusCard(card);
+    if (card.video && isTouchDevice() && !isDragging()) onFocusCard(card);
   };
 
   const hasRealAssets = Boolean(card.image || card.video);
@@ -183,7 +187,7 @@ function UICard({
       className={`ui-card${hovered ? ' ui-card--hovered' : ''}`}
       style={{
         backgroundColor: card.bg,
-        cursor: card.video ? 'pointer' : 'default',
+        cursor: card.video ? 'pointer' : 'inherit',
       }}
       onMouseEnter={handleEnter}
       onMouseLeave={handleLeave}
@@ -200,7 +204,6 @@ function UICard({
               className="ui-card__img"
             />
           )}
-          {/* Playback is handled by the overlay — no inline video element needed */}
         </div>
       ) : (
         <>
@@ -242,8 +245,66 @@ export default function UIExploration() {
   const [mouseOver,   setMouseOver]   = useState(false);
   const [focusedCard, setFocusedCard] = useState<UICardData | null>(null);
 
-  /* Carousel pauses when mouse is over (desktop) OR overlay is open (mobile) */
+  const trackRef  = useRef<HTMLDivElement>(null);
+  const posRef    = useRef(0);          /* current scroll offset in px  */
+  const rafRef    = useRef<number>(0);  /* rAF handle for cleanup       */
+  const pausedRef = useRef(false);      /* mirrors `paused` for the rAF */
+
+  /* drag: { startX, startPos (px at drag start), moved } */
+  const dragRef = useRef<{
+    startX:   number;
+    startPos: number;
+    moved:    boolean;
+  } | null>(null);
+
+  /* Keep ref in sync — rAF reads pausedRef to avoid stale closures */
   const paused = mouseOver || focusedCard !== null;
+  pausedRef.current = paused;
+
+  /* ── rAF scroll loop — runs for the lifetime of the component ── */
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+
+    const step = () => {
+      /* Advance only when unpaused and not dragging */
+      if (!pausedRef.current && !dragRef.current) {
+        posRef.current += SCROLL_SPEED;
+      }
+
+      /* Infinite wrap: track is 2× cards, wrap at the midpoint */
+      const half = track.scrollWidth / 2;
+      if (half > 0) {
+        if (posRef.current >= half) posRef.current -= half;
+        if (posRef.current <  0)   posRef.current += half;
+      }
+
+      track.style.transform = `translateX(${-posRef.current}px)`;
+      rafRef.current = requestAnimationFrame(step);
+    };
+
+    rafRef.current = requestAnimationFrame(step);
+    return () => cancelAnimationFrame(rafRef.current);
+  }, []); /* empty — refs keep everything up-to-date without restarts */
+
+  /* ── Drag pointer handlers (desktop only) ─────────── */
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isTouchDevice()) return;
+    dragRef.current = { startX: e.clientX, startPos: posRef.current, moved: false };
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!dragRef.current) return;
+    const delta = e.clientX - dragRef.current.startX;
+    if (Math.abs(delta) > 6) dragRef.current.moved = true;
+    /* Drag right → negative delta → scroll left (smaller pos) */
+    posRef.current = dragRef.current.startPos - delta;
+  };
+
+  const handlePointerUp = () => {
+    dragRef.current = null;
+  };
 
   const handleFocusCard = useCallback((card: UICardData) => {
     setFocusedCard(card);
@@ -251,20 +312,27 @@ export default function UIExploration() {
 
   const handleDismissOverlay = useCallback(() => {
     setFocusedCard(null);
-    /* carousel resumes automatically once focusedCard is null */
   }, []);
 
-  /* Desktop only: pause carousel while mouse is inside the strip */
-  const handleCarouselEnter = () => { if (!isTouchDevice()) setMouseOver(true);  };
-  const handleCarouselLeave = () => { if (!isTouchDevice()) setMouseOver(false); };
+  /* Pause carousel while mouse hovers over the strip */
+  const handleCarouselEnter = () => {
+    if (!isTouchDevice()) setMouseOver(true);
+  };
+  const handleCarouselLeave = () => {
+    if (!isTouchDevice()) {
+      setMouseOver(false);
+      dragRef.current = null; /* cancel any drag that exits the bounds */
+    }
+  };
 
-  /* Duplicate cards for infinite loop */
+  /* Passed down so hover-to-open is suppressed during a drag */
+  const isDragging = useCallback(() => dragRef.current?.moved ?? false, []);
+
   const allCards = [...CARDS, ...CARDS];
 
   return (
     <section className="ui-exploration">
 
-      {/* Mobile overlay — mounts on top of everything */}
       {focusedCard && (
         <VideoOverlay card={focusedCard} onDismiss={handleDismissOverlay} />
       )}
@@ -273,15 +341,18 @@ export default function UIExploration() {
         className="ui-exploration__carousel"
         onMouseEnter={handleCarouselEnter}
         onMouseLeave={handleCarouselLeave}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerCancel={handlePointerUp}
       >
-        <div
-          className={`ui-exploration__track${paused ? ' ui-exploration__track--paused' : ''}`}
-        >
+        <div ref={trackRef} className="ui-exploration__track">
           {allCards.map((card, i) => (
             <UICard
               key={`${card.id}-${i}`}
               card={card}
               onFocusCard={handleFocusCard}
+              isDragging={isDragging}
             />
           ))}
         </div>
