@@ -2,7 +2,8 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import GlareHover from '../components/GlareHover';
-import nocodeVideo from '../assets/videos/nocode-demo.mp4';
+import websiteDesignVideo from '../assets/videos/website-design-demo.mp4';
+import nocodeVideo        from '../assets/videos/nocode-demo.mp4';
 import './ServicesPage.css';
 
 /* ── Service data ───────────────────────────────────── */
@@ -13,10 +14,10 @@ interface Service {
 }
 
 const SERVICES: Service[] = [
-  { title: 'Website Design', meta: <>Product<br/>Designer</>                       },
-  { title: 'No-Code Dev',    meta: <>Framer<br/>Developer</>,  video: nocodeVideo  },
-  { title: 'Graphics',       meta: <>In<br/>Progress</>                            },
-  { title: 'Brand Identity', meta: <>In<br/>Progress</>                            },
+  { title: 'Website Design', meta: <>Product<br/>Designer</>,  video: websiteDesignVideo },
+  { title: 'No-Code Dev',    meta: <>Framer<br/>Developer</>,  video: nocodeVideo        },
+  { title: 'Graphics',       meta: <>In<br/>Progress</>                                  },
+  { title: 'Brand Identity', meta: <>In<br/>Progress</>                                  },
 ];
 
 /* Delay before the glare sweeps in — feels intentional, not jittery */
@@ -137,8 +138,8 @@ export default function ServicesPage({ onBack, onNavigate }: ServicesPageProps) 
             {SERVICES[activeIdx].video && (
               <video
                 key={SERVICES[activeIdx].title}
+                ref={(el) => { el?.play().catch(() => {}); }}
                 src={SERVICES[activeIdx].video}
-                autoPlay
                 muted
                 loop
                 playsInline
