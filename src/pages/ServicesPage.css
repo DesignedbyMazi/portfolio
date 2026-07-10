@@ -130,6 +130,25 @@
   display: block;
 }
 
+/* Doodle overlays — sit above the video, non-interactive */
+.svc-doodle {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 88px;
+  pointer-events: none;
+  z-index: 2;
+  color: var(--color-text-secondary);
+  overflow: visible;
+}
+
+.svc-doodle--top    { top: 0; }
+.svc-doodle--bottom { bottom: 0; transform: scaleY(-1); }
+
+@media (max-width: 767px) {
+  .svc-doodle { height: 60px; }
+}
+
 /* ── Footer ─────────────────────────────────────────── */
 .svc-footer-wrap {
   max-width: 800px;
