@@ -2,19 +2,21 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import GlareHover from '../components/GlareHover';
+import nocodeVideo from '../assets/videos/nocode-demo.mp4';
 import './ServicesPage.css';
 
 /* ── Service data ───────────────────────────────────── */
 interface Service {
   title: string;
   meta:  ReactNode;
+  video?: string;
 }
 
 const SERVICES: Service[] = [
-  { title: 'Website Design', meta: <>Product<br/>Designer</>  },
-  { title: 'No-Code Dev',    meta: <>Framer<br/>Developer</>  },
-  { title: 'Graphics',       meta: <>In<br/>Progress</>       },
-  { title: 'Brand Identity', meta: <>In<br/>Progress</>       },
+  { title: 'Website Design', meta: <>Product<br/>Designer</>                       },
+  { title: 'No-Code Dev',    meta: <>Framer<br/>Developer</>,  video: nocodeVideo  },
+  { title: 'Graphics',       meta: <>In<br/>Progress</>                            },
+  { title: 'Brand Identity', meta: <>In<br/>Progress</>                            },
 ];
 
 /* Delay before the glare sweeps in — feels intentional, not jittery */
@@ -130,8 +132,21 @@ export default function ServicesPage({ onBack, onNavigate }: ServicesPageProps) 
             })}
           </ul>
 
-          {/* Right — plain container, will carry a video */}
-          <div className="svc-visual" aria-hidden="true" />
+          {/* Right — visual panel */}
+          <div className="svc-visual" aria-hidden="true">
+            {SERVICES[activeIdx].video && (
+              <video
+                key={SERVICES[activeIdx].title}
+                src={SERVICES[activeIdx].video}
+                autoPlay
+                muted
+                loop
+                playsInline
+                preload="none"
+                className="svc-visual__video"
+              />
+            )}
+          </div>
 
         </div>
       </div>

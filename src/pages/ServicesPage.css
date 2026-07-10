@@ -110,13 +110,24 @@
   width: fit-content !important;
 }
 
-/* ── Right column — plain container for future video ── */
+/* ── Right column — visual panel ───────────────────── */
 .svc-visual {
   width: 430px;
   height: 466px;
   flex-shrink: 0;
   background: var(--color-surface);
   border: 1px solid var(--color-border);
+  overflow: hidden;
+  position: relative;
+}
+
+.svc-visual__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
 }
 
 /* ── Footer ─────────────────────────────────────────── */
@@ -181,6 +192,7 @@
   .svc-visual {
     width: 100%;
     height: 240px;
+    overflow: hidden;
   }
 
   .svc-footer-wrap {

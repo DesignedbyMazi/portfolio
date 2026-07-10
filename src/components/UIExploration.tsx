@@ -161,10 +161,10 @@ function UICard({
    * DESKTOP — mouseenter opens overlay immediately, but only
    * when the user isn't mid-drag (moved > 6px threshold).
    */
+  /* Hover scales the card and pauses the carousel — overlay never opens on hover */
   const handleEnter = () => {
-    if (!card.video || isTouchDevice() || isDragging()) return;
+    if (!card.video || isTouchDevice()) return;
     setHovered(true);
-    onFocusCard(card);
   };
 
   const handleLeave = () => {
@@ -172,12 +172,9 @@ function UICard({
     setHovered(false);
   };
 
-  /*
-   * MOBILE — tap opens overlay. Guard isDragging() so a
-   * swipe-and-release doesn't accidentally trigger the overlay.
-   */
+  /* Click / tap opens the overlay on all devices. Guard drag so swipe-release doesn't fire. */
   const handleClick = () => {
-    if (card.video && isTouchDevice() && !isDragging()) onFocusCard(card);
+    if (card.video && !isDragging()) onFocusCard(card);
   };
 
   const hasRealAssets = Boolean(card.image || card.video);
