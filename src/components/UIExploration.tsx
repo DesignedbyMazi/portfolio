@@ -160,23 +160,20 @@ function UICard({
    * No inline play; the overlay handles playback. Cards without a video
    * get no interaction at all (early return keeps cursor:default intact).
    */
+  /* Desktop hover: scale effect only — no overlay */
   const handleEnter = () => {
     if (!card.video || isTouchDevice()) return;
     setHovered(true);
-    onFocusCard(card);
   };
 
   const handleLeave = () => {
     if (!card.video || isTouchDevice()) return;
     setHovered(false);
-    /* Overlay stays open — it has its own dismiss (click-outside / scroll / end) */
   };
 
-  /*
-   * MOBILE — tap opens the overlay (video cards only).
-   */
+  /* Click/tap opens the overlay on all devices */
   const handleClick = () => {
-    if (card.video && isTouchDevice()) onFocusCard(card);
+    if (card.video) onFocusCard(card);
   };
 
   const hasRealAssets = Boolean(card.image || card.video);
