@@ -1,55 +1,38 @@
-/* ── Base navbar ─────────────────────────────────────── */
+/* ─────────────────────────────────────────────────────
+   Original sticky top bar
+   Fades out when the hero section has been scrolled past
+───────────────────────────────────────────────────── */
 .navbar {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 100;
-  width: 100%;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  background: rgba(255, 255, 255, 0.8);
-
-  /* Border on bottom (top position), transparent on top */
-  border-top:    0.8px solid transparent;
+  background: rgba(255, 255, 255, 0.80);
   border-bottom: 0.8px solid rgba(234, 234, 234, 0.6);
-
-  /* Subtle directional shadow — below when at top */
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
-
-  /* Smooth slide between top and bottom */
+  opacity: 1;
   transform: translateY(0);
   transition:
-    transform   0.5s cubic-bezier(0.16, 1, 0.3, 1),
-    border-color 0.3s ease,
-    box-shadow   0.3s ease;
+    opacity  0.4s ease,
+    transform 0.4s ease;
 }
 
-/* ── Dark mode ───────────────────────────────────────── */
+.navbar--hidden {
+  opacity: 0;
+  transform: translateY(-100%);
+  pointer-events: none;
+}
+
 [data-theme="dark"] .navbar {
-  background: rgba(17, 17, 17, 0.8);
-  border-bottom-color: #1F1F1F;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  background: rgba(17, 17, 17, 0.80);
+  border-bottom-color: rgba(31, 31, 31, 0.8);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
 }
 
-/* ── Bottom position — MOBILE ONLY ──────────────────── */
-/* On desktop the class is still applied by JS but has no effect */
-@media (max-width: 767px) {
-  .navbar--bottom {
-    transform: translateY(calc(100vh - 100%));
-    border-top:    0.8px solid rgba(234, 234, 234, 0.6);
-    border-bottom: 0.8px solid transparent;
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.06);
-  }
-
-  [data-theme="dark"] .navbar--bottom {
-    border-top-color:    #1F1F1F;
-    border-bottom-color: transparent;
-    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.25);
-  }
-}
-
-/* ── Inner layout ────────────────────────────────────── */
+/* ── Inner layout ── */
 .navbar__inner {
   max-width: var(--page-width);
   margin: 0 auto;
@@ -64,13 +47,6 @@
   display: flex;
   align-items: center;
   gap: 20px;
-  position: relative;
-  align-self: stretch;
-}
-
-.navbar__link-wrap {
-  display: flex;
-  align-items: center;
 }
 
 .navbar__link {
@@ -80,22 +56,13 @@
   color: var(--color-text-muted);
   letter-spacing: 0.15px;
   white-space: nowrap;
+  text-decoration: none;
+  transition: color 0.15s ease;
 }
 
-.navbar__link-wrap--active .navbar__link {
-  font-weight: 700;
+.navbar__link--active,
+.navbar__link:hover {
   color: var(--color-text-primary);
-}
-
-/* Single sliding underline shared across all tabs */
-.navbar__sliding-line {
-  position: absolute;
-  bottom: 0;
-  height: 2px;
-  background: #850909;
-  border-radius: 1px;
-  pointer-events: none;
-  transition: left 0.2s linear, width 0.2s linear, opacity 0.15s ease;
 }
 
 .navbar__status {
@@ -129,12 +96,213 @@
   white-space: nowrap;
 }
 
-/* ── Tablet ──────────────────────────── */
+/* ─────────────────────────────────────────────────────
+   Shared glassmorphism pill foundation
+───────────────────────────────────────────────────── */
+.float-header,
+.float-nav {
+  position: fixed;
+  left: 50%;
+  z-index: 100;
+  border-radius: 9999px;
+
+  /* Light-mode glass */
+  background: rgba(245, 245, 245, 0.82);
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 4px 16px rgba(0, 0, 0, 0.10);
+
+  /* Hidden by default — slide in when visible */
+  pointer-events: none;
+  transition:
+    opacity  0.4s ease,
+    transform 0.4s ease;
+}
+
+[data-theme="dark"] .float-header,
+[data-theme="dark"] .float-nav {
+  /* Dark-mode glass (Figma spec) */
+  background: rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(226, 226, 226, 0.08);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+/* ─────────────────────────────────────────────────────
+   Floating top header pill
+───────────────────────────────────────────────────── */
+.float-header {
+  top: 16px;
+  transform: translateX(-50%) translateY(-12px);
+  opacity: 0;
+
+  width: min(302px, calc(100vw - 48px));
+  height: 32px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.float-header--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Left group: avatar + name ── */
+.float-header__left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-left: 2px;
+}
+
+.float-header__avatar {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.float-header__name {
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  letter-spacing: 0;
+  white-space: nowrap;
+  color: #2D2D2D;
+}
+
+[data-theme="dark"] .float-header__name {
+  color: #DFDFDF;
+}
+
+/* ── Right group: View works + theme toggle ── */
+.float-header__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-right: 6px;
+}
+
+.float-header__cta {
+  font-size: 12px;
+  line-height: 18px;
+  font-weight: 500;
+  letter-spacing: 0.15px;
+  color: #2D2D2D;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.15s ease;
+}
+
+.float-header__cta:hover { opacity: 0.65; }
+
+[data-theme="dark"] .float-header__cta {
+  color: #DFDFDF;
+}
+
+.float-header__theme {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: #777777;
+  transition: color 0.15s ease;
+}
+
+.float-header__theme:hover { color: #444; }
+[data-theme="dark"] .float-header__theme:hover { color: #bbb; }
+
+/* ─────────────────────────────────────────────────────
+   Floating bottom icon nav
+───────────────────────────────────────────────────── */
+.float-nav {
+  bottom: 20px;
+  transform: translateX(-50%) translateY(12px);
+  opacity: 0;
+
+  width: min(288px, calc(100vw - 48px));
+  height: 48px;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.float-nav--visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: auto;
+}
+
+/* ── Individual tab ── */
+.float-nav__tab {
+  flex: 1;
+  max-width: 64px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: #515151;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.float-nav__tab--active {
+  background: rgba(0, 0, 0, 0.08);
+  color: #111111;
+}
+
+[data-theme="dark"] .float-nav__tab {
+  color: #515151;
+}
+
+[data-theme="dark"] .float-nav__tab--active {
+  background: rgba(255, 255, 255, 0.10);
+  color: #FFFFFF;
+}
+
+/* ─────────────────────────────────────────────────────
+   Bottom-padding spacer so content doesn't hide
+   behind the floating bottom nav
+───────────────────────────────────────────────────── */
+.page .main,
+.works-content,
+.svc-content {
+  padding-bottom: 88px;
+}
+
+/* ─────────────────────────────────────────────────────
+   Tablet
+───────────────────────────────────────────────────── */
 @media (max-width: 1024px) {
   .navbar__inner { padding: 0 40px; }
 }
 
-/* ── Mobile ──────────────────────────── */
+/* ─────────────────────────────────────────────────────
+   Mobile
+───────────────────────────────────────────────────── */
 @media (max-width: 767px) {
   .navbar__inner {
     padding: 0 24px;
@@ -142,15 +310,11 @@
   }
   .navbar__links { gap: 16px; }
   .navbar__link  { font-size: 14px; letter-spacing: 0; }
+
+  .float-header { top: 12px; }
+  .float-nav    { bottom: max(16px, env(safe-area-inset-bottom, 16px)); }
 }
 
-/* ── Narrow: hide status text, keep dot ── */
 @media (max-width: 520px) {
   .navbar__status-text { display: none; }
-}
-
-/* ── Very narrow: drop Services + About Me ── */
-@media (max-width: 380px) {
-  .navbar__links { gap: 12px; }
-  .navbar__link-wrap:nth-child(n+3) { display: none; }
 }

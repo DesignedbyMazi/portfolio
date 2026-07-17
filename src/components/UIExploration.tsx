@@ -7,7 +7,6 @@ import dashboardImg    from '../assets/images/dashboard-card.png';
 import dashboardVideo  from '../assets/videos/dashboard-demo.mp4';
 import balanceeImg     from '../assets/images/balancee-card.png';
 import balanceeVideo   from '../assets/videos/balancee-demo.mp4';
-import cryptoWalletImg from '../assets/images/crypto-wallet-card.png';
 import karsaImg        from '../assets/images/karsa-card.png';
 import './UIExploration.css';
 
@@ -33,7 +32,6 @@ const CARDS: UICardData[] = [
   { id:2, title:'Baraka Landing Redesign',      subtitle:'Grow your wealth the smart way with auto-invest in US stocks & ETFs.',                          bg:'#0C0C14', accentColor:'#A78BFA', tag:'Investing',   image:barakaImg,      video:barakaVideo    },
   { id:3, title:'Project Management Dashboard', subtitle:'Designed for efficiency, the dashboard effectively highlights crucial project data.',             bg:'#1E2A78', accentColor:'#818CF8', tag:'Productivity', image:dashboardImg,  video:dashboardVideo },
   { id:4, title:'Balanceé Feature',             subtitle:'Streamlined Vehicle Repair and Maintenance Services with customer-focused features.',             bg:'#0D7C7C', accentColor:'#5EEAD4', tag:'FinTech',     image:balanceeImg,    video:balanceeVideo  },
-  { id:5, title:'Crypto Wallet App',            subtitle:'Transfer assets from wallet to your preferred destination with ease.',                           bg:'#3B0FA0', accentColor:'#A78BFA', tag:'Web3',        image:cryptoWalletImg                     },
   { id:6, title:'Karsa — Spend Anywhere',       subtitle:'Transfer money globally with ease. Additional support for US transfers.',                        bg:'#111111', accentColor:'#6EE7B7', tag:'Finance',     image:karsaImg                            },
 ];
 

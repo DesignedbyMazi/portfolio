@@ -9,7 +9,6 @@ import dashboardImg   from '../assets/images/dashboard-card.png';
 import balanceeImg    from '../assets/images/balancee-card.png';
 import barakaImg      from '../assets/images/baraka-card.jpg';
 import karsaImg       from '../assets/images/karsa-card.png';
-import cryptoImg      from '../assets/images/crypto-wallet-card.png';
 
 /* ── Videos ─────────────────────────────────────────── */
 import carloftyVideo  from '../assets/videos/carlofty-outcome.mp4';
@@ -69,7 +68,6 @@ const liveProjects: LiveProject[] = [
   { id:'balancee',  label:'Balancee',        year:'2025',           title:'Balancee',      image:balanceeImg,  video:balanceeVideo                                                 },
   { id:'baraka',    label:'Baraka',          year:'2024',           title:'Baraka',        image:barakaImg,    video:barakaVideo,    href:'https://barakaredesign.framer.website/'   },
   { id:'karsa',     label:'Karsa',           year:'2024',           title:'Karsa',         image:karsaImg                                                                         },
-  { id:'crypto',    label:'Crypto Wallet',   year:'2024',           title:'Crypto Wallet', image:cryptoImg                                                                        },
 ];
 
 const caseStudies: CaseStudy[] = [
