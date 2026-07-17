@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import profileImg from '../assets/images/profile.jpg';
+import GlareHover from './GlareHover';
+import ClickSpark from './ClickSpark';
 import './Navbar.css';
 
 interface NavbarProps {
@@ -7,7 +9,7 @@ interface NavbarProps {
   onNavigate?: (page: string) => void;
 }
 
-/* ── Inline icon components (use currentColor) ── */
+/* ── Inline icon components (stroke="currentColor") ── */
 function HomeIcon() {
   return (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden>
@@ -61,11 +63,10 @@ function SunIcon() {
 const NAV_TABS = [
   { key: 'Home',     label: 'Home',     Icon: HomeIcon      },
   { key: 'Work',     label: 'Work',     Icon: BriefcaseIcon },
-  { key: 'Services', label: 'Services', Icon: PaintIcon     },
-  { key: 'About Me', label: 'About Me', Icon: UserIcon      },
+  { key: 'Services', label: 'Services', Icon: PaintIcon      },
+  { key: 'About Me', label: 'About Me', Icon: UserIcon       },
 ] as const;
 
-/* ── Original top links (shown only before float) ── */
 const TEXT_LINKS = ['Home', 'Work', 'Services', 'About Me'] as const;
 
 export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps) {
@@ -75,10 +76,8 @@ export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps)
   /* Detect scroll past hero via IntersectionObserver */
   useEffect(() => {
     const heroEl = document.querySelector('.hero');
-    if (!heroEl) {
-      setFloated(true);
-      return;
-    }
+    if (!heroEl) { setFloated(true); return; }
+
     const observer = new IntersectionObserver(
       ([entry]) => setFloated(!entry.isIntersecting),
       { threshold: 0 }
@@ -87,7 +86,7 @@ export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps)
     return () => observer.disconnect();
   }, []);
 
-  /* Read initial theme from DOM */
+  /* Sync theme from DOM on mount */
   useEffect(() => {
     const t = document.documentElement.getAttribute('data-theme');
     if (t === 'dark' || t === 'light') setTheme(t);
@@ -99,9 +98,12 @@ export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps)
     document.documentElement.setAttribute('data-theme', next);
   };
 
+  /* Spark color adapts to theme for readability */
+  const sparkColor = theme === 'dark' ? '#ffffff' : '#555555';
+
   return (
     <>
-      {/* ── Original sticky top bar — fades out once floated ── */}
+      {/* ── Original sticky top bar — fades out when floated ── */}
       <nav className={`navbar${floated ? ' navbar--hidden' : ''}`}>
         <div className="navbar__inner">
           <div className="navbar__links">
@@ -123,7 +125,7 @@ export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps)
         </div>
       </nav>
 
-      {/* ── Floating top header pill ── */}
+      {/* ── Floating top header — Dynamic Island morph ── */}
       <div
         className={`float-header${floated ? ' float-header--visible' : ''}`}
         role="banner"
@@ -154,20 +156,46 @@ export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps)
         className={`float-nav${floated ? ' float-nav--visible' : ''}`}
         aria-label="Main navigation"
       >
-        {NAV_TABS.map(({ key, label, Icon }) => {
-          const isActive = activePage === key;
-          return (
-            <button
-              key={key}
-              className={`float-nav__tab${isActive ? ' float-nav__tab--active' : ''}`}
-              onClick={() => onNavigate?.(key)}
-              aria-label={label}
-              aria-current={isActive ? 'page' : undefined}
-            >
-              <Icon />
-            </button>
-          );
-        })}
+        {/* ClickSpark fires on any click inside the pill */}
+        <ClickSpark
+          sparkColor={sparkColor}
+          sparkSize={7}
+          sparkRadius={18}
+          sparkCount={6}
+          duration={380}
+        >
+          {/* This div carries the flex layout that ClickSpark's wrapper div can't */}
+          <div className="float-nav__tabs">
+            {NAV_TABS.map(({ key, label, Icon }) => {
+              const isActive = activePage === key;
+              return (
+                <button
+                  key={key}
+                  className={`float-nav__tab${isActive ? ' float-nav__tab--active' : ''}`}
+                  onClick={() => onNavigate?.(key)}
+                  aria-label={label}
+                  aria-current={isActive ? 'page' : undefined}
+                >
+                  {/* GlareHover adds sweep glare on hover */}
+                  <GlareHover
+                    width="100%"
+                    height="100%"
+                    background="transparent"
+                    borderRadius="9999px"
+                    borderColor="transparent"
+                    glareColor="#ffffff"
+                    glareOpacity={0.28}
+                    glareAngle={-30}
+                    glareSize={300}
+                    transitionDuration={600}
+                  >
+                    <Icon />
+                  </GlareHover>
+                </button>
+              );
+            })}
+          </div>
+        </ClickSpark>
       </nav>
     </>
   );

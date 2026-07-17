@@ -1,6 +1,5 @@
 /* ─────────────────────────────────────────────────────
    Original sticky top bar
-   Fades out when the hero section has been scrolled past
 ───────────────────────────────────────────────────── */
 .navbar {
   position: fixed;
@@ -16,7 +15,7 @@
   opacity: 1;
   transform: translateY(0);
   transition:
-    opacity  0.4s ease,
+    opacity   0.4s ease,
     transform 0.4s ease;
 }
 
@@ -32,7 +31,6 @@
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.20);
 }
 
-/* ── Inner layout ── */
 .navbar__inner {
   max-width: var(--page-width);
   margin: 0 auto;
@@ -77,7 +75,6 @@
   border-radius: 50%;
   background: var(--color-success);
   flex-shrink: 0;
-  box-shadow: 0 0 0 0 rgba(17, 171, 42, 0.6);
   animation: pulse-dot 2.2s ease-in-out infinite;
 }
 
@@ -97,7 +94,7 @@
 }
 
 /* ─────────────────────────────────────────────────────
-   Shared glassmorphism pill foundation
+   Shared pill foundation (light-mode base)
 ───────────────────────────────────────────────────── */
 .float-header,
 .float-nav {
@@ -105,68 +102,90 @@
   left: 50%;
   z-index: 100;
   border-radius: 9999px;
+  pointer-events: none;
 
-  /* Light-mode: frosted white pill */
+  /* Light-mode glass */
   background: rgba(252, 252, 252, 0.88);
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  /* Border at 65% opacity — was 0.08, 65% = ~0.052 */
+  border: 1px solid rgba(0, 0, 0, 0.052);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.70),
     0 4px 24px rgba(0, 0, 0, 0.12),
     0 1px 4px  rgba(0, 0, 0, 0.06);
-
-  /* Hidden by default */
-  pointer-events: none;
-
-  /* Spring-like entry: fast out, smooth settle */
-  transition:
-    opacity   0.55s cubic-bezier(0.16, 1, 0.3, 1),
-    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] .float-header,
 [data-theme="dark"] .float-nav {
-  /*
-   * Opaque dark foundation so the pill reads clearly
-   * against ANY content scrolling behind it — light or dark.
-   * Pure glass (rgba white 0.10) disappears on dark BGs and
-   * goes milky-white on light content behind it.
-   */
   background: rgba(22, 22, 22, 0.92);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  /* Border at 65% opacity — was 0.14, 65% = ~0.091 */
+  border: 1px solid rgba(255, 255, 255, 0.091);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.07),
     0 8px 32px rgba(0, 0, 0, 0.55),
     0 2px 8px  rgba(0, 0, 0, 0.30);
 }
 
 /* ─────────────────────────────────────────────────────
-   Floating top header pill
+   Floating top header — Dynamic Island morph
+
+   Starts as a narrow pill (avatar width only).
+   When .float-header--visible is added, width expands
+   outward from center using a spring cubic-bezier that
+   slightly overshoots then settles — exactly like
+   Apple Dynamic Island.
+
+   overflow: hidden clips all content to the pill shape
+   during the morph so nothing bleeds outside.
 ───────────────────────────────────────────────────── */
 .float-header {
   top: 16px;
-  /* Start above viewport edge, slightly small — makes entry feel like it drops in */
-  transform: translateX(-50%) translateY(-28px) scale(0.94);
-  opacity: 0;
+  transform: translateX(-50%);
 
-  width: min(302px, calc(100vw - 48px));
+  /* Collapsed: narrow pill, hidden */
+  width: 28px;
   height: 32px;
-  padding: 4px;
+  opacity: 0;
+  overflow: hidden;
+
   display: flex;
   align-items: center;
   justify-content: space-between;
+  padding: 4px;
+
+  /* Opacity: instant so the tiny pill is visible from frame 1.
+     Width: aggressive spring (1.8 overshoot) for a dramatic Dynamic Island bounce. */
+  transition:
+    opacity 0.05s ease,
+    width   0.72s cubic-bezier(0.25, 1.8, 0.5, 1);
 }
 
 .float-header--visible {
+  width: min(302px, calc(100vw - 48px));
   opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
 }
 
-/* ── Left group: avatar + name ── */
+/* ── Inner content fades in AFTER pill has expanded ── */
+.float-header__left,
+.float-header__right {
+  opacity: 0;
+  flex-shrink: 0;
+  /* Fade OUT: quick, no delay (content disappears as pill shrinks) */
+  transition: opacity 0.12s ease;
+}
+
+/* Fade IN: small delay so content appears once pill is mostly open */
+.float-header--visible .float-header__left,
+.float-header--visible .float-header__right {
+  opacity: 1;
+  transition: opacity 0.2s ease 0.28s;
+}
+
+/* ── Left group ── */
 .float-header__left {
   display: flex;
   align-items: center;
@@ -191,11 +210,9 @@
   color: #2D2D2D;
 }
 
-[data-theme="dark"] .float-header__name {
-  color: #FFFFFF;
-}
+[data-theme="dark"] .float-header__name { color: #FFFFFF; }
 
-/* ── Right group: View works + theme toggle ── */
+/* ── Right group ── */
 .float-header__right {
   display: flex;
   align-items: center;
@@ -214,14 +231,14 @@
   padding: 0;
   cursor: pointer;
   white-space: nowrap;
+  text-decoration: underline;
+  text-underline-offset: 2px;
   transition: opacity 0.15s ease;
 }
 
 .float-header__cta:hover { opacity: 0.65; }
 
-[data-theme="dark"] .float-header__cta {
-  color: #FFFFFF;
-}
+[data-theme="dark"] .float-header__cta { color: #FFFFFF; }
 
 .float-header__theme {
   display: flex;
@@ -237,7 +254,7 @@
   transition: color 0.15s ease;
 }
 
-.float-header__theme:hover { color: #444; }
+.float-header__theme:hover          { color: #444; }
 [data-theme="dark"] .float-header__theme:hover { color: #bbb; }
 
 /* ─────────────────────────────────────────────────────
@@ -247,14 +264,16 @@
   bottom: 20px;
   transform: translateX(-50%) translateY(28px) scale(0.94);
   opacity: 0;
+  overflow: hidden;
 
   width: min(288px, calc(100vw - 48px));
   height: 48px;
   padding: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+
+  /* Bottom nav slides up — keep translate animation */
+  transition:
+    opacity   0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .float-nav--visible {
@@ -263,19 +282,31 @@
   pointer-events: auto;
 }
 
-/* ── Individual tab ── */
+/* ── ClickSpark fills the nav; tabs flex inside it ── */
+.float-nav__tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  height: 100%;
+}
+
+/* ── Individual icon tab ── */
 .float-nav__tab {
   flex: 1;
   max-width: 64px;
   height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border-radius: 9999px;
   border: none;
   background: transparent;
   cursor: pointer;
+  /* Default color — overridden per theme below */
   color: #515151;
+  /* No padding: GlareHover fills the button */
+  padding: 0;
+  /* Clip the glare sweep to the pill shape */
+  overflow: hidden;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
@@ -284,18 +315,20 @@
   color: #111111;
 }
 
-[data-theme="dark"] .float-nav__tab {
-  color: #888888;
-}
-
-[data-theme="dark"] .float-nav__tab--active {
+[data-theme="dark"] .float-nav__tab          { color: #888888; }
+[data-theme="dark"] .float-nav__tab--active  {
   background: rgba(255, 255, 255, 0.10);
   color: #FFFFFF;
 }
 
+/* GlareHover fills the tab button */
+.float-nav__tab .glare-hover {
+  width: 100% !important;
+  height: 100% !important;
+}
+
 /* ─────────────────────────────────────────────────────
-   Bottom-padding spacer so content doesn't hide
-   behind the floating bottom nav
+   Bottom padding — content doesn't hide under the pill
 ───────────────────────────────────────────────────── */
 .page .main,
 .works-content,
@@ -314,13 +347,10 @@
    Mobile
 ───────────────────────────────────────────────────── */
 @media (max-width: 767px) {
-  .navbar__inner {
-    padding: 0 24px;
-    gap: 12px;
-  }
-  .navbar__links { gap: 16px; }
-  .navbar__link  { font-size: 14px; letter-spacing: 0; }
+  /* Old sticky bar never shows on mobile — floating nav takes over entirely */
+  .navbar { display: none !important; }
 
+  /* Floating pills use same scroll trigger as desktop; just adjust position */
   .float-header { top: 12px; }
   .float-nav    { bottom: max(16px, env(safe-area-inset-bottom, 16px)); }
 }
