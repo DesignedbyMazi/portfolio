@@ -106,32 +106,41 @@
   z-index: 100;
   border-radius: 9999px;
 
-  /* Light-mode glass */
-  background: rgba(245, 245, 245, 0.82);
-  border: 1px solid rgba(0, 0, 0, 0.07);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  /* Light-mode: frosted white pill */
+  background: rgba(252, 252, 252, 0.88);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    0 4px 16px rgba(0, 0, 0, 0.10);
+    inset 0 1px 0 rgba(255, 255, 255, 0.70),
+    0 4px 24px rgba(0, 0, 0, 0.12),
+    0 1px 4px  rgba(0, 0, 0, 0.06);
 
-  /* Hidden by default — slide in when visible */
+  /* Hidden by default */
   pointer-events: none;
+
+  /* Spring-like entry: fast out, smooth settle */
   transition:
-    opacity  0.4s ease,
-    transform 0.4s ease;
+    opacity   0.55s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-theme="dark"] .float-header,
 [data-theme="dark"] .float-nav {
-  /* Dark-mode glass (Figma spec) */
-  background: rgba(255, 255, 255, 0.10);
-  border: 1px solid rgba(226, 226, 226, 0.08);
-  backdrop-filter: blur(7px);
-  -webkit-backdrop-filter: blur(7px);
+  /*
+   * Opaque dark foundation so the pill reads clearly
+   * against ANY content scrolling behind it — light or dark.
+   * Pure glass (rgba white 0.10) disappears on dark BGs and
+   * goes milky-white on light content behind it.
+   */
+  background: rgba(22, 22, 22, 0.92);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 4px 4px rgba(0, 0, 0, 0.25);
+    inset 0 1px 0 rgba(255, 255, 255, 0.10),
+    0 8px 32px rgba(0, 0, 0, 0.55),
+    0 2px 8px  rgba(0, 0, 0, 0.30);
 }
 
 /* ─────────────────────────────────────────────────────
@@ -139,7 +148,8 @@
 ───────────────────────────────────────────────────── */
 .float-header {
   top: 16px;
-  transform: translateX(-50%) translateY(-12px);
+  /* Start above viewport edge, slightly small — makes entry feel like it drops in */
+  transform: translateX(-50%) translateY(-28px) scale(0.94);
   opacity: 0;
 
   width: min(302px, calc(100vw - 48px));
@@ -152,7 +162,7 @@
 
 .float-header--visible {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
 }
 
@@ -182,7 +192,7 @@
 }
 
 [data-theme="dark"] .float-header__name {
-  color: #DFDFDF;
+  color: #FFFFFF;
 }
 
 /* ── Right group: View works + theme toggle ── */
@@ -210,7 +220,7 @@
 .float-header__cta:hover { opacity: 0.65; }
 
 [data-theme="dark"] .float-header__cta {
-  color: #DFDFDF;
+  color: #FFFFFF;
 }
 
 .float-header__theme {
@@ -235,7 +245,7 @@
 ───────────────────────────────────────────────────── */
 .float-nav {
   bottom: 20px;
-  transform: translateX(-50%) translateY(12px);
+  transform: translateX(-50%) translateY(28px) scale(0.94);
   opacity: 0;
 
   width: min(288px, calc(100vw - 48px));
@@ -249,7 +259,7 @@
 
 .float-nav--visible {
   opacity: 1;
-  transform: translateX(-50%) translateY(0);
+  transform: translateX(-50%) translateY(0) scale(1);
   pointer-events: auto;
 }
 
@@ -275,7 +285,7 @@
 }
 
 [data-theme="dark"] .float-nav__tab {
-  color: #515151;
+  color: #888888;
 }
 
 [data-theme="dark"] .float-nav__tab--active {
