@@ -1,0 +1,45 @@
+.about-page {
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+/* Full-viewport centred flex row */
+.about-main {
+  display: flex;
+  align-items: center;
+  min-height: 100vh;
+  padding: 0 var(--content-padding, 24px);
+  padding-bottom: 96px; /* clear floating bottom nav */
+}
+
+/* ── Option Wheel container ────────────────────────── */
+.about-wheel-wrap {
+  /* Enough width to display the longest label without clipping */
+  width: clamp(280px, 50vw, 560px);
+  /* Height drives the visible portion of the wheel's arc */
+  height: 65vh;
+  min-height: 320px;
+  flex-shrink: 0;
+  /* Slight left offset so the wheel feels anchored to the left edge */
+  margin-left: clamp(0px, 2vw, 40px);
+}
+
+/* Right panel placeholder — fills remaining space */
+.about-panel {
+  flex: 1;
+}
+
+/* ── Mobile ─────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .about-main {
+    flex-direction: column;
+    align-items: flex-start;
+    padding-top: 72px;
+  }
+
+  .about-wheel-wrap {
+    width: 100%;
+    height: 60vh;
+    margin-left: 0;
+  }
+}

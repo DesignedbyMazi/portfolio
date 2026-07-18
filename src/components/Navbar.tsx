@@ -73,7 +73,14 @@ const TEXT_LINKS = ['Home', 'Work', 'Services', 'About Me'] as const;
 
 export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'Godswill Uche', showViewWorks = true, onGoHome }: NavbarProps) {
   const [floated, setFloated] = useState(false);
-  const [theme,   setTheme]   = useState<'light' | 'dark'>('light');
+  /* Read from localStorage so the choice survives navigation and page loads */
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const s = localStorage.getItem('portfolio-theme');
+      if (s === 'dark' || s === 'light') return s;
+    } catch {}
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  });
 
   /* Detect scroll past hero via IntersectionObserver */
   useEffect(() => {
@@ -88,16 +95,28 @@ export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'G
     return () => observer.disconnect();
   }, []);
 
-  /* Sync theme from DOM on mount */
+  /* Apply persisted theme to DOM once on mount */
   useEffect(() => {
-    const t = document.documentElement.getAttribute('data-theme');
-    if (t === 'dark' || t === 'light') setTheme(t);
+    document.documentElement.setAttribute('data-theme', theme);
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  /* Sync with all other mounted Navbar instances via window event */
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const next = (e as CustomEvent<string>).detail;
+      if (next === 'dark' || next === 'light') setTheme(next);
+    };
+    window.addEventListener('portfolio-theme', handler);
+    return () => window.removeEventListener('portfolio-theme', handler);
   }, []);
 
   const toggleTheme = () => {
     const next = theme === 'light' ? 'dark' : 'light';
-    setTheme(next);
+    /* Update DOM instantly — no React render cycle in the way */
     document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('portfolio-theme', next); } catch {}
+    /* Notify every other mounted Navbar simultaneously */
+    window.dispatchEvent(new CustomEvent('portfolio-theme', { detail: next }));
   };
 
   return (

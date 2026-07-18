@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import CarloftyCaseStudy from './pages/CarloftyCaseStudy';
 import WorksPage from './pages/WorksPage';
 import ServicesPage from './pages/ServicesPage';
+import AboutPage from './pages/AboutPage';
 import './App.css';
 
 /* ── Global click spark overlay — fires on every click, any page ── */
@@ -118,13 +119,14 @@ function useWelcomeConfetti() {
   }, []);
 }
 
-type View = 'home' | 'works' | 'services' | 'carlofty';
+type View = 'home' | 'works' | 'services' | 'carlofty' | 'about';
 
 function App() {
   const [view, setView]                       = useState<View>('home');
   const [worksMounted,    setWorksMounted]    = useState(false);
   const [servicesMounted, setServicesMounted] = useState(false);
   const [carloftyMounted, setCarloftyMounted] = useState(false);
+  const [aboutMounted,    setAboutMounted]    = useState(false);
   // Tracks which view to return to when leaving Carlofty
   const [carloftyReturn, setCarloftyReturn] = useState<'home' | 'works'>('home');
 
@@ -139,6 +141,7 @@ function App() {
   const goHome     = () => nav('home');
   const goWorks    = () => { setWorksMounted(true);    nav('works');    };
   const goServices = () => { setServicesMounted(true); nav('services'); };
+  const goAbout    = () => { setAboutMounted(true);    nav('about');    };
   const goCarlofty = (returnTo: 'home' | 'works' = 'works') => {
     setCarloftyMounted(true);
     setCarloftyReturn(returnTo);
@@ -151,7 +154,7 @@ function App() {
     if (page === 'Home')     goHome();
     if (page === 'Work')     goWorks();
     if (page === 'Services') goServices();
-    if (page === 'About Me') goHome();
+    if (page === 'About Me') goAbout();
   };
 
   return (
@@ -197,6 +200,13 @@ function App() {
       {carloftyMounted && (
         <div style={{ display: view === 'carlofty' ? undefined : 'none' }}>
           <CarloftyCaseStudy onBack={goBack} onNavigate={handleNav} onGoHome={goHome} />
+        </div>
+      )}
+
+      {/* ── About ─────────────────────────────────────────── */}
+      {aboutMounted && (
+        <div style={{ display: view === 'about' ? undefined : 'none' }}>
+          <AboutPage onBack={goHome} onNavigate={handleNav} />
         </div>
       )}
     </>

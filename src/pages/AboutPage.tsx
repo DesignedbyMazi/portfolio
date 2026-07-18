@@ -1,0 +1,107 @@
+import { useState, useCallback, useEffect } from 'react';
+import Navbar from '../components/Navbar';
+import OptionWheel from '../components/OptionWheel';
+import './AboutPage.css';
+
+const WHEEL_ITEMS = [
+  'About Uche',
+  "Uche's Archives",
+  "Uche's Music Taste",
+  'Fun Fact About Uche',
+];
+
+interface Props {
+  onBack:     () => void;
+  onNavigate: (page: string) => void;
+}
+
+export default function AboutPage({ onBack, onNavigate }: Props) {
+  const [selectedIdx, setSelectedIdx] = useState(0);
+
+  /* Track theme for OptionWheel color props */
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const s = localStorage.getItem('portfolio-theme');
+      if (s === 'dark' || s === 'light') return s;
+    } catch {}
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const next = (e as CustomEvent<string>).detail;
+      if (next === 'dark' || next === 'light') setTheme(next);
+    };
+    window.addEventListener('portfolio-theme', handler);
+    return () => window.removeEventListener('portfolio-theme', handler);
+  }, []);
+
+  const handleNav = (page: string) => {
+    if (page === 'Home') onBack();
+    else onNavigate(page);
+  };
+
+  /* Synthesise a short descending-sine click using Web Audio API — no file needed */
+  const synthTick = useCallback(() => {
+    try {
+      const AudioCtx = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+      if (!AudioCtx) return;
+      const ctx  = new AudioCtx();
+      const osc  = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1100, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(680, ctx.currentTime + 0.032);
+      gain.gain.setValueAtTime(0.055, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.048);
+      osc.start(ctx.currentTime);
+      osc.stop(ctx.currentTime + 0.05);
+      setTimeout(() => ctx.close(), 300);
+    } catch {}
+  }, []);
+
+  const textColor   = theme === 'dark' ? 'rgba(200,200,205,0.42)' : 'rgba(80,80,90,0.42)';
+  const activeColor = theme === 'dark' ? '#FFFFFF'                 : '#0F0F0F';
+
+  return (
+    <div className="about-page">
+      <Navbar
+        activePage="About Me"
+        onNavigate={handleNav}
+        pageLabel="About Me"
+        showViewWorks={false}
+        onGoHome={onBack}
+      />
+
+      <div className="about-main">
+        <div className="about-wheel-wrap">
+          <OptionWheel
+            items={WHEEL_ITEMS}
+            defaultSelected={0}
+            fontSize={2.25}
+            side="left"
+            spacing={1.55}
+            curve={0.85}
+            tilt={5}
+            blur={1.6}
+            fade={0.28}
+            minOpacity={0.05}
+            smoothing={180}
+            inset={0}
+            textColor={textColor}
+            activeColor={activeColor}
+            loop={false}
+            draggable
+            onTick={synthTick}
+            onChange={(index) => setSelectedIdx(index)}
+          />
+        </div>
+
+        {/* Right panel — content for each wheel item (to be populated) */}
+        <div className="about-panel" data-section={selectedIdx} />
+      </div>
+    </div>
+  );
+}
