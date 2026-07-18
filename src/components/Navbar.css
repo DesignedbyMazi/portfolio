@@ -108,32 +108,32 @@
   border-radius: 9999px;
   pointer-events: none;
 
-  /* Light-mode: frosted glass — translucent so page content bleeds through */
-  background: rgba(255, 255, 255, 0.58);
-  backdrop-filter: blur(32px) saturate(220%);
-  -webkit-backdrop-filter: blur(32px) saturate(220%);
-  border: 1px solid rgba(255, 255, 255, 0.88);
+  /* Light-mode: classic iOS frosted white */
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(40px) saturate(280%) brightness(108%);
+  -webkit-backdrop-filter: blur(40px) saturate(280%) brightness(108%);
+  border: 1px solid rgba(255, 255, 255, 0.90);
   box-shadow:
-    0 0 0 0.5px rgba(0, 0, 0, 0.07),
-    0 8px 32px rgba(0, 0, 0, 0.13),
-    0 2px 6px  rgba(0, 0, 0, 0.07),
+    0 0 0 0.5px rgba(0, 0, 0, 0.08),
+    0 8px 32px rgba(0, 0, 0, 0.14),
     inset 0 2px 0 rgba(255, 255, 255, 1),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+    inset 0 -1px 0 rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] .float-header,
 [data-theme="dark"] .float-nav {
-  /* Dark-mode: deep glass — translucent so blur vibrancy is visible */
-  background: rgba(30, 30, 32, 0.62);
-  backdrop-filter: blur(32px) saturate(200%);
-  -webkit-backdrop-filter: blur(32px) saturate(200%);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  /* Dark-mode: brightness() lifts the blurred zone so frost is visible
+     even over near-black content — this is the missing piece */
+  background: rgba(52, 52, 56, 0.68);
+  backdrop-filter: blur(40px) saturate(200%) brightness(160%);
+  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(160%);
+  border: 1px solid rgba(255, 255, 255, 0.22);
   box-shadow:
-    0 0 0 0.5px rgba(255, 255, 255, 0.07),
-    0 8px 40px rgba(0, 0, 0, 0.55),
-    0 2px 8px  rgba(0, 0, 0, 0.30),
-    inset 0 1.5px 0 rgba(255, 255, 255, 0.14),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+    0 0 0 0.5px rgba(255, 255, 255, 0.08),
+    0 8px 40px rgba(0, 0, 0, 0.50),
+    0 2px 8px  rgba(0, 0, 0, 0.28),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.16),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.20);
 }
 
 /* ─────────────────────────────────────────────────────
