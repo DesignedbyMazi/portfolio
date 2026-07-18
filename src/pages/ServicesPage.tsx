@@ -73,7 +73,7 @@ export default function ServicesPage({ onBack, onNavigate }: ServicesPageProps) 
 
   return (
     <div className="svc-page">
-      <Navbar activePage="Services" onNavigate={handleNav} />
+      <Navbar activePage="Services" onNavigate={handleNav} pageLabel="Services" showViewWorks={false} onGoHome={onBack} />
 
       <div className="svc-content">
 

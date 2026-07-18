@@ -7,6 +7,9 @@ import './Navbar.css';
 interface NavbarProps {
   activePage?: string;
   onNavigate?: (page: string) => void;
+  pageLabel?: string;
+  showViewWorks?: boolean;
+  onGoHome?: () => void;
 }
 
 /* ── Inline icon components (stroke="currentColor") ── */
@@ -69,7 +72,7 @@ const NAV_TABS = [
 
 const TEXT_LINKS = ['Home', 'Work', 'Services', 'About Me'] as const;
 
-export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps) {
+export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'Godswill Uche', showViewWorks = true, onGoHome }: NavbarProps) {
   const [floated, setFloated] = useState(false);
   const [theme,   setTheme]   = useState<'light' | 'dark'>('light');
 
@@ -131,16 +134,24 @@ export default function Navbar({ activePage = 'Home', onNavigate }: NavbarProps)
         role="banner"
       >
         <div className="float-header__left">
-          <img src={profileImg} alt="" className="float-header__avatar" aria-hidden />
-          <span className="float-header__name">Godswill Uche</span>
+          <img
+            src={profileImg}
+            alt="Go to home"
+            className="float-header__avatar"
+            onClick={() => onGoHome?.()}
+            style={{ cursor: onGoHome ? 'pointer' : 'default' }}
+          />
+          <span className="float-header__name">{pageLabel}</span>
         </div>
         <div className="float-header__right">
-          <button
-            className="float-header__cta"
-            onClick={() => onNavigate?.('Work')}
-          >
-            View works
-          </button>
+          {showViewWorks && (
+            <button
+              className="float-header__cta"
+              onClick={() => onNavigate?.('Work')}
+            >
+              View works
+            </button>
+          )}
           <button
             className="float-header__theme"
             onClick={toggleTheme}

@@ -66,13 +66,14 @@ function App() {
     if (page === 'Home')     goHome();
     if (page === 'Work')     goWorks();
     if (page === 'Services') goServices();
+    if (page === 'About Me') goHome();
   };
 
   return (
     <>
       {/* ── Home ─────────────────────────────────────────── */}
       <div className="page" style={{ display: view === 'home' ? undefined : 'none' }}>
-        <Navbar onNavigate={handleNav} />
+        <Navbar onNavigate={handleNav} pageLabel="Godswill Uche" showViewWorks onGoHome={goHome} />
         <main className="main">
           <UIExploration />
           <div className="content">
@@ -108,7 +109,7 @@ function App() {
       {/* ── Carlofty ──────────────────────────────────────── */}
       {carloftyMounted && (
         <div style={{ display: view === 'carlofty' ? undefined : 'none' }}>
-          <CarloftyCaseStudy onBack={goBack} />
+          <CarloftyCaseStudy onBack={goBack} onNavigate={handleNav} onGoHome={goHome} />
         </div>
       )}
     </>

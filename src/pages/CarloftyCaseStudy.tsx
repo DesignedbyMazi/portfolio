@@ -15,7 +15,11 @@ import carloftyWaitlistVideo    from '../assets/videos/carlofty-waitlist.mp4';
 import carloftyOutcomeVideo     from '../assets/videos/carlofty-outcome.mp4';
 import './CarloftyCaseStudy.css';
 
-interface Props { onBack: () => void; }
+interface Props {
+  onBack: () => void;
+  onNavigate?: (page: string) => void;
+  onGoHome?: () => void;
+}
 
 /* ── Sidebar nav items (must match DOM order) ────────── */
 const NAV_ITEMS = [
@@ -215,12 +219,13 @@ function OutcomeCard({ icon, prefix, count, suffix, label }: {
 }
 
 /* ────────────────────────────────────────────────── */
-export default function CarloftyCaseStudy({ onBack }: Props) {
+export default function CarloftyCaseStudy({ onBack, onNavigate, onGoHome }: Props) {
   const [activeId, setActiveId] = useState(NAV_ITEMS[0].id);
 
   const handleNav = useCallback((page: string) => {
     if (page === 'Home') onBack();
-  }, [onBack]);
+    else onNavigate?.(page);
+  }, [onBack, onNavigate]);
 
   /* ── Scrollspy — track which section is in view ── */
   useEffect(() => {
@@ -286,7 +291,7 @@ export default function CarloftyCaseStudy({ onBack }: Props) {
 
   return (
     <div className="cs-page">
-      <Navbar activePage="Work" onNavigate={handleNav} />
+      <Navbar activePage="Work" onNavigate={handleNav} pageLabel="Carlofty" showViewWorks={false} onGoHome={onGoHome} />
 
       {/* ── Two-column outer layout ─────────────────── */}
       <div className="cs-outer">

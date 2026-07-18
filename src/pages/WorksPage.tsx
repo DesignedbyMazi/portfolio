@@ -267,7 +267,7 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
 
   return (
     <div className="works-page">
-      <Navbar activePage="Work" onNavigate={handleNav} />
+      <Navbar activePage="Work" onNavigate={handleNav} pageLabel="Works" showViewWorks={false} onGoHome={onBack} />
 
       <div className="works-content">
 
