@@ -1,5 +1,6 @@
 import { motion, useMotionValue, useTransform } from 'motion/react';
-import { useState, useEffect, useRef, ReactNode } from 'react';
+import { useState, useEffect, useRef } from 'react';
+import type { ReactNode } from 'react';
 import './Stack.css';
 
 interface CardRotateProps {
