@@ -72,7 +72,7 @@ const NAV_TABS = [
 const TEXT_LINKS = ['Home', 'Work', 'Services', 'About Me'] as const;
 
 export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'Godswill Uche', showViewWorks = true, onGoHome }: NavbarProps) {
-  const [floated, setFloated] = useState(false);
+  const [floated, setFloated] = useState(() => activePage !== 'Home');
   /* Read from localStorage so the choice survives navigation and page loads */
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
@@ -82,8 +82,10 @@ export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'G
     return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
   });
 
-  /* Detect scroll past hero via IntersectionObserver */
+  /* Detect scroll past hero via IntersectionObserver — home only */
   useEffect(() => {
+    if (activePage !== 'Home') { setFloated(true); return; }
+
     const heroEl = document.querySelector('.hero');
     if (!heroEl) { setFloated(true); return; }
 
@@ -93,7 +95,7 @@ export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'G
     );
     observer.observe(heroEl);
     return () => observer.disconnect();
-  }, []);
+  }, [activePage]);
 
   /* Apply persisted theme to DOM once on mount */
   useEffect(() => {
