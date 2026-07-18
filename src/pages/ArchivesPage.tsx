@@ -4,27 +4,28 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import './ArchivesPage.css';
 
+/* Capital "A" matches the /public/Archives/ folder exactly — Linux/Vercel is case-sensitive */
 const PHOTO_PATHS = [
-  '/archives/01.jpg',
-  '/archives/02.jpg',
-  '/archives/03.jpg',
-  '/archives/04.jpg',
-  '/archives/05.jpg',
-  '/archives/06.jpg',
-  '/archives/07.jpg',
-  '/archives/08.jpg',
-  '/archives/09.jpg',
-  '/archives/10.jpg',
-  '/archives/11.jpg',
-  '/archives/12.jpg',
-  '/archives/13.jpg',
-  '/archives/14.jpg',
-  '/archives/15.jpg',
-  '/archives/16.jpg',
-  '/archives/17.jpg',
-  '/archives/18.jpg',
-  '/archives/19.jpg',
-  '/archives/20.jpg',
+  '/Archives/01.jpg',
+  '/Archives/02.jpg',
+  '/Archives/03.jpg',
+  '/Archives/04.jpg',
+  '/Archives/09.jpg',
+  '/Archives/10.jpg',
+  '/Archives/11.jpg',
+  '/Archives/12.jpg',
+  '/Archives/13.jpg',
+  '/Archives/14.jpg',
+  '/Archives/15.jpg',
+  '/Archives/16.jpg',
+  '/Archives/17.jpg',
+  '/Archives/18.jpg',
+  '/Archives/19.jpg',
+  '/Archives/20.jpg',
+  '/Archives/21.jpg',
+  '/Archives/22.jpg',
+  '/Archives/23.jpg',
+  '/Archives/24.jpg',
 ];
 
 function shuffle<T>(arr: T[]): T[] {
@@ -50,7 +51,7 @@ export default function ArchivesPage({ onBack, onNavigate }: Props) {
       src={src}
       alt={`archive-${i + 1}`}
       className="card-image"
-      onError={e => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
+      draggable={false}
     />
   ));
 
