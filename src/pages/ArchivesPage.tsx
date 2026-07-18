@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useCallback } from 'react';
 import Stack from '../components/Stack';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -42,8 +42,40 @@ interface Props {
   onNavigate: (page: string) => void;
 }
 
+function synthSwipe() {
+  try {
+    const Ctx = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!Ctx) return;
+    const ctx = new Ctx();
+    const bufLen = Math.floor(ctx.sampleRate * 0.18);
+    const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
+
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'bandpass';
+    filter.frequency.setValueAtTime(2200, ctx.currentTime);
+    filter.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.16);
+    filter.Q.value = 1.8;
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.28, ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
+
+    src.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+    src.start();
+    setTimeout(() => ctx.close(), 600);
+  } catch { /* ignore — audio permission denied or unsupported */ }
+}
+
 export default function ArchivesPage({ onBack, onNavigate }: Props) {
   const photos = useMemo(() => shuffle(PHOTO_PATHS), []);
+  const handleSwipe = useCallback(() => synthSwipe(), []);
 
   const cards = photos.map((src, i) => (
     <img
@@ -65,8 +97,8 @@ export default function ArchivesPage({ onBack, onNavigate }: Props) {
       <Navbar
         activePage="About Me"
         onNavigate={handleNav}
-        pageLabel="Godswill Uche"
-        showViewWorks
+        pageLabel="Uche's Archives"
+        showViewWorks={false}
         onGoHome={onBack}
       />
 
@@ -86,6 +118,7 @@ export default function ArchivesPage({ onBack, onNavigate }: Props) {
               sensitivity={120}
               sendToBackOnClick
               animationConfig={{ stiffness: 280, damping: 22 }}
+              onCardSwiped={handleSwipe}
             />
           </div>
         </div>

@@ -6,11 +6,12 @@ import './Stack.css';
 interface CardRotateProps {
   children: ReactNode;
   onSendToBack: () => void;
+  onSwipe?: () => void;
   sensitivity: number;
   disableDrag?: boolean;
 }
 
-function CardRotate({ children, onSendToBack, sensitivity, disableDrag = false }: CardRotateProps) {
+function CardRotate({ children, onSendToBack, onSwipe, sensitivity, disableDrag = false }: CardRotateProps) {
   const x = useMotionValue(0);
   const y = useMotionValue(0);
   const rotateX = useTransform(y, [-100, 100], [60, -60]);
@@ -19,6 +20,7 @@ function CardRotate({ children, onSendToBack, sensitivity, disableDrag = false }
   function handleDragEnd(_: unknown, info: { offset: { x: number; y: number } }) {
     if (Math.abs(info.offset.x) > sensitivity || Math.abs(info.offset.y) > sensitivity) {
       onSendToBack();
+      onSwipe?.();
     } else {
       x.set(0);
       y.set(0);
@@ -64,6 +66,7 @@ interface StackProps {
   pauseOnHover?: boolean;
   mobileClickOnly?: boolean;
   mobileBreakpoint?: number;
+  onCardSwiped?: () => void;
 }
 
 interface CardItem {
@@ -82,6 +85,7 @@ export default function Stack({
   pauseOnHover = false,
   mobileClickOnly = false,
   mobileBreakpoint = 768,
+  onCardSwiped,
 }: StackProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
@@ -139,6 +143,7 @@ export default function Stack({
           <CardRotate
             key={card.id}
             onSendToBack={() => sendToBack(card.id)}
+            onSwipe={onCardSwiped}
             sensitivity={sensitivity}
             disableDrag={shouldDisableDrag}
           >
