@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import profileImg from '../assets/images/profile.jpg';
 import GlareHover from './GlareHover';
-import ClickSpark from './ClickSpark';
 import './Navbar.css';
 
 interface NavbarProps {
@@ -101,9 +100,6 @@ export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'G
     document.documentElement.setAttribute('data-theme', next);
   };
 
-  /* Spark color adapts to theme for readability */
-  const sparkColor = theme === 'dark' ? '#ffffff' : '#555555';
-
   return (
     <>
       {/* ── Original sticky top bar — fades out when floated ── */}
@@ -167,46 +163,36 @@ export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'G
         className={`float-nav${floated ? ' float-nav--visible' : ''}`}
         aria-label="Main navigation"
       >
-        {/* ClickSpark fires on any click inside the pill */}
-        <ClickSpark
-          sparkColor={sparkColor}
-          sparkSize={7}
-          sparkRadius={18}
-          sparkCount={6}
-          duration={380}
-        >
-          {/* This div carries the flex layout that ClickSpark's wrapper div can't */}
-          <div className="float-nav__tabs">
-            {NAV_TABS.map(({ key, label, Icon }) => {
-              const isActive = activePage === key;
-              return (
-                <button
-                  key={key}
-                  className={`float-nav__tab${isActive ? ' float-nav__tab--active' : ''}`}
-                  onClick={() => onNavigate?.(key)}
-                  aria-label={label}
-                  aria-current={isActive ? 'page' : undefined}
+        <div className="float-nav__tabs">
+          {NAV_TABS.map(({ key, label, Icon }) => {
+            const isActive = activePage === key;
+            return (
+              <button
+                key={key}
+                className={`float-nav__tab${isActive ? ' float-nav__tab--active' : ''}`}
+                onClick={() => onNavigate?.(key)}
+                aria-label={label}
+                aria-current={isActive ? 'page' : undefined}
+              >
+                {/* GlareHover adds sweep glare on hover */}
+                <GlareHover
+                  width="100%"
+                  height="100%"
+                  background="transparent"
+                  borderRadius="9999px"
+                  borderColor="transparent"
+                  glareColor="#ffffff"
+                  glareOpacity={0.28}
+                  glareAngle={-30}
+                  glareSize={300}
+                  transitionDuration={600}
                 >
-                  {/* GlareHover adds sweep glare on hover */}
-                  <GlareHover
-                    width="100%"
-                    height="100%"
-                    background="transparent"
-                    borderRadius="9999px"
-                    borderColor="transparent"
-                    glareColor="#ffffff"
-                    glareOpacity={0.28}
-                    glareAngle={-30}
-                    glareSize={300}
-                    transitionDuration={600}
-                  >
-                    <Icon />
-                  </GlareHover>
-                </button>
-              );
-            })}
-          </div>
-        </ClickSpark>
+                  <Icon />
+                </GlareHover>
+              </button>
+            );
+          })}
+        </div>
       </nav>
     </>
   );

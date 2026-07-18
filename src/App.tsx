@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import confetti from 'canvas-confetti';
 import { useAnimations } from './hooks/useAnimations';
 import Navbar from './components/Navbar';
@@ -12,6 +12,91 @@ import CarloftyCaseStudy from './pages/CarloftyCaseStudy';
 import WorksPage from './pages/WorksPage';
 import ServicesPage from './pages/ServicesPage';
 import './App.css';
+
+/* ── Global click spark overlay — fires on every click, any page ── */
+function GlobalSpark() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const sparksRef = useRef<Array<{ x: number; y: number; angle: number; startTime: number }>>([]);
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const resize = () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener('resize', resize);
+
+    const handleClick = (e: MouseEvent) => {
+      const now = performance.now();
+      const count = 8;
+      for (let i = 0; i < count; i++) {
+        sparksRef.current.push({
+          x: e.clientX,
+          y: e.clientY,
+          angle: (2 * Math.PI * i) / count,
+          startTime: now,
+        });
+      }
+    };
+    document.addEventListener('click', handleClick);
+
+    const ctx = canvas.getContext('2d')!;
+    const DURATION   = 420;
+    const RADIUS     = 20;
+    const LINE_SIZE  = 8;
+    let animId: number;
+
+    const draw = (ts: number) => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      sparksRef.current = sparksRef.current.filter(spark => {
+        const elapsed = ts - spark.startTime;
+        if (elapsed >= DURATION) return false;
+        const t      = elapsed / DURATION;
+        const eased  = t * (2 - t);          // ease-out
+        const dist   = eased * RADIUS;
+        const len    = LINE_SIZE * (1 - eased);
+        const x1 = spark.x + dist * Math.cos(spark.angle);
+        const y1 = spark.y + dist * Math.sin(spark.angle);
+        const x2 = spark.x + (dist + len) * Math.cos(spark.angle);
+        const y2 = spark.y + (dist + len) * Math.sin(spark.angle);
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        ctx.strokeStyle = isDark ? 'rgba(255,255,255,0.70)' : 'rgba(60,60,60,0.55)';
+        ctx.lineWidth   = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(x1, y1);
+        ctx.lineTo(x2, y2);
+        ctx.stroke();
+        return true;
+      });
+      animId = requestAnimationFrame(draw);
+    };
+    animId = requestAnimationFrame(draw);
+
+    return () => {
+      cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+      document.removeEventListener('click', handleClick);
+    };
+  }, []);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      style={{
+        position:      'fixed',
+        top:           0,
+        left:          0,
+        width:         '100%',
+        height:        '100%',
+        pointerEvents: 'none',
+        zIndex:        99999,
+      }}
+    />
+  );
+}
 
 /* ── Welcome confetti — fires on every page load ── */
 function useWelcomeConfetti() {
@@ -71,6 +156,8 @@ function App() {
 
   return (
     <>
+      <GlobalSpark />
+
       {/* ── Home ─────────────────────────────────────────── */}
       <div className="page" style={{ display: view === 'home' ? undefined : 'none' }}>
         <Navbar onNavigate={handleNav} pageLabel="Godswill Uche" showViewWorks onGoHome={goHome} />
