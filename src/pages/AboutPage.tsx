@@ -1,6 +1,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import OptionWheel from '../components/OptionWheel';
+import ArchivesPage from './ArchivesPage';
 import './AboutPage.css';
 
 const WHEEL_ITEMS = [
@@ -10,13 +11,22 @@ const WHEEL_ITEMS = [
   'Fun Fact About Uche',
 ];
 
+/* Maps wheel index → which sub-page to open (null = not yet built) */
+const PAGE_MAP: Record<number, 'archives' | null> = {
+  1: 'archives',
+};
+
 interface Props {
   onBack:     () => void;
   onNavigate: (page: string) => void;
 }
 
+type SubPage = 'archives' | null;
+
 export default function AboutPage({ onBack, onNavigate }: Props) {
   const [selectedIdx, setSelectedIdx] = useState(0);
+  const [subPage,  setSubPage]  = useState<SubPage>(null);
+  const [bursting, setBursting] = useState(false);
 
   /* Track theme for OptionWheel color props */
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -41,7 +51,7 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
     else onNavigate(page);
   };
 
-  /* Synthesise a short descending-sine click using Web Audio API — no file needed */
+  /* Synthesise a short descending-sine click using Web Audio API */
   const synthTick = useCallback(() => {
     try {
       const AudioCtx = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
@@ -62,46 +72,71 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
     } catch {}
   }, []);
 
+  /* Called when an item on the wheel is clicked */
+  const handleItemClick = useCallback((index: number) => {
+    const target = PAGE_MAP[index];
+    if (!target) return;
+    /* Burst → then mount sub-page */
+    setBursting(true);
+    setTimeout(() => {
+      setBursting(false);
+      setSubPage(target);
+    }, 420);
+  }, []);
+
+  const handleSubPageBack = () => setSubPage(null);
+
   const textColor   = theme === 'dark' ? 'rgba(200,200,205,0.42)' : 'rgba(80,80,90,0.42)';
   const activeColor = theme === 'dark' ? '#FFFFFF'                 : '#0F0F0F';
 
   return (
-    <div className="about-page">
-      <Navbar
-        activePage="About Me"
-        onNavigate={handleNav}
-        pageLabel="About Me"
-        showViewWorks={false}
-        onGoHome={onBack}
-      />
+    <>
+      <div className="about-page">
+        <Navbar
+          activePage="About Me"
+          onNavigate={handleNav}
+          pageLabel="About Me"
+          showViewWorks={false}
+          onGoHome={onBack}
+        />
 
-      <div className="about-main">
-        <div className="about-wheel-wrap">
-          <OptionWheel
-            items={WHEEL_ITEMS}
-            defaultSelected={0}
-            fontSize={2.25}
-            side="left"
-            spacing={1.55}
-            curve={0.85}
-            tilt={5}
-            blur={1.6}
-            fade={0.28}
-            minOpacity={0.05}
-            smoothing={180}
-            inset={0}
-            textColor={textColor}
-            activeColor={activeColor}
-            loop={false}
-            draggable
-            onTick={synthTick}
-            onChange={(index) => setSelectedIdx(index)}
-          />
+        <div className="about-main">
+          <div className="about-wheel-wrap">
+            <OptionWheel
+              items={WHEEL_ITEMS}
+              defaultSelected={0}
+              fontSize={44 / 15}          /* 44 px at 15 px root */
+              side="left"
+              spacing={1.55}
+              curve={0.85}
+              tilt={5}
+              blur={1.6}
+              fade={0.28}
+              minOpacity={0.05}
+              smoothing={180}
+              inset={0}
+              textColor={textColor}
+              activeColor={activeColor}
+              loop={false}
+              draggable
+              onTick={synthTick}
+              onChange={(index) => setSelectedIdx(index)}
+              onItemClick={handleItemClick}
+            />
+          </div>
+
+          {/* Right panel — future content per wheel item */}
+          <div className="about-panel" data-section={selectedIdx} />
         </div>
-
-        {/* Right panel — content for each wheel item (to be populated) */}
-        <div className="about-panel" data-section={selectedIdx} />
       </div>
-    </div>
+
+      {/* Burst overlay — plays before sub-page mounts */}
+      {bursting && <div className="about-burst" />}
+
+      {/* Sub-pages */}
+      {subPage === 'archives' && (
+        <ArchivesPage onBack={handleSubPageBack} />
+      )}
+    </>
   );
 }

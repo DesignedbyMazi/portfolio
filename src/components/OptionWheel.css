@@ -41,3 +41,8 @@
 .option-wheel__item--selected {
   font-weight: 500;
 }
+
+/* Scrambled characters during DecryptedText animation */
+.ow-encrypted {
+  opacity: 0.28;
+}

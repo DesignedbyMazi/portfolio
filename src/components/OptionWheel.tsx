@@ -1,15 +1,13 @@
 import { useRef, useState, useCallback, useEffect, useLayoutEffect } from 'react';
+import DecryptedText from './DecryptedText';
 import './OptionWheel.css';
-
-interface Spark {
-  x: number; y: number; angle: number; startTime: number;
-}
 
 interface OptionWheelProps {
   items?: string[];
   defaultSelected?: number;
   onChange?: (index: number, item: string) => void;
   onTick?: () => void;
+  onItemClick?: (index: number) => void;
   textColor?: string;
   activeColor?: string;
   side?: 'left' | 'right';
@@ -34,6 +32,7 @@ export default function OptionWheel({
   defaultSelected = 0,
   onChange,
   onTick,
+  onItemClick,
   textColor,
   activeColor,
   side = 'left',
@@ -58,9 +57,10 @@ export default function OptionWheel({
   const targetRef    = useRef(defaultSelected);
   const rafRef       = useRef<number | null>(null);
   const lastRef      = useRef(0);
-  const cfgRef       = useRef<Record<string, unknown>>({});
-  const onChangeRef  = useRef(onChange);
-  const onTickRef    = useRef(onTick);
+  const cfgRef          = useRef<Record<string, unknown>>({});
+  const onChangeRef     = useRef(onChange);
+  const onTickRef       = useRef(onTick);
+  const onItemClickRef  = useRef(onItemClick);
   const selectedRef  = useRef(defaultSelected);
   const wheelTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const dragRef       = useRef<{ y: number; start: number; id: number } | null>(null);
@@ -76,8 +76,9 @@ export default function OptionWheel({
     ? parseFloat(getComputedStyle(document.documentElement).fontSize) || 16
     : 16;
 
-  onChangeRef.current = onChange;
-  onTickRef.current   = onTick;
+  onChangeRef.current    = onChange;
+  onTickRef.current      = onTick;
+  onItemClickRef.current = onItemClick;
 
   cfgRef.current = {
     count: items.length,
@@ -230,6 +231,7 @@ export default function OptionWheel({
       else if (d < -cfg.count / 2) d += cfg.count;
     }
     applyTarget(cur + d, true);
+    onItemClickRef.current?.(index);
   }, [applyTarget]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -285,7 +287,18 @@ export default function OptionWheel({
           className={`option-wheel__item${selectedIndex === index ? ' option-wheel__item--selected' : ''}`}
           onClick={() => handleItemClick(index)}
         >
-          {label}
+          {selectedIndex === index ? (
+            /* Remount on every selection change → triggers decrypt animation */
+            <DecryptedText
+              key={`dt-${selectedIndex}`}
+              text={label}
+              animateOn="view"
+              sequential
+              speed={28}
+              revealDirection="start"
+              encryptedClassName="ow-encrypted"
+            />
+          ) : label}
         </div>
       ))}
     </div>

@@ -3,6 +3,21 @@
   background: var(--color-bg);
 }
 
+/* ── Burst transition overlay ──────────────────────────────── */
+.about-burst {
+  position: fixed;
+  inset: 0;
+  background: var(--color-bg);
+  z-index: 155;
+  pointer-events: none;
+  animation: about-burst-expand 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes about-burst-expand {
+  from { clip-path: circle(0% at 50% 55%); }
+  to   { clip-path: circle(160% at 50% 55%); }
+}
+
 /* Full-viewport centred flex row */
 .about-main {
   display: flex;
