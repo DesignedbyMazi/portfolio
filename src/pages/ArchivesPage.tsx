@@ -1,7 +1,8 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, Suspense } from 'react';
 import Stack from '../components/Stack';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import Antigravity from '../components/Antigravity';
 import './ArchivesPage.css';
 
 /* Capital "A" matches the /public/Archives/ folder exactly — Linux/Vercel is case-sensitive */
@@ -119,6 +120,25 @@ export default function ArchivesPage({ onBack, onNavigate }: Props) {
               sendToBackOnClick
               animationConfig={{ stiffness: 280, damping: 22 }}
               onCardSwiped={handleSwipe}
+              topCardOverlay={
+                <Suspense fallback={null}>
+                  <Antigravity
+                    count={180}
+                    magnetRadius={8}
+                    ringRadius={5}
+                    waveSpeed={0.5}
+                    waveAmplitude={0.9}
+                    particleSize={1.4}
+                    lerpSpeed={0.06}
+                    color="#ffffff"
+                    autoAnimate
+                    particleVariance={0.8}
+                    pulseSpeed={2.5}
+                    fieldStrength={9}
+                    rotationSpeed={0.08}
+                  />
+                </Suspense>
+              }
             />
           </div>
         </div>

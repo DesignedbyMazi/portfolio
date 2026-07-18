@@ -67,6 +67,7 @@ interface StackProps {
   mobileClickOnly?: boolean;
   mobileBreakpoint?: number;
   onCardSwiped?: () => void;
+  topCardOverlay?: ReactNode;
 }
 
 interface CardItem {
@@ -86,9 +87,11 @@ export default function Stack({
   mobileClickOnly = false,
   mobileBreakpoint = 768,
   onCardSwiped,
+  topCardOverlay,
 }: StackProps) {
   const [isMobile, setIsMobile] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
+  const [topHovered, setTopHovered] = useState(false);
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth < mobileBreakpoint);
@@ -112,6 +115,7 @@ export default function Stack({
   }, [cards]);
 
   const sendToBack = (id: number) => {
+    setTopHovered(false);
     setStack(prev => {
       const next = [...prev];
       const idx = next.findIndex(c => c.id === id);
@@ -139,6 +143,7 @@ export default function Stack({
           rotationsRef.current[card.id] = Math.random() * 10 - 5;
         }
         const rot = randomRotation ? rotationsRef.current[card.id] : 0;
+        const isTop = index === stack.length - 1;
         return (
           <CardRotate
             key={card.id}
@@ -150,6 +155,8 @@ export default function Stack({
             <motion.div
               className="card"
               onClick={() => shouldEnableClick && sendToBack(card.id)}
+              onMouseEnter={() => isTop && setTopHovered(true)}
+              onMouseLeave={() => setTopHovered(false)}
               animate={{
                 rotateZ: (stack.length - index - 1) * 4 + rot,
                 scale: 1 + index * 0.06 - stack.length * 0.06,
@@ -159,6 +166,11 @@ export default function Stack({
               transition={{ type: 'spring', stiffness: animationConfig.stiffness, damping: animationConfig.damping }}
             >
               {card.content}
+              {isTop && topHovered && topCardOverlay && (
+                <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', borderRadius: '1rem', overflow: 'hidden' }}>
+                  {topCardOverlay}
+                </div>
+              )}
             </motion.div>
           </CardRotate>
         );
