@@ -1,11 +1,9 @@
 import { useMemo } from 'react';
 import Stack from '../components/Stack';
+import Navbar from '../components/Navbar';
+import Footer from '../components/Footer';
 import './ArchivesPage.css';
 
-/* ── Photos ─────────────────────────────────────────────────
-   Save your photos in /public/archives/ named 01.jpg → 20.jpg
-   (matching the order of images you attached in the conversation)
-   ────────────────────────────────────────────────────────── */
 const PHOTO_PATHS = [
   '/archives/01.jpg',
   '/archives/02.jpg',
@@ -40,9 +38,10 @@ function shuffle<T>(arr: T[]): T[] {
 
 interface Props {
   onBack: () => void;
+  onNavigate: (page: string) => void;
 }
 
-export default function ArchivesPage({ onBack }: Props) {
+export default function ArchivesPage({ onBack, onNavigate }: Props) {
   const photos = useMemo(() => shuffle(PHOTO_PATHS), []);
 
   const cards = photos.map((src, i) => (
@@ -55,37 +54,43 @@ export default function ArchivesPage({ onBack }: Props) {
     />
   ));
 
+  const handleNav = (page: string) => {
+    if (page === 'Home') onBack();
+    else onNavigate(page);
+  };
+
   return (
     <div className="archives-page">
-      {/* Header */}
-      <header className="archives-header">
-        <div>
-          <div className="archives-identity">
-            <p className="archives-name">Godswill Uche</p>
-            <p className="archives-role">Product Designer</p>
+      <Navbar
+        activePage="About Me"
+        onNavigate={handleNav}
+        pageLabel="Godswill Uche"
+        showViewWorks
+        onGoHome={onBack}
+      />
+
+      <main className="archives-main">
+        <button className="archives-back-link" onClick={onBack} aria-label="Go back">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M10 12L6 8L10 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg>
+          Go back
+        </button>
+
+        <div className="archives-stack-area">
+          <div className="archives-stack-wrap">
+            <Stack
+              cards={cards}
+              randomRotation
+              sensitivity={120}
+              sendToBackOnClick
+              animationConfig={{ stiffness: 280, damping: 22 }}
+            />
           </div>
-
-          <button className="archives-back-btn" onClick={onBack} aria-label="Go back">
-            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
-              <path d="M10 12L6 8L10 4" stroke="#FFFFFF" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span className="archives-back-label">Go back</span>
-          </button>
         </div>
-      </header>
+      </main>
 
-      {/* Stacked image cards */}
-      <div className="archives-body">
-        <div className="archives-stack-wrap">
-          <Stack
-            cards={cards}
-            randomRotation
-            sensitivity={120}
-            sendToBackOnClick
-            animationConfig={{ stiffness: 280, damping: 22 }}
-          />
-        </div>
-      </div>
+      <Footer />
     </div>
   );
 }

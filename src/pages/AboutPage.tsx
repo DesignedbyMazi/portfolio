@@ -135,7 +135,7 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
 
       {/* Sub-pages */}
       {subPage === 'archives' && (
-        <ArchivesPage onBack={handleSubPageBack} />
+        <ArchivesPage onBack={handleSubPageBack} onNavigate={onNavigate} />
       )}
     </>
   );
