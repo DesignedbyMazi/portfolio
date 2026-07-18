@@ -25,8 +25,7 @@ type SubPage = 'archives' | null;
 
 export default function AboutPage({ onBack, onNavigate }: Props) {
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const [subPage,  setSubPage]  = useState<SubPage>(null);
-  const [bursting, setBursting] = useState(false);
+  const [subPage, setSubPage] = useState<SubPage>(null);
 
   /* Track theme for OptionWheel color props */
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -72,16 +71,9 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
     } catch {}
   }, []);
 
-  /* Called when an item on the wheel is clicked */
   const handleItemClick = useCallback((index: number) => {
     const target = PAGE_MAP[index];
-    if (!target) return;
-    /* Burst → then mount sub-page */
-    setBursting(true);
-    setTimeout(() => {
-      setBursting(false);
-      setSubPage(target);
-    }, 420);
+    if (target) setSubPage(target);
   }, []);
 
   const handleSubPageBack = () => setSubPage(null);
@@ -130,10 +122,6 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
         </div>
       </div>
 
-      {/* Burst overlay — plays before sub-page mounts */}
-      {bursting && <div className="about-burst" />}
-
-      {/* Sub-pages */}
       {subPage === 'archives' && (
         <ArchivesPage onBack={handleSubPageBack} onNavigate={onNavigate} />
       )}

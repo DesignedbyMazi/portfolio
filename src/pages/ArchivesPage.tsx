@@ -1,9 +1,10 @@
-import { useMemo, useCallback, Suspense } from 'react';
+import { useMemo, useCallback, Suspense, lazy } from 'react';
 import Stack from '../components/Stack';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import Antigravity from '../components/Antigravity';
 import './ArchivesPage.css';
+
+const Antigravity = lazy(() => import('../components/Antigravity'));
 
 /* Capital "A" matches the /public/Archives/ folder exactly — Linux/Vercel is case-sensitive */
 const PHOTO_PATHS = [
@@ -43,40 +44,35 @@ interface Props {
   onNavigate: (page: string) => void;
 }
 
-function synthSwipe() {
+function synthBubblePop() {
   try {
     const Ctx = window.AudioContext ?? (window as Window & { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
     if (!Ctx) return;
     const ctx = new Ctx();
-    const bufLen = Math.floor(ctx.sampleRate * 0.18);
-    const buf = ctx.createBuffer(1, bufLen, ctx.sampleRate);
-    const data = buf.getChannelData(0);
-    for (let i = 0; i < bufLen; i++) data[i] = Math.random() * 2 - 1;
 
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'bandpass';
-    filter.frequency.setValueAtTime(2200, ctx.currentTime);
-    filter.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.16);
-    filter.Q.value = 1.8;
-
+    const osc  = ctx.createOscillator();
     const gain = ctx.createGain();
-    gain.gain.setValueAtTime(0.28, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18);
 
-    src.connect(filter);
-    filter.connect(gain);
+    osc.connect(gain);
     gain.connect(ctx.destination);
-    src.start();
-    setTimeout(() => ctx.close(), 600);
-  } catch { /* ignore — audio permission denied or unsupported */ }
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(520, ctx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(180, ctx.currentTime + 0.07);
+
+    gain.gain.setValueAtTime(0, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.22, ctx.currentTime + 0.004);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.07);
+
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 0.08);
+    setTimeout(() => ctx.close(), 300);
+  } catch { /* ignore */ }
 }
 
 export default function ArchivesPage({ onBack, onNavigate }: Props) {
   const photos = useMemo(() => shuffle(PHOTO_PATHS), []);
-  const handleSwipe = useCallback(() => synthSwipe(), []);
+  const handleSwipe = useCallback(() => synthBubblePop(), []);
 
   const cards = photos.map((src, i) => (
     <img
