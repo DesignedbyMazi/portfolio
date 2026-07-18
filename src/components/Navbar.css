@@ -94,7 +94,11 @@
 }
 
 /* ─────────────────────────────────────────────────────
-   Shared pill foundation (light-mode base)
+   Shared pill foundation — Apple-grade glassmorphism
+   • saturate() boosts vibrancy (the distinctive Apple
+     "vibrancy" effect) — content behind bleeds through
+   • Outer 0.5px ring gives crisp physical edge
+   • Inner top highlight adds the lit-glass shimmer
 ───────────────────────────────────────────────────── */
 .float-header,
 .float-nav {
@@ -104,29 +108,30 @@
   border-radius: 9999px;
   pointer-events: none;
 
-  /* Light-mode glass */
-  background: rgba(252, 252, 252, 0.88);
-  /* Border at 65% opacity — was 0.08, 65% = ~0.052 */
-  border: 1px solid rgba(0, 0, 0, 0.052);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  /* Light-mode: iOS frosted white */
+  background: rgba(240, 240, 242, 0.75);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.70),
-    0 4px 24px rgba(0, 0, 0, 0.12),
-    0 1px 4px  rgba(0, 0, 0, 0.06);
+    0 0 0 0.5px rgba(0, 0, 0, 0.05),
+    0 4px 24px rgba(0, 0, 0, 0.10),
+    0 1px 4px  rgba(0, 0, 0, 0.06),
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.92);
 }
 
 [data-theme="dark"] .float-header,
 [data-theme="dark"] .float-nav {
-  background: rgba(22, 22, 22, 0.92);
-  /* Border at 65% opacity — was 0.14, 65% = ~0.091 */
-  border: 1px solid rgba(255, 255, 255, 0.091);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  /* Dark-mode: iOS Control Centre deep charcoal */
+  background: rgba(28, 28, 30, 0.78);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.07),
-    0 8px 32px rgba(0, 0, 0, 0.55),
-    0 2px 8px  rgba(0, 0, 0, 0.30);
+    0 0 0 0.5px rgba(255, 255, 255, 0.04),
+    0 4px 32px rgba(0, 0, 0, 0.50),
+    0 2px 8px  rgba(0, 0, 0, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.09);
 }
 
 /* ─────────────────────────────────────────────────────

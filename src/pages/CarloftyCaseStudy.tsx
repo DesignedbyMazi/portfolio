@@ -70,6 +70,57 @@ function scrollToSection(id: string) {
   requestAnimationFrame(step);
 }
 
+/* ── Mobile section navigator (dropdown pill) ────────── */
+function CsSectionNav({ activeId }: { activeId: string }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const activeItem = NAV_ITEMS.find(n => n.id === activeId) ?? NAV_ITEMS[0];
+
+  return (
+    <div className="cs-snav" ref={ref}>
+      {/* List expands upward */}
+      <div className={`cs-snav__list${open ? ' cs-snav__list--open' : ''}`} role="listbox">
+        {NAV_ITEMS.map(item => (
+          <button
+            key={item.id}
+            role="option"
+            aria-selected={item.id === activeId}
+            className={`cs-snav__option${item.id === activeId ? ' cs-snav__option--active' : ''}`}
+            onClick={() => { scrollToSection(item.id); setOpen(false); }}
+          >
+            {item.id === activeId && <span className="cs-snav__option-dot" />}
+            {item.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Pill chip */}
+      <button
+        className={`cs-snav__chip${open ? ' cs-snav__chip--open' : ''}`}
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        <span className="cs-snav__dot" />
+        <span className="cs-snav__label">{activeItem.label}</span>
+        <svg className="cs-snav__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M18 9C18 9 13.58 15 12 15C10.42 15 6 9 6 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 /* ── Sticky sidebar ──────────────────────────────────── */
 function CSSidebar({ activeId }: { activeId: string }) {
   return (
@@ -291,7 +342,7 @@ export default function CarloftyCaseStudy({ onBack, onNavigate, onGoHome }: Prop
 
   return (
     <div className="cs-page">
-      <Navbar activePage="Work" onNavigate={handleNav} pageLabel="Carlofty" showViewWorks={false} onGoHome={onGoHome} />
+      <Navbar activePage="Work" onNavigate={handleNav} pageLabel="Carlofty Casestudy" showViewWorks={false} onGoHome={onGoHome} />
 
       {/* ── Two-column outer layout ─────────────────── */}
       <div className="cs-outer">
@@ -698,6 +749,10 @@ export default function CarloftyCaseStudy({ onBack, onNavigate, onGoHome }: Prop
 
         </div>{/* end cs-content */}
       </div>{/* end cs-outer */}
+
+      {/* ── Mobile section navigator ─────────────── */}
+      <CsSectionNav activeId={activeId} />
+
     </div>
   );
 }
