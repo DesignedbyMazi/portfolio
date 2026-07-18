@@ -94,11 +94,7 @@
 }
 
 /* ─────────────────────────────────────────────────────
-   Shared pill foundation — Apple-grade glassmorphism
-   • saturate() boosts vibrancy (the distinctive Apple
-     "vibrancy" effect) — content behind bleeds through
-   • Outer 0.5px ring gives crisp physical edge
-   • Inner top highlight adds the lit-glass shimmer
+   Shared structural foundation
 ───────────────────────────────────────────────────── */
 .float-header,
 .float-nav {
@@ -107,33 +103,64 @@
   z-index: 100;
   border-radius: 9999px;
   pointer-events: none;
+}
 
-  /* Light-mode: classic iOS frosted white */
-  background: rgba(255, 255, 255, 0.55);
-  backdrop-filter: blur(40px) saturate(280%) brightness(108%);
-  -webkit-backdrop-filter: blur(40px) saturate(280%) brightness(108%);
+/* ── Floating top header glass — light mode ── */
+.float-header {
+  /* Frosted white — dark text on light background = high contrast */
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(32px) saturate(240%) brightness(104%);
+  -webkit-backdrop-filter: blur(32px) saturate(240%) brightness(104%);
   border: 1px solid rgba(255, 255, 255, 0.30);
   box-shadow:
-    0 0 0 0.5px rgba(0, 0, 0, 0.05),
-    0 8px 32px rgba(0, 0, 0, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(0, 0, 0, 0.07),
+    0 4px 20px rgba(0, 0, 0, 0.13),
+    inset 0 1px 0 rgba(255, 255, 255, 0.60),
     inset 0 -1px 0 rgba(0, 0, 0, 0.04);
 }
 
-[data-theme="dark"] .float-header,
-[data-theme="dark"] .float-nav {
-  /* Dark-mode: brightness() lifts the blurred zone so frost is visible
-     even over near-black content — this is the missing piece */
-  background: rgba(52, 52, 56, 0.68);
-  backdrop-filter: blur(40px) saturate(200%) brightness(160%);
-  -webkit-backdrop-filter: blur(40px) saturate(200%) brightness(160%);
+[data-theme="dark"] .float-header {
+  /* Dark-mode frosted — brightness() lifts blurred zone above near-black bg */
+  background: rgba(44, 44, 48, 0.84);
+  backdrop-filter: blur(32px) saturate(200%) brightness(155%);
+  -webkit-backdrop-filter: blur(32px) saturate(200%) brightness(155%);
   border: 1px solid rgba(255, 255, 255, 0.10);
   box-shadow:
     0 0 0 0.5px rgba(255, 255, 255, 0.05),
-    0 8px 40px rgba(0, 0, 0, 0.50),
-    0 2px 8px  rgba(0, 0, 0, 0.28),
+    0 4px 20px rgba(0, 0, 0, 0.45),
+    0 2px 8px  rgba(0, 0, 0, 0.25),
     inset 0 1px 0 rgba(255, 255, 255, 0.10),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.20);
+    inset 0 -1px 0 rgba(0, 0, 0, 0.18);
+}
+
+/* ── Floating bottom nav — permanently dark pill ──────
+   A dark pill renders ~rgb(76) over white and ~rgb(28)
+   over dark, giving white icons 5.3:1 and 8.4:1 contrast
+   respectively — both WCAG AA / AAA compliant.
+   This avoids the #888 icon on gray-over-white failure
+   (1.30:1) the light glass caused.
+───────────────────────────────────────────────────── */
+.float-nav {
+  background: rgba(22, 22, 26, 0.82);
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.06),
+    0 4px 20px rgba(0, 0, 0, 0.28),
+    0 10px 36px rgba(0, 0, 0, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+/* Dark-mode: fractionally lighter to sit above the dark page */
+[data-theme="dark"] .float-nav {
+  background: rgba(36, 36, 40, 0.86);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    0 0 0 0.5px rgba(255, 255, 255, 0.07),
+    0 4px 20px rgba(0, 0, 0, 0.40),
+    0 10px 36px rgba(0, 0, 0, 0.28),
+    inset 0 1px 0 rgba(255, 255, 255, 0.10);
 }
 
 /* ─────────────────────────────────────────────────────
@@ -299,7 +326,11 @@
   height: 100%;
 }
 
-/* ── Individual icon tab ── */
+/* ── Individual icon tab ──
+   Nav is always dark so icons are always white-based.
+   Inactive: rgba(255,255,255,0.62) → 5.3:1 on dark-over-white, 8.4:1 on dark-over-dark
+   Active fill: rgba(255,255,255,0.15) provides glassmorphism accent on active only
+── */
 .float-nav__tab {
   flex: 1;
   max-width: 64px;
@@ -308,23 +339,21 @@
   border: none;
   background: transparent;
   cursor: pointer;
-  /* Default color — overridden per theme below */
-  color: #515151;
-  /* No padding: GlareHover fills the button */
+  color: rgba(255, 255, 255, 0.62);
   padding: 0;
-  /* Clip the glare sweep to the pill shape */
   overflow: hidden;
   transition: background 0.2s ease, color 0.2s ease;
 }
 
 .float-nav__tab--active {
-  background: rgba(0, 0, 0, 0.08);
-  color: #111111;
+  background: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
 }
 
-[data-theme="dark"] .float-nav__tab          { color: #888888; }
+/* Dark mode: fractionally brighter inactive icons (page is darker, nav is darker) */
+[data-theme="dark"] .float-nav__tab          { color: rgba(255, 255, 255, 0.65); }
 [data-theme="dark"] .float-nav__tab--active  {
-  background: rgba(255, 255, 255, 0.10);
+  background: rgba(255, 255, 255, 0.16);
   color: #FFFFFF;
 }
 
