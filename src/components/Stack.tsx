@@ -96,8 +96,8 @@ export default function Stack({
   const shouldDisableDrag = mobileClickOnly && isMobile;
   const shouldEnableClick = sendToBackOnClick || shouldDisableDrag;
 
-  /* Stable random rotations per card — computed once */
-  const rotationsRef = useRef<number[]>([]);
+  /* Stable random rotations keyed by card id — never changes on reorder */
+  const rotationsRef = useRef<Record<number, number>>({});
 
   const [stack, setStack] = useState<CardItem[]>(() =>
     cards.map((content, i) => ({ id: i + 1, content }))
@@ -106,13 +106,6 @@ export default function Stack({
   useEffect(() => {
     setStack(cards.map((content, i) => ({ id: i + 1, content })));
   }, [cards]);
-
-  /* Grow rotations array when stack size changes */
-  useEffect(() => {
-    while (rotationsRef.current.length < stack.length) {
-      rotationsRef.current.push(Math.random() * 10 - 5);
-    }
-  }, [stack.length]);
 
   const sendToBack = (id: number) => {
     setStack(prev => {
@@ -137,7 +130,11 @@ export default function Stack({
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}
     >
       {stack.map((card, index) => {
-        const rot = randomRotation ? (rotationsRef.current[index] ?? 0) : 0;
+        /* Assign rotation once per card id; never recalculated on reorder */
+        if (randomRotation && rotationsRef.current[card.id] === undefined) {
+          rotationsRef.current[card.id] = Math.random() * 10 - 5;
+        }
+        const rot = randomRotation ? rotationsRef.current[card.id] : 0;
         return (
           <CardRotate
             key={card.id}

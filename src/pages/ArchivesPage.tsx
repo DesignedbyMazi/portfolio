@@ -91,7 +91,9 @@ export default function ArchivesPage({ onBack, onNavigate }: Props) {
         </div>
       </main>
 
-      <Footer />
+      <div className="archives-footer-wrap">
+        <Footer />
+      </div>
     </div>
   );
 }

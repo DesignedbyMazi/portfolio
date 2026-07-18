@@ -105,7 +105,7 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
             <OptionWheel
               items={WHEEL_ITEMS}
               defaultSelected={0}
-              fontSize={44 / 15}          /* 44 px at 15 px root */
+              fontSize={36 / 15}          /* 36 px at 15 px root */
               side="left"
               spacing={1.55}
               curve={0.85}
