@@ -331,6 +331,10 @@ class App {
   isDown = false;
   start = 0;
   wasHidden = false;
+  mouseX = -9999;
+  mouseY = -9999;
+  boundOnMouseMoveHover!: (e: MouseEvent) => void;
+  boundOnMouseLeave!: () => void;
 
   constructor(container: HTMLElement, { items, bend = 3, textColor = '#ffffff', borderRadius = 0, font = DEFAULT_FONT, scrollSpeed = 2, scrollEase = 0.05 }: AppOptions = {}) {
     this.container = container;
@@ -392,6 +396,32 @@ class App {
 
   onTouchUp() { this.isDown = false; this.onCheck(); }
 
+  onMouseMoveHover(e: MouseEvent) {
+    const rect = this.container.getBoundingClientRect();
+    this.mouseX = e.clientX - rect.left;
+    this.mouseY = e.clientY - rect.top;
+  }
+
+  onMouseLeave() {
+    this.mouseX = -9999;
+    this.mouseY = -9999;
+    this.medias.forEach(m => { if (m.videoEl) m.videoEl.muted = true; });
+  }
+
+  checkVideoHover() {
+    if (this.screen.width === 0 || this.mouseX < 0) return;
+    const worldX = ((this.mouseX / this.screen.width) * 2 - 1) * (this.viewport.width / 2);
+    const worldY = (1 - (this.mouseY / this.screen.height) * 2) * (this.viewport.height / 2);
+    for (const media of this.medias) {
+      if (!media.videoEl) continue;
+      const hw = media.plane.scale.x / 2;
+      const hh = media.plane.scale.y / 2;
+      const over = Math.abs(worldX - media.plane.position.x) < hw &&
+                   Math.abs(worldY - media.plane.position.y) < hh;
+      media.videoEl.muted = !over;
+    }
+  }
+
   onWheel(e: WheelEvent) {
     const delta = e.deltaY || (e as any).wheelDelta || (e as any).detail;
     this.scroll.target += (delta > 0 ? this.scrollSpeed : -this.scrollSpeed) * 0.2;
@@ -433,6 +463,7 @@ class App {
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     const direction: 'left' | 'right' = this.scroll.current > this.scroll.last ? 'right' : 'left';
     this.medias.forEach(m => m.update(this.scroll, direction));
+    this.checkVideoHover();
     this.renderer.render({ scene: this.scene, camera: this.camera });
     this.scroll.last = this.scroll.current;
     this.raf = window.requestAnimationFrame(this.update.bind(this));
@@ -454,6 +485,10 @@ class App {
     this.container.addEventListener('touchstart', this.boundOnTouchDown);
     window.addEventListener('touchmove', this.boundOnTouchMove);
     window.addEventListener('touchend', this.boundOnTouchUp);
+    this.boundOnMouseMoveHover = this.onMouseMoveHover.bind(this);
+    this.boundOnMouseLeave = this.onMouseLeave.bind(this);
+    this.container.addEventListener('mousemove', this.boundOnMouseMoveHover);
+    this.container.addEventListener('mouseleave', this.boundOnMouseLeave);
   }
 
   destroy() {
@@ -466,6 +501,8 @@ class App {
     this.container.removeEventListener('touchstart', this.boundOnTouchDown);
     window.removeEventListener('touchmove', this.boundOnTouchMove);
     window.removeEventListener('touchend', this.boundOnTouchUp);
+    this.container.removeEventListener('mousemove', this.boundOnMouseMoveHover);
+    this.container.removeEventListener('mouseleave', this.boundOnMouseLeave);
     this.medias.forEach(m => m.destroy());
     if (this.gl.canvas.parentNode) this.gl.canvas.parentNode.removeChild(this.gl.canvas);
   }
