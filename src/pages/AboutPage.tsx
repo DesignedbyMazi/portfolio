@@ -2,6 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import Navbar from '../components/Navbar';
 import OptionWheel from '../components/OptionWheel';
 import ArchivesPage from './ArchivesPage';
+import FunFactPage from './FunFactPage';
 import './AboutPage.css';
 
 const WHEEL_ITEMS = [
@@ -12,8 +13,9 @@ const WHEEL_ITEMS = [
 ];
 
 /* Maps wheel index → which sub-page to open (null = not yet built) */
-const PAGE_MAP: Record<number, 'archives' | null> = {
+const PAGE_MAP: Record<number, 'archives' | 'funfact' | null> = {
   1: 'archives',
+  3: 'funfact',
 };
 
 interface Props {
@@ -21,7 +23,7 @@ interface Props {
   onNavigate: (page: string) => void;
 }
 
-type SubPage = 'archives' | null;
+type SubPage = 'archives' | 'funfact' | null;
 
 export default function AboutPage({ onBack, onNavigate }: Props) {
   const [selectedIdx, setSelectedIdx] = useState(0);
@@ -124,6 +126,10 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
 
       {subPage === 'archives' && (
         <ArchivesPage onBack={handleSubPageBack} onNavigate={onNavigate} />
+      )}
+
+      {subPage === 'funfact' && (
+        <FunFactPage onBack={handleSubPageBack} onNavigate={onNavigate} />
       )}
     </>
   );

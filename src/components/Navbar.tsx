@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { AnimatePresence, motion, useMotionValue, useSpring, useTransform } from 'motion/react';
+import type { SpringOptions } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import profileImg from '../assets/images/profile.jpg';
 import GlareHover from './GlareHover';
 import './Navbar.css';
@@ -61,6 +63,61 @@ function SunIcon() {
   );
 }
 
+/* ── Dock spring config ── */
+const DOCK_SPRING: SpringOptions = { mass: 0.1, stiffness: 150, damping: 12 };
+const BASE_SIZE = 40;
+const MAGNIFY = 58;
+const DISTANCE = 110;
+
+interface NavDockItemProps {
+  mouseX: ReturnType<typeof useMotionValue<number>>;
+  isActive: boolean;
+  label: string;
+  onClick: () => void;
+  children: React.ReactNode;
+}
+
+function NavDockItem({ mouseX, isActive, label, onClick, children }: NavDockItemProps) {
+  const ref = useRef<HTMLButtonElement>(null);
+  const [showLabel, setShowLabel] = useState(false);
+
+  const mouseDistance = useTransform(mouseX, (val: number) => {
+    const rect = ref.current?.getBoundingClientRect() ?? { x: 0, width: BASE_SIZE };
+    return val - rect.x - BASE_SIZE / 2;
+  });
+
+  const targetSize = useTransform(mouseDistance, [-DISTANCE, 0, DISTANCE], [BASE_SIZE, MAGNIFY, BASE_SIZE]);
+  const size = useSpring(targetSize, DOCK_SPRING);
+
+  return (
+    <motion.button
+      ref={ref}
+      style={{ width: size, height: size }}
+      className={`float-nav__tab${isActive ? ' float-nav__tab--active' : ''}`}
+      onClick={onClick}
+      onMouseEnter={() => setShowLabel(true)}
+      onMouseLeave={() => setShowLabel(false)}
+      aria-label={label}
+      aria-current={isActive ? 'page' : undefined}
+    >
+      {children}
+      <AnimatePresence>
+        {showLabel && (
+          <motion.span
+            className="float-nav__label"
+            initial={{ opacity: 0, y: 2 }}
+            animate={{ opacity: 1, y: -2 }}
+            exit={{ opacity: 0, y: 2 }}
+            transition={{ duration: 0.15 }}
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </motion.button>
+  );
+}
+
 /* ── Tab config ── */
 const NAV_TABS = [
   { key: 'Home',     label: 'Home',     Icon: HomeIcon      },
@@ -70,6 +127,53 @@ const NAV_TABS = [
 ] as const;
 
 const TEXT_LINKS = ['Home', 'Work', 'Services', 'About Me'] as const;
+
+/* ── NavDock — float-nav pill with Dock magnification ── */
+interface NavDockProps {
+  floated: boolean;
+  activePage: string;
+  onNavigate?: (page: string) => void;
+}
+
+function NavDock({ floated, activePage, onNavigate }: NavDockProps) {
+  const mouseX = useMotionValue(Infinity);
+
+  return (
+    <nav
+      className={`float-nav${floated ? ' float-nav--visible' : ''}`}
+      aria-label="Main navigation"
+      onMouseMove={(e) => mouseX.set(e.pageX)}
+      onMouseLeave={() => mouseX.set(Infinity)}
+    >
+      <div className="float-nav__tabs">
+        {NAV_TABS.map(({ key, label, Icon }) => (
+          <NavDockItem
+            key={key}
+            mouseX={mouseX}
+            isActive={activePage === key}
+            label={label}
+            onClick={() => onNavigate?.(key)}
+          >
+            <GlareHover
+              width="100%"
+              height="100%"
+              background="transparent"
+              borderRadius="9999px"
+              borderColor="transparent"
+              glareColor="#ffffff"
+              glareOpacity={0.28}
+              glareAngle={-30}
+              glareSize={300}
+              transitionDuration={600}
+            >
+              <Icon />
+            </GlareHover>
+          </NavDockItem>
+        ))}
+      </div>
+    </nav>
+  );
+}
 
 export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'Godswill Uche', showViewWorks = true, onGoHome }: NavbarProps) {
   const [floated, setFloated] = useState(() => activePage !== 'Home');
@@ -179,42 +283,8 @@ export default function Navbar({ activePage = 'Home', onNavigate, pageLabel = 'G
         </div>
       </div>
 
-      {/* ── Floating bottom icon nav ── */}
-      <nav
-        className={`float-nav${floated ? ' float-nav--visible' : ''}`}
-        aria-label="Main navigation"
-      >
-        <div className="float-nav__tabs">
-          {NAV_TABS.map(({ key, label, Icon }) => {
-            const isActive = activePage === key;
-            return (
-              <button
-                key={key}
-                className={`float-nav__tab${isActive ? ' float-nav__tab--active' : ''}`}
-                onClick={() => onNavigate?.(key)}
-                aria-label={label}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {/* GlareHover adds sweep glare on hover */}
-                <GlareHover
-                  width="100%"
-                  height="100%"
-                  background="transparent"
-                  borderRadius="9999px"
-                  borderColor="transparent"
-                  glareColor="#ffffff"
-                  glareOpacity={0.28}
-                  glareAngle={-30}
-                  glareSize={300}
-                  transitionDuration={600}
-                >
-                  <Icon />
-                </GlareHover>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+      {/* ── Floating bottom icon nav with Dock magnification ── */}
+      <NavDock floated={floated} activePage={activePage} onNavigate={onNavigate} />
     </>
   );
 }
