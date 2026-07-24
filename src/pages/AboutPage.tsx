@@ -1,9 +1,10 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import Navbar from '../components/Navbar';
 import OptionWheel from '../components/OptionWheel';
 import ArchivesPage from './ArchivesPage';
-import FunFactPage from './FunFactPage';
 import './AboutPage.css';
+
+const FunFactPage = lazy(() => import('./FunFactPage'));
 
 const WHEEL_ITEMS = [
   'About Uche',
@@ -129,7 +130,9 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
       )}
 
       {subPage === 'funfact' && (
-        <FunFactPage onBack={handleSubPageBack} onNavigate={onNavigate} />
+        <Suspense fallback={null}>
+          <FunFactPage onBack={handleSubPageBack} onNavigate={onNavigate} />
+        </Suspense>
       )}
     </>
   );

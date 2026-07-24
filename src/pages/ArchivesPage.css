@@ -5,13 +5,7 @@
   z-index: 150;
   display: flex;
   flex-direction: column;
-  overflow: hidden; /* everything fits in one viewport */
-  animation: archives-fadein 0.15s ease both;
-}
-
-@keyframes archives-fadein {
-  from { opacity: 0; }
-  to   { opacity: 1; }
+  overflow: hidden;
 }
 
 /* Main content: fills space between navbar and footer */

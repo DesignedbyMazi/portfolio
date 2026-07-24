@@ -51,6 +51,7 @@ export default function FunFactPage({ onBack, onNavigate }: Props) {
             bend={3}
             textColor="#ffffff"
             borderRadius={0.05}
+            font="bold 24px Inter"
             scrollSpeed={2}
             scrollEase={0.03}
           />
