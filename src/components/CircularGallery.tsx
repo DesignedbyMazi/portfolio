@@ -405,7 +405,11 @@ class App {
   onMouseLeave() {
     this.mouseX = -9999;
     this.mouseY = -9999;
-    this.medias.forEach(m => { if (m.videoEl) m.videoEl.muted = true; });
+    this.medias.forEach(m => {
+      if (!m.videoEl) return;
+      m.videoEl.muted = true;
+      if (m.videoEl.paused) m.videoEl.play().catch(() => {});
+    });
   }
 
   checkVideoHover() {
@@ -413,12 +417,24 @@ class App {
     const worldX = ((this.mouseX / this.screen.width) * 2 - 1) * (this.viewport.width / 2);
     const worldY = (1 - (this.mouseY / this.screen.height) * 2) * (this.viewport.height / 2);
     for (const media of this.medias) {
-      if (!media.videoEl) continue;
+      const v = media.videoEl;
+      if (!v) continue;
       const hw = media.plane.scale.x / 2;
       const hh = media.plane.scale.y / 2;
       const over = Math.abs(worldX - media.plane.position.x) < hw &&
                    Math.abs(worldY - media.plane.position.y) < hh;
-      media.videoEl.muted = !over;
+      if (over) {
+        // Only change muted on transition to avoid interrupting playback every frame
+        if (v.muted) {
+          v.muted = false;
+          v.play().catch(() => { v.muted = true; });
+        } else if (v.paused) {
+          v.play().catch(() => {});
+        }
+      } else if (!v.muted) {
+        v.muted = true;
+        if (v.paused) v.play().catch(() => {});
+      }
     }
   }
 
