@@ -30,7 +30,7 @@ export default function FunFactPage({ onBack, onNavigate }: Props) {
     window.addEventListener('resize', update);
     return () => window.removeEventListener('resize', update);
   }, []);
-  const galleryFont = isDesktop ? '600 24px Inter' : '500 24px Inter';
+  const galleryFont = isDesktop ? '700 24px Inter' : '500 24px Inter';
 
   /* Mirror the site's active theme so gallery text color follows light/dark */
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
