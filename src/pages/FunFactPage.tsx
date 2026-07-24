@@ -32,6 +32,24 @@ export default function FunFactPage({ onBack, onNavigate }: Props) {
   }, []);
   const galleryFont = isDesktop ? '600 24px Inter' : '500 24px Inter';
 
+  /* Mirror the site's active theme so gallery text color follows light/dark */
+  const [theme, setTheme] = useState<'light' | 'dark'>(() => {
+    try {
+      const s = localStorage.getItem('portfolio-theme');
+      if (s === 'dark' || s === 'light') return s;
+    } catch {}
+    return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+  });
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const next = (e as CustomEvent<string>).detail;
+      if (next === 'dark' || next === 'light') setTheme(next);
+    };
+    window.addEventListener('portfolio-theme', handler);
+    return () => window.removeEventListener('portfolio-theme', handler);
+  }, []);
+  const textColor = theme === 'dark' ? '#F0F0F0' : '#2D2D2D';
+
   const handleNav = (page: string) => {
     if (page === 'Home') onBack();
     else onNavigate(page);
@@ -59,7 +77,7 @@ export default function FunFactPage({ onBack, onNavigate }: Props) {
           <CircularGallery
             items={FUNFACT_ITEMS}
             bend={3}
-            textColor="#ffffff"
+            textColor={textColor}
             borderRadius={0.05}
             font={galleryFont}
             scrollSpeed={2}
