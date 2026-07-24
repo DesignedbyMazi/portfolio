@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import CircularGallery from '../components/CircularGallery';
 import Footer from '../components/Footer';
 import Navbar from '../components/Navbar';
@@ -22,6 +23,15 @@ interface Props {
 }
 
 export default function FunFactPage({ onBack, onNavigate }: Props) {
+  /* Desktop (≥768px) → semibold 600, mobile stays 500 */
+  const [isDesktop, setIsDesktop] = useState(() => window.innerWidth >= 768);
+  useEffect(() => {
+    const update = () => setIsDesktop(window.innerWidth >= 768);
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
+  }, []);
+  const galleryFont = isDesktop ? '600 24px Inter' : '500 24px Inter';
+
   const handleNav = (page: string) => {
     if (page === 'Home') onBack();
     else onNavigate(page);
@@ -51,7 +61,7 @@ export default function FunFactPage({ onBack, onNavigate }: Props) {
             bend={3}
             textColor="#ffffff"
             borderRadius={0.05}
-            font="500 24px Inter"
+            font={galleryFont}
             scrollSpeed={2}
             scrollEase={0.03}
           />

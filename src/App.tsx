@@ -56,7 +56,7 @@ function GlobalSpark() {
         const elapsed = ts - spark.startTime;
         if (elapsed >= DURATION) return false;
         const t      = elapsed / DURATION;
-        const eased  = t * (2 - t);          // ease-out
+        const eased  = t * (2 - t);
         const dist   = eased * RADIUS;
         const len    = LINE_SIZE * (1 - eased);
         const x1 = spark.x + dist * Math.cos(spark.angle);
@@ -120,21 +120,42 @@ function useWelcomeConfetti() {
 }
 
 type View = 'home' | 'works' | 'services' | 'carlofty' | 'about';
+const VALID_VIEWS: View[] = ['home', 'works', 'services', 'carlofty', 'about'];
+
+/* Read the last view from sessionStorage — falls back to 'home' */
+function getSavedView(): View {
+  try {
+    const v = sessionStorage.getItem('portfolio-view') as View;
+    return VALID_VIEWS.includes(v) ? v : 'home';
+  } catch { return 'home'; }
+}
+
+function getSavedReturn(): 'home' | 'works' {
+  try {
+    const r = sessionStorage.getItem('portfolio-carlofty-return');
+    return r === 'works' ? 'works' : 'home';
+  } catch { return 'home'; }
+}
 
 function App() {
-  const [view, setView]                       = useState<View>('home');
-  const [worksMounted,    setWorksMounted]    = useState(false);
-  const [servicesMounted, setServicesMounted] = useState(false);
-  const [carloftyMounted, setCarloftyMounted] = useState(false);
-  const [aboutMounted,    setAboutMounted]    = useState(false);
-  // Tracks which view to return to when leaving Carlofty
-  const [carloftyReturn, setCarloftyReturn] = useState<'home' | 'works'>('home');
+  /* ── Restore last view on mount ──────────────────── */
+  const [view, setView] = useState<View>(getSavedView);
+
+  /* Mount pages that were active on last visit immediately */
+  const initialView = getSavedView();
+  const [worksMounted,    setWorksMounted]    = useState(initialView === 'works' || initialView === 'carlofty');
+  const [servicesMounted, setServicesMounted] = useState(initialView === 'services');
+  const [carloftyMounted, setCarloftyMounted] = useState(initialView === 'carlofty');
+  const [aboutMounted,    setAboutMounted]    = useState(initialView === 'about');
+
+  const [carloftyReturn, setCarloftyReturn] = useState<'home' | 'works'>(getSavedReturn);
 
   useAnimations();
   useWelcomeConfetti();
 
   const nav = (to: View) => {
     window.scrollTo({ top: 0, behavior: 'instant' });
+    try { sessionStorage.setItem('portfolio-view', to); } catch {}
     setView(to);
   };
 
@@ -145,6 +166,7 @@ function App() {
   const goCarlofty = (returnTo: 'home' | 'works' = 'works') => {
     setCarloftyMounted(true);
     setCarloftyReturn(returnTo);
+    try { sessionStorage.setItem('portfolio-carlofty-return', returnTo); } catch {}
     nav('carlofty');
   };
   const goBack = () => nav(carloftyReturn);

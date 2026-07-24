@@ -28,7 +28,12 @@ type SubPage = 'archives' | 'funfact' | null;
 
 export default function AboutPage({ onBack, onNavigate }: Props) {
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const [subPage, setSubPage] = useState<SubPage>(null);
+  const [subPage, setSubPage] = useState<SubPage>(() => {
+    try {
+      const s = sessionStorage.getItem('portfolio-about-subpage') as SubPage;
+      return s === 'archives' || s === 'funfact' ? s : null;
+    } catch { return null; }
+  });
 
   /* Track theme for OptionWheel color props */
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -76,10 +81,16 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
 
   const handleItemClick = useCallback((index: number) => {
     const target = PAGE_MAP[index];
-    if (target) setSubPage(target);
+    if (target) {
+      setSubPage(target);
+      try { sessionStorage.setItem('portfolio-about-subpage', target); } catch {}
+    }
   }, []);
 
-  const handleSubPageBack = () => setSubPage(null);
+  const handleSubPageBack = () => {
+    setSubPage(null);
+    try { sessionStorage.removeItem('portfolio-about-subpage'); } catch {}
+  };
 
   const textColor   = theme === 'dark' ? 'rgba(200,200,205,0.42)' : 'rgba(80,80,90,0.42)';
   const activeColor = theme === 'dark' ? '#FFFFFF'                 : '#0F0F0F';

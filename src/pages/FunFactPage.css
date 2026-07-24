@@ -60,6 +60,13 @@
   }
 }
 
+/* ── Desktop: semibold text ────────────────────────── */
+@media (min-width: 768px) {
+  .funfact-back-link {
+    font-weight: 600;
+  }
+}
+
 /* ── Mobile ─────────────────────────────────────────── */
 @media (max-width: 767px) {
   .funfact-main {
