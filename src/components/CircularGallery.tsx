@@ -330,6 +330,7 @@ class App {
   boundOnTouchUp!: () => void;
   isDown = false;
   start = 0;
+  wasHidden = false;
 
   constructor(container: HTMLElement, { items, bend = 3, textColor = '#ffffff', borderRadius = 0, font = DEFAULT_FONT, scrollSpeed = 2, scrollEase = 0.05 }: AppOptions = {}) {
     this.container = container;
@@ -417,6 +418,18 @@ class App {
   }
 
   update() {
+    // When container is hidden (keep-alive display:none), pause rendering but
+    // keep the loop alive so it resumes automatically on the next visible frame.
+    if (this.container.clientWidth === 0) {
+      this.wasHidden = true;
+      this.raf = window.requestAnimationFrame(this.update.bind(this));
+      return;
+    }
+    // First visible frame after hidden (or if init ran with 0 dimensions): re-sync.
+    if (this.wasHidden || this.screen.width === 0) {
+      this.wasHidden = false;
+      this.onResize();
+    }
     this.scroll.current = lerp(this.scroll.current, this.scroll.target, this.scroll.ease);
     const direction: 'left' | 'right' = this.scroll.current > this.scroll.last ? 'right' : 'left';
     this.medias.forEach(m => m.update(this.scroll, direction));
@@ -432,11 +445,13 @@ class App {
     this.boundOnTouchMove = this.onTouchMove.bind(this);
     this.boundOnTouchUp = this.onTouchUp.bind(this);
     window.addEventListener('resize', this.boundOnResize);
-    window.addEventListener('wheel', this.boundOnWheel);
-    window.addEventListener('mousedown', this.boundOnTouchDown);
+    // Wheel and pointer-down scoped to container so they don't fire when
+    // the gallery is hidden behind another page (keep-alive display:none).
+    this.container.addEventListener('wheel', this.boundOnWheel);
+    this.container.addEventListener('mousedown', this.boundOnTouchDown);
     window.addEventListener('mousemove', this.boundOnTouchMove);
     window.addEventListener('mouseup', this.boundOnTouchUp);
-    window.addEventListener('touchstart', this.boundOnTouchDown);
+    this.container.addEventListener('touchstart', this.boundOnTouchDown);
     window.addEventListener('touchmove', this.boundOnTouchMove);
     window.addEventListener('touchend', this.boundOnTouchUp);
   }
@@ -444,11 +459,11 @@ class App {
   destroy() {
     window.cancelAnimationFrame(this.raf);
     window.removeEventListener('resize', this.boundOnResize);
-    window.removeEventListener('wheel', this.boundOnWheel);
-    window.removeEventListener('mousedown', this.boundOnTouchDown);
+    this.container.removeEventListener('wheel', this.boundOnWheel);
+    this.container.removeEventListener('mousedown', this.boundOnTouchDown);
     window.removeEventListener('mousemove', this.boundOnTouchMove);
     window.removeEventListener('mouseup', this.boundOnTouchUp);
-    window.removeEventListener('touchstart', this.boundOnTouchDown);
+    this.container.removeEventListener('touchstart', this.boundOnTouchDown);
     window.removeEventListener('touchmove', this.boundOnTouchMove);
     window.removeEventListener('touchend', this.boundOnTouchUp);
     this.medias.forEach(m => m.destroy());
@@ -472,14 +487,24 @@ export default function CircularGallery({
   useEffect(() => {
     if (!containerRef.current) return;
     let app: App | undefined;
-    let isMounted = true;
-    resolveFont(font, fontUrl).then(resolvedFont => {
-      if (!isMounted || !containerRef.current) return;
+    let cancelled = false;
+
+    const init = (resolvedFont: string) => {
+      if (cancelled || !containerRef.current) return;
       app = new App(containerRef.current, { items, bend, textColor, borderRadius, font: resolvedFont, scrollSpeed, scrollEase });
-    });
+    };
+
+    // Skip async font resolution for fonts already in the document
+    // (e.g. Inter loaded via <link> in index.html) — initialise synchronously.
+    if (!fontUrl && font !== DEFAULT_FONT) {
+      init(font);
+    } else {
+      resolveFont(font, fontUrl).then(init);
+    }
+
     return () => {
-      isMounted = false;
-      if (app) app.destroy();
+      cancelled = true;
+      app?.destroy();
     };
   }, [items, bend, textColor, borderRadius, font, fontUrl, scrollSpeed, scrollEase]);
 

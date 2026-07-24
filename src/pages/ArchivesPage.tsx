@@ -74,15 +74,16 @@ export default function ArchivesPage({ onBack, onNavigate }: Props) {
   const photos = useMemo(() => shuffle(PHOTO_PATHS), []);
   const handleSwipe = useCallback(() => synthBubblePop(), []);
 
-  const cards = photos.map((src, i) => (
+  const cards = useMemo(() => photos.map((src, i) => (
     <img
       key={i}
       src={src}
       alt={`archive-${i + 1}`}
       className="card-image"
       draggable={false}
+      loading="eager"
     />
-  ));
+  )), [photos]);
 
   const handleNav = (page: string) => {
     if (page === 'Home') onBack();

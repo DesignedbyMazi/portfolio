@@ -35,6 +35,16 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
     } catch { return null; }
   });
 
+  /* Keep-alive: once a sub-page is opened for the first time it stays mounted
+     and is shown/hidden via CSS display so WebGL contexts and images survive
+     navigation back without needing to reinitialise. */
+  const [archivesMounted, setArchivesMounted] = useState<boolean>(() => {
+    try { return sessionStorage.getItem('portfolio-about-subpage') === 'archives'; } catch { return false; }
+  });
+  const [funfactMounted, setFunfactMounted] = useState<boolean>(() => {
+    try { return sessionStorage.getItem('portfolio-about-subpage') === 'funfact'; } catch { return false; }
+  });
+
   /* Track theme for OptionWheel color props */
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
     try {
@@ -82,15 +92,17 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
   const handleItemClick = useCallback((index: number) => {
     const target = PAGE_MAP[index];
     if (target) {
+      if (target === 'archives') setArchivesMounted(true);
+      if (target === 'funfact') setFunfactMounted(true);
       setSubPage(target);
       try { sessionStorage.setItem('portfolio-about-subpage', target); } catch {}
     }
   }, []);
 
-  const handleSubPageBack = () => {
+  const handleSubPageBack = useCallback(() => {
     setSubPage(null);
     try { sessionStorage.removeItem('portfolio-about-subpage'); } catch {}
-  };
+  }, []);
 
   const textColor   = theme === 'dark' ? 'rgba(200,200,205,0.42)' : 'rgba(80,80,90,0.42)';
   const activeColor = theme === 'dark' ? '#FFFFFF'                 : '#0F0F0F';
@@ -136,14 +148,18 @@ export default function AboutPage({ onBack, onNavigate }: Props) {
         </div>
       </div>
 
-      {subPage === 'archives' && (
-        <ArchivesPage onBack={handleSubPageBack} onNavigate={onNavigate} />
+      {archivesMounted && (
+        <div style={{ display: subPage === 'archives' ? undefined : 'none' }}>
+          <ArchivesPage onBack={handleSubPageBack} onNavigate={onNavigate} />
+        </div>
       )}
 
-      {subPage === 'funfact' && (
-        <Suspense fallback={null}>
-          <FunFactPage onBack={handleSubPageBack} onNavigate={onNavigate} />
-        </Suspense>
+      {funfactMounted && (
+        <div style={{ display: subPage === 'funfact' ? undefined : 'none' }}>
+          <Suspense fallback={null}>
+            <FunFactPage onBack={handleSubPageBack} onNavigate={onNavigate} />
+          </Suspense>
+        </div>
       )}
     </>
   );
