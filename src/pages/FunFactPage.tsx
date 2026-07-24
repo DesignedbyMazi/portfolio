@@ -7,12 +7,12 @@ const FUNFACT_ITEMS = [
   { image: '/Funfact/01.jpg', text: "I wasn't born Nigerian" },
   { image: '/Funfact/02.jpg', text: 'I speak a bit French' },
   { image: '/Funfact/03.jpg', text: 'I love to travel' },
-  { image: '/Funfact/04.jpg', text: 'Manchester United' },
+  { image: '/Funfact/04.jpg', text: 'United for lifeeeee!' },
   { image: '/Funfact/05.jpg', text: 'B.Sc Dental Technology' },
-  { image: '/Funfact/06.jpg', text: 'Three Idiots' },
+  { image: '/Funfact/06.jpg', text: 'Favorite movie to rewatch' },
   { image: '/Funfact/07.jpg', text: "Messi's the GOAT" },
   { image: '/Funfact/08.jpg', text: 'Curious & Intelligent' },
-  { image: '/Funfact/09.jpg', text: 'Sarcasm and Memes' },
+  { image: '/Funfact/09.jpg', text: 'I love memessss!' },
   { image: '/Funfact/10.mov', text: "I'm quite a stepper" },
 ];
 
