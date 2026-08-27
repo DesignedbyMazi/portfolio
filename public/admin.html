@@ -304,6 +304,24 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-heigh
 .toast--ok{background:var(--ok-dim);color:var(--ok);border:1px solid #BBF7D0;}
 .toast--err{background:var(--err-dim);color:var(--err);border:1px solid #FECACA;}
 
+/* ── UPLOAD CARD ── */
+.upload-card{border:1px solid var(--bd);border-radius:var(--r);overflow:hidden;margin-top:6px;}
+.uc-zone{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;
+  padding:28px 20px;cursor:pointer;background:var(--bg-s);transition:background .15s;min-height:90px;
+}
+.uc-zone:hover,.uc-zone.dragover{background:var(--bg-h);}
+.uc-preview{width:100%;background:#000;position:relative;}
+.uc-preview img{width:100%;max-height:220px;object-fit:cover;display:block;}
+.uc-preview video{width:100%;max-height:220px;display:block;}
+.uc-replace{font-size:0.68rem;color:var(--tx-3);padding:7px 12px;text-align:center;background:var(--bg-s);cursor:pointer;transition:background .12s;}
+.uc-replace:hover{background:var(--bg-h);color:var(--tx-2);}
+.uc-icon{font-size:1.4rem;line-height:1;opacity:.25;}
+.uc-text{font-size:0.8rem;font-weight:500;color:var(--tx-2);}
+.uc-hint{font-size:0.68rem;color:var(--tx-3);}
+.uc-progress{padding:9px 14px;font-size:0.75rem;color:var(--tx-2);background:var(--bg-s);text-align:center;border-top:1px solid var(--bd);}
+.uc-err{padding:8px 12px;font-size:0.7rem;color:var(--err);text-align:center;}
+
 /* ── SQL MODAL ── */
 .modal-over{position:fixed;inset:0;background:rgba(0,0,0,.25);z-index:9998;display:none;align-items:center;justify-content:center;}
 .modal-over.open{display:flex;}
@@ -810,7 +828,7 @@ function fCard() {
   </div>
   <div class="frow"><label class="flabel">Card Title</label>${inp('title','Designing Trust into a Broken Payment Experience...')}</div>
   <div class="frow"><label class="flabel">Card Description (portfolio preview)</label>${ta('description','Global car auctions shouldn\'t require a middleman...')}</div>
-  <div class="frow"><label class="flabel">Card Thumbnail URL</label>${inp('card_image_url','https://...')}${mediaPrev('card_image_url','image')}</div>
+  <div class="frow"><label class="flabel">Card Thumbnail</label>${uploadCard('card_image_url','image/*')}</div>
 `; }
 
 function fHero() { return `
@@ -828,7 +846,7 @@ function fHero() { return `
     <div><label class="flabel">Deliverables</label>${inp('content.hero.metaDeliverables','Design system, Payment Flow, Admin Dashboard...')}</div>
   </div>
   <div class="fdivider"></div>
-  <div class="frow"><label class="flabel">Hero Image URL</label>${inp('content.hero.imageUrl','https://...')}${mediaPrev('content.hero.imageUrl','image')}</div>
+  <div class="frow"><label class="flabel">Hero Image / Video</label>${uploadCard('content.hero.imageUrl','image/*,video/*')}</div>
 `; }
 
 function fMyRole() { return `
@@ -837,7 +855,7 @@ function fMyRole() { return `
   <div class="frow"><label class="flabel">Body</label>${ta('content.myRole.body','I was responsible for design direction, system, flows, and handoff...')}</div>
   <div class="frow"><label class="flabel">Tags</label>${tagsEl('content.myRole.tags')}</div>
   <div class="fdivider"></div>
-  <div class="frow"><label class="flabel">Video URL</label>${inp('content.myRole.videoUrl','https://...')}${mediaPrev('content.myRole.videoUrl','video')}</div>
+  <div class="frow"><label class="flabel">Role Video / Image</label>${uploadCard('content.myRole.videoUrl','image/*,video/*')}</div>
 `; }
 
 function fChallenge() {
@@ -862,7 +880,7 @@ function fChallenge() {
   </div>
   <button class="add-row" onclick="addBan()">+ Add Problem</button>
   <div class="fdivider"></div>
-  <div class="frow"><label class="flabel">Challenge Image URL</label>${inp('content.challenge.imageUrl','https://...')}${mediaPrev('content.challenge.imageUrl','image')}</div>
+  <div class="frow"><label class="flabel">Challenge Image / Video</label>${uploadCard('content.challenge.imageUrl','image/*,video/*')}</div>
 `; }
 
 function addBan() { let a=g('content.challenge.banItems')||[]; a=[...a,['','']]; sp('content.challenge.banItems',a); document.getElementById('ban-list').innerHTML=(a.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Problem ${i+1}</span><button class="repeat-del" onclick="rmBan(${i})">Remove</button></div><div class="frow-2"><div><label class="flabel">Bold Label</label><input class="finput" value="${esc(it[0]||'')}" oninput="updBan(${i},0,this.value)"></div><div><label class="flabel">Description</label><input class="finput" value="${esc(it[1]||'')}" oninput="updBan(${i},1,this.value)"></div></div></div>`).join('')); }
@@ -918,7 +936,7 @@ function fAudit() {
   <button class="add-row" onclick="addAudit()">+ Add Card</button>
   <div class="fdivider"></div>
   <div class="frow"><label class="flabel">Video Label</label>${inp('content.audit.videoLabel','My Waitlist Landing Page Redesign:')}</div>
-  <div class="frow"><label class="flabel">Video URL</label>${inp('content.audit.videoUrl','https://...')}${mediaPrev('content.audit.videoUrl','video')}</div>
+  <div class="frow"><label class="flabel">Audit Video / Image</label>${uploadCard('content.audit.videoUrl','image/*,video/*')}</div>
 `; }
 
 function renderAuditCards(items) { return items.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Card ${i+1}</span><button class="repeat-del" onclick="rmAudit(${i})">Remove</button></div><div class="frow-2"><div><label class="flabel">Icon</label><select class="fselect" onchange="updAudit(${i},'icon',this.value)">${ICONS.map(ic=>`<option${it.icon===ic?' selected':''}>${ic}</option>`).join('')}</select></div><div><label class="flabel">Title</label><input class="finput" value="${esc(it.title||'')}" oninput="updAudit(${i},'title',this.value)"></div></div><div class="frow"><label class="flabel">Body</label><textarea class="ftextarea" oninput="updAudit(${i},'body',this.value)">${esc(it.body||'')}</textarea></div></div>`).join(''); }
@@ -992,7 +1010,7 @@ function renderSols(items) { return items.map((it,i)=>{
       <input class="tag-input" placeholder="Type and press Enter" onkeydown="addSolTag(event,${i})">
     </div>
   </div>
-  <div class="frow"><label class="flabel">Media URL</label><input class="finput" value="${esc(it.mediaUrl||'')}" oninput="updSol(${i},'mediaUrl',this.value)"></div>
+  <div class="frow"><label class="flabel">Media (Image or Video)</label>${uploadCard(`content.solutions.cards.${i}.mediaUrl`,'image/*,video/*')}</div>
   </div>`;
 }).join(''); }
 function addSol() { let a=g('content.solutions.cards')||[]; a=[...a,{icon:'Stack',title:'',body:'',tags:[],mediaUrl:'',mediaType:'video'}]; sp('content.solutions.cards',a); document.getElementById('sols-list').innerHTML=renderSols(a); }
@@ -1016,7 +1034,7 @@ function fOutcome() {
   <div class="frow"><label class="flabel">Label</label>${inp('content.outcome.calloutLabel','WHAT THIS CASE STUDY DEMONSTRATES')}</div>
   <div class="frow"><label class="flabel">Body</label>${ta('content.outcome.calloutBody','End-to-end product design ownership on a live fintech-adjacent platform...')}</div>
   <div class="fdivider"></div>
-  <div class="frow"><label class="flabel">Outro Video URL</label>${inp('content.outcome.videoUrl','https://...')}${mediaPrev('content.outcome.videoUrl','video')}</div>
+  <div class="frow"><label class="flabel">Outro Video / Image</label>${uploadCard('content.outcome.videoUrl','image/*,video/*')}</div>
 `; }
 
 function renderOutcomes(items) { return items.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Outcome ${i+1}</span><button class="repeat-del" onclick="rmOutcome(${i})">Remove</button></div><div class="frow-3"><div><label class="flabel">Icon</label><select class="fselect" onchange="updOutcome(${i},'icon',this.value)">${ICONS.map(ic=>`<option${it.icon===ic?' selected':''}>${ic}</option>`).join('')}</select></div><div><label class="flabel">Prefix (e.g. $)</label><input class="finput" value="${esc(it.prefix||'')}" oninput="updOutcome(${i},'prefix',this.value)"></div><div><label class="flabel">Count</label><input class="finput" type="number" value="${it.count||0}" oninput="updOutcome(${i},'count',+this.value)"></div></div><div class="frow-2"><div><label class="flabel">Suffix (e.g. M+, min)</label><input class="finput" value="${esc(it.suffix||'')}" oninput="updOutcome(${i},'suffix',this.value)"></div><div><label class="flabel">Label</label><input class="finput" value="${esc(it.label||'')}" oninput="updOutcome(${i},'label',this.value)"></div></div></div>`).join(''); }
@@ -1094,6 +1112,94 @@ async function previewStudy() {
     showToast('Saved · Preview opened in new tab', 'ok');
   } catch(e) { showToast('Could not save before preview: ' + e.message, 'err'); }
   finally { btn.textContent = 'Preview ↗'; btn.disabled = false; }
+}
+
+/* ─────────────────────────────── STORAGE ────── */
+async function uploadToStorage(file, folder) {
+  const ext = (file.name.split('.').pop() || 'bin').toLowerCase();
+  const uid = Date.now() + '-' + Math.random().toString(36).slice(2, 7);
+  const path = `${folder || 'general'}/${uid}.${ext}`;
+  const r = await fetch(`${SB_URL}/storage/v1/object/cms-media/${path}`, {
+    method: 'POST',
+    headers: {
+      'apikey': SB_KEY,
+      'Authorization': `Bearer ${SB_KEY}`,
+      'Content-Type': file.type || 'application/octet-stream',
+      'x-upsert': 'true',
+    },
+    body: file,
+  });
+  if (!r.ok) {
+    const e = await r.json().catch(() => ({}));
+    throw new Error(e.error || e.message || `Upload failed (${r.status})`);
+  }
+  return `${SB_URL}/storage/v1/object/public/cms-media/${path}`;
+}
+
+function isVideoUrl(url) {
+  return /\.(mp4|webm|mov|avi|m4v|ogv)$/i.test(url || '');
+}
+
+function uploadCard(path, accept) {
+  const url = g(path);
+  const wid = 'ucw-' + path.replace(/\W/g, '_');
+  const isVid = url && (accept === 'video/*' || isVideoUrl(url));
+  return `
+    <div class="upload-card" id="${wid}">
+      <input type="file" id="ufi-${wid}" accept="${accept || 'image/*,video/*'}" style="display:none"
+             onchange="handleUpload(this,'${path}','${wid}','${accept || ''}')">
+      <div class="uc-zone" id="zone-${wid}"
+           onclick="document.getElementById('ufi-${wid}').click()"
+           ondragover="event.preventDefault();this.classList.add('dragover')"
+           ondragleave="this.classList.remove('dragover')"
+           ondrop="handleDrop(event,'${path}','${wid}','${accept || ''}')">
+        ${url ? `
+          <div class="uc-preview" style="width:100%">
+            ${isVid
+              ? `<video src="${esc(url)}" muted controls style="width:100%;max-height:220px;display:block"></video>`
+              : `<img src="${esc(url)}" style="width:100%;max-height:220px;object-fit:cover;display:block"
+                      onerror="this.parentElement.innerHTML='<div class=uc-err>Could not load preview</div>'">`
+            }
+          </div>
+          <div class="uc-replace" onclick="event.stopPropagation();document.getElementById('ufi-${wid}').click()">
+            Click or drag to replace
+          </div>
+        ` : `
+          <div class="uc-icon">&#8593;</div>
+          <div class="uc-text">Click to upload or drag &amp; drop</div>
+          <div class="uc-hint">Images and videos &middot; Any format</div>
+        `}
+      </div>
+      <div class="uc-progress" id="uprog-${wid}" style="display:none"></div>
+    </div>
+  `;
+}
+
+async function handleUpload(input, path, wid, accept) {
+  const file = input.files?.[0]; if (!file) return;
+  const prog = document.getElementById(`uprog-${wid}`);
+  if (prog) { prog.style.display = 'block'; prog.textContent = `Uploading ${file.name}…`; }
+  const zone = document.getElementById(`zone-${wid}`);
+  if (zone) zone.style.pointerEvents = 'none';
+  try {
+    const folder = formData.slug || 'general';
+    const url = await uploadToStorage(file, folder);
+    sp(path, url);
+    const wrap = document.getElementById(wid);
+    if (wrap) wrap.outerHTML = uploadCard(path, accept);
+    showToast('Uploaded successfully', 'ok');
+  } catch(e) {
+    if (prog) prog.textContent = 'Upload failed: ' + e.message;
+    if (zone) zone.style.pointerEvents = '';
+    showToast('Upload failed: ' + e.message, 'err');
+  }
+}
+
+function handleDrop(event, path, wid, accept) {
+  event.preventDefault();
+  const file = event.dataTransfer?.files?.[0]; if (!file) return;
+  const fakeInput = { files: [file], accept };
+  handleUpload(fakeInput, path, wid, accept);
 }
 
 /* ─────────────────────────────── UTILS ──────── */
