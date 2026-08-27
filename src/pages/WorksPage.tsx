@@ -31,6 +31,15 @@ function ArrowUpRight() {
 }
 
 
+function LockIcon() {
+  return (
+    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
+      <rect x="1.5" y="5" width="9" height="6.5" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
+      <path d="M3.5 5V3.5a2.5 2.5 0 0 1 5 0V5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
+    </svg>
+  );
+}
+
 /* ── Data ───────────────────────────────────────────── */
 type Tab = 'live' | 'cases';
 
@@ -302,14 +311,32 @@ export default function WorksPage({ onBack, onNavigate }: WorksPageProps) {
                 Loading case studies…
               </p>
             )}
-            {!loading && caseStudies.length === 0 && (
-              <p style={{ color: 'var(--tx-2)', fontSize: '0.9rem', padding: '2rem 0' }}>
-                No published case studies yet.
-              </p>
-            )}
             {caseStudies.map((cs) => (
               <CaseCard key={cs.id} cs={cs} />
             ))}
+            {/* Placeholder — hidden once 3 or more case studies are published */}
+            {!loading && caseStudies.length < 3 && (
+              <div className="works-case works-case--locked">
+                <p className="works-coming-soon">
+                  <span>Coming soon</span>
+                  <LockIcon />
+                </p>
+                <div className="works-case-img-wrap">
+                  <img src={dashboardImg} alt="Coming soon" className="works-case-img" />
+                </div>
+                <div className="works-case-body">
+                  <h3 className="works-case-title">Next case study in progress.</h3>
+                  <p className="works-case-desc">
+                    A detailed breakdown of another end-to-end product design engagement.
+                    Currently being documented — check back soon.
+                  </p>
+                  <span className="works-case-cta" style={{ opacity: 0.4, pointerEvents: 'none' }}>
+                    <span>Read Case Study</span>
+                    <ArrowUpRight />
+                  </span>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

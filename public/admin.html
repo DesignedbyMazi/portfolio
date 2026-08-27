@@ -472,49 +472,48 @@ const hdrs = (extra = {}) => ({
 async function loadStudies() {
   try {
     const r = await fetch(`${SB_URL}/rest/v1/case_studies?select=id,slug,title,card_image_url,published,order,updated_at&order=order.asc`, { headers: hdrs() });
-    if (r.status === 404 || r.status === 400 || r.status === 42) { showSql(); return; }
-    if (!r.ok) { const e = await r.json(); throw new Error(e.message || r.statusText); }
+    if (r.status === 404 || r.status === 400) { showSql(); return; }
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message || e.error || r.statusText); }
     studies = await r.json();
-    supaAvail = true;
   } catch(e) {
-    supaAvail = false;
-    studies = lsGet('cms-studies') || [];
-    if (studies.length === 0) showToast('Offline mode – data stored locally', 'err');
+    showToast('Supabase error: ' + e.message, 'err');
   }
   renderDash(studies);
 }
 
 async function fetchStudy(id) {
-  if (!supaAvail) return lsGetStudy(id);
   const r = await fetch(`${SB_URL}/rest/v1/case_studies?id=eq.${encodeURIComponent(id)}&select=*`, { headers: hdrs() });
-  if (!r.ok) throw new Error('Failed to load study');
-  const arr = await r.json(); return arr[0];
+  if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message || 'Failed to load study'); }
+  const arr = await r.json();
+  if (!arr || arr.length === 0) throw new Error('Case study not found in Supabase');
+  return arr[0];
 }
 
 async function upsertStudy(payload) {
-  if (!supaAvail) { lsSaveStudy(payload); return payload; }
   if (editing) {
     const r = await fetch(`${SB_URL}/rest/v1/case_studies?id=eq.${encodeURIComponent(editing.id)}`, {
       method:'PATCH', headers: hdrs(), body: JSON.stringify({ ...payload, updated_at: new Date().toISOString() })
     });
-    if (!r.ok) { const e = await r.json(); throw new Error(e.message || 'Update failed'); }
-    return (await r.json())[0];
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message || e.error || 'Update failed'); }
+    const rows = await r.json();
+    if (!rows || rows.length === 0) throw new Error('Update returned no data — check Supabase RLS policies');
+    return rows[0];
   } else {
     const r = await fetch(`${SB_URL}/rest/v1/case_studies`, {
       method:'POST', headers: hdrs(), body: JSON.stringify(payload)
     });
-    if (!r.ok) { const e = await r.json(); throw new Error(e.message || 'Insert failed'); }
-    return (await r.json())[0];
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message || e.error || 'Insert failed'); }
+    const rows = await r.json();
+    if (!rows || rows.length === 0) throw new Error('Supabase insert returned no data — check RLS policies allow anonymous inserts');
+    return rows[0];
   }
 }
 
 async function deleteStudy(id) {
   if (!confirm('Delete this case study? This is permanent.')) return;
   try {
-    if (supaAvail) {
-      const r = await fetch(`${SB_URL}/rest/v1/case_studies?id=eq.${encodeURIComponent(id)}`, { method:'DELETE', headers: hdrs() });
-      if (!r.ok) throw new Error('Delete failed');
-    } else { lsDeleteStudy(id); }
+    const r = await fetch(`${SB_URL}/rest/v1/case_studies?id=eq.${encodeURIComponent(id)}`, { method:'DELETE', headers: hdrs() });
+    if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message || e.error || 'Delete failed'); }
     showToast('Deleted successfully', 'ok');
     await loadStudies();
   } catch(e) { showToast(e.message, 'err'); }
@@ -552,11 +551,11 @@ function showDash() {
 function renderDash(list) {
   const el = document.getElementById('view-dash');
   const count = list.length;
-  const needsSql = !supaAvail && count === 0;
+  const needsSql = count === 0;
   el.innerHTML = `
     <div class="dash-header">
       <div class="dash-title">Case Studies</div>
-      <div class="dash-sub">${count} ${count === 1 ? 'study' : 'studies'} in your portfolio${!supaAvail ? ' · <span style="color:var(--warn)">Offline mode</span>' : ''}</div>
+      <div class="dash-sub">${count} ${count === 1 ? 'study' : 'studies'} in your portfolio</div>
     </div>
     ${needsSql ? `<div class="sql-notice"><p>The <strong>case_studies</strong> table doesn't exist yet in Supabase, or the connection failed. Create the table first, then refresh.</p><button onclick="showSql()">View Setup SQL</button></div>` : ''}
     <div class="study-list">
@@ -605,6 +604,15 @@ const SECS = [
 ];
 
 function startNew() { editing = null; formData = defaultFD(); showEditor('New Case Study'); }
+
+function autoSlug(title) {
+  if (formData.slug && formData.slug !== '') return; // don't overwrite a manually set slug
+  const slug = title.trim().toLowerCase()
+    .replace(/[^a-z0-9\s-]/g,'').replace(/\s+/g,'-').replace(/-+/g,'-').slice(0,60);
+  sp('slug', slug);
+  const el = document.querySelector('input[oninput*="sp(\'slug\'"]');
+  if (el) el.value = slug;
+}
 
 async function openEdit(id) {
   try {
@@ -826,7 +834,7 @@ function fCard() {
     <div><label class="flabel">Slug</label>${inp('slug','carlofty')}<div class="fhint">Lowercase, no spaces. URL path: /case-study/<strong>${formData.slug||'slug'}</strong></div></div>
     <div><label class="flabel">Display Order</label>${num('order','1')}</div>
   </div>
-  <div class="frow"><label class="flabel">Card Title</label>${inp('title','Designing Trust into a Broken Payment Experience...')}</div>
+  <div class="frow"><label class="flabel">Card Title</label><input type="text" class="finput" placeholder="Designing Trust into a Broken Payment Experience..." value="${esc(String(g('title')))}" oninput="sp('title',this.value);autoSlug(this.value)"></div>
   <div class="frow"><label class="flabel">Card Description (portfolio preview)</label>${ta('description','Global car auctions shouldn\'t require a middleman...')}</div>
   <div class="frow"><label class="flabel">Card Thumbnail</label>${uploadCard('card_image_url','image/*')}</div>
 `; }
