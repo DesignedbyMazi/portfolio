@@ -337,8 +337,10 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-heigh
     <div class="topbar-sep"></div>
     <span class="topbar-crumb" id="tb-crumb">Dashboard</span>
     <span class="topbar-pill topbar-pill--draft" id="tb-pill" style="display:none">Draft</span>
-    <button class="topbar-btn topbar-btn--new" onclick="startNew()">+ New Case Study</button>
-    <button class="topbar-btn topbar-btn--primary" id="btn-save" style="display:none" onclick="save()">Save</button>
+    <button class="topbar-btn topbar-btn--new" id="btn-new" onclick="startNew()">+ New Case Study</button>
+    <button class="topbar-btn topbar-btn--ghost" id="btn-preview" style="display:none" onclick="previewStudy()">Preview &#8599;</button>
+    <button class="topbar-btn topbar-btn--ghost" id="btn-draft" style="display:none" onclick="saveDraft()">Save Draft</button>
+    <button class="topbar-btn topbar-btn--primary" id="btn-publish" style="display:none" onclick="publish()">Publish</button>
     <button class="topbar-btn topbar-btn--ghost" id="btn-dash" style="display:none" onclick="showDash()">&#8592; Dashboard</button>
     <button class="topbar-btn topbar-btn--logout" onclick="logout()">Sign out</button>
   </div>
@@ -518,8 +520,10 @@ function lsDeleteStudy(id) { lsSet('cms-studies', (lsGet('cms-studies')||[]).fil
 function showDash() {
   document.getElementById('view-dash').classList.add('active');
   document.getElementById('view-editor').classList.remove('active');
-  document.getElementById('btn-save').style.display = 'none';
-  document.getElementById('btn-dash').style.display = 'none';
+  ['btn-preview','btn-draft','btn-publish','btn-dash'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+  document.getElementById('btn-new').style.display = 'flex';
   document.getElementById('tb-pill').style.display = 'none';
   document.getElementById('sec-nav-group').style.display = 'none';
   document.getElementById('tb-crumb').textContent = 'Dashboard';
@@ -550,6 +554,7 @@ function renderDash(list) {
           </div>
           <span class="topbar-pill topbar-pill--${s.published ? 'live' : 'draft'}">${s.published ? 'Live' : 'Draft'}</span>
           <div class="study-actions" onclick="event.stopPropagation()">
+            ${s.slug ? `<a class="study-btn" href="/case-study/${esc(s.slug)}" target="_blank" rel="noopener" style="text-decoration:none">Preview &#8599;</a>` : ''}
             <button class="study-btn" onclick="openEdit('${s.id}')">Edit</button>
             <button class="study-btn study-btn--del" onclick="deleteStudy('${s.id}')">Delete</button>
           </div>
@@ -567,7 +572,7 @@ function fmtDate(iso) {
 
 /* ─────────────────────────────── EDITOR ────── */
 const SECS = [
-  { key:'card',        label:'Card & Publish',       always:true },
+  { key:'card',        label:'Card Details',          always:true },
   { key:'hero',        label:'Hero Section' },
   { key:'myRole',      label:'My Role' },
   { key:'challenge',   label:'The Challenge' },
@@ -600,8 +605,10 @@ async function openEdit(id) {
 function showEditor(title) {
   document.getElementById('view-dash').classList.remove('active');
   document.getElementById('view-editor').classList.add('active');
-  document.getElementById('btn-save').style.display = 'flex';
-  document.getElementById('btn-dash').style.display = 'flex';
+  document.getElementById('btn-new').style.display = 'none';
+  ['btn-preview','btn-draft','btn-publish','btn-dash'].forEach(id => {
+    document.getElementById(id).style.display = 'flex';
+  });
   document.getElementById('tb-pill').style.display = 'flex';
   document.getElementById('sec-nav-group').style.display = 'block';
   document.getElementById('tb-crumb').textContent = title;
@@ -789,10 +796,16 @@ function rerenderTags(path, twId) {
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
 /* ─── SECTION RENDERERS ─────────────────────── */
-function fCard() { return `
-  ${chk('published','Published – visible on live portfolio')}
+function fCard() {
+  const pub = formData.published;
+  return `
+  <div class="frow" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:${pub?'var(--ok-dim)':'var(--bg-h)'};border-radius:var(--r-sm);border:1px solid ${pub?'#BBF7D0':'var(--bd)'};">
+    <span style="font-size:0.72rem;font-weight:600;color:${pub?'var(--ok)':'var(--tx-3)'};">${pub?'● Live on portfolio':'○ Draft – not visible to visitors'}</span>
+    <span style="flex:1"></span>
+    ${pub ? `<button onclick="saveDraft()" style="padding:4px 10px;border-radius:var(--r-sm);background:transparent;border:1px solid #BBF7D0;color:var(--ok);font-size:0.7rem;cursor:pointer;font-family:var(--font-body);">Unpublish</button>` : ''}
+  </div>
   <div class="frow-2">
-    <div><label class="flabel">Slug</label>${inp('slug','carlofty')}<div class="fhint">Lowercase, no spaces. Used in URLs.</div></div>
+    <div><label class="flabel">Slug</label>${inp('slug','carlofty')}<div class="fhint">Lowercase, no spaces. URL path: /case-study/<strong>${formData.slug||'slug'}</strong></div></div>
     <div><label class="flabel">Display Order</label>${num('order','1')}</div>
   </div>
   <div class="frow"><label class="flabel">Card Title</label>${inp('title','Designing Trust into a Broken Payment Experience...')}</div>
@@ -1035,23 +1048,52 @@ function mergeContent(saved) {
 
 function defaultFD() { return { slug:'', title:'', description:'', card_image_url:'', published:false, order:0, content:defaultContent() }; }
 
-/* ─────────────────────────────── SAVE ──────── */
-async function save() {
-  const btn = document.getElementById('btn-save');
-  btn.textContent = 'Saving…'; btn.disabled = true;
+/* ─────────────────────────────── SAVE / PUBLISH ─── */
+async function _doSave(publishState, btnId, labelBusy, labelDone) {
+  if (!formData.slug) { showToast('Add a slug first (Card & Publish section)', 'err'); return; }
+  const btn = document.getElementById(btnId);
+  btn.textContent = labelBusy; btn.disabled = true;
+  formData.published = publishState;
   const payload = {
     slug: formData.slug, title: formData.title, description: formData.description,
-    card_image_url: formData.card_image_url, published: !!formData.published,
+    card_image_url: formData.card_image_url, published: publishState,
     order: parseInt(formData.order)||0, content: formData.content,
   };
   try {
     const res = await upsertStudy(payload);
-    if (res && !editing) editing = res;
-    showToast(formData.published ? 'Saved & published ✓' : 'Saved as draft ✓', 'ok');
+    if (res && !editing) { editing = res; }
+    showToast(labelDone, 'ok');
     updatePill();
     await loadStudies();
-  } catch(e) { showToast('Save failed: ' + e.message, 'err'); }
-  finally { btn.textContent = 'Save'; btn.disabled = false; }
+  } catch(e) { showToast('Error: ' + e.message, 'err'); }
+  finally { btn.textContent = btnId === 'btn-draft' ? 'Save Draft' : 'Publish'; btn.disabled = false; }
+}
+
+function saveDraft() { _doSave(false, 'btn-draft', 'Saving…', 'Saved as draft'); }
+
+async function publish() {
+  const saved = await _doSave(true, 'btn-publish', 'Publishing…', 'Published – now live ✓');
+  return saved;
+}
+
+async function previewStudy() {
+  if (!formData.slug) { showToast('Add a slug first so we know the URL', 'err'); return; }
+  const btn = document.getElementById('btn-preview');
+  btn.textContent = 'Saving…'; btn.disabled = true;
+  try {
+    const payload = {
+      slug: formData.slug, title: formData.title, description: formData.description,
+      card_image_url: formData.card_image_url, published: false,
+      order: parseInt(formData.order)||0, content: formData.content,
+    };
+    const res = await upsertStudy(payload);
+    if (res && !editing) editing = res;
+    await loadStudies();
+    const previewUrl = window.location.origin + '/case-study/' + encodeURIComponent(formData.slug);
+    window.open(previewUrl, '_blank', 'noopener');
+    showToast('Saved · Preview opened in new tab', 'ok');
+  } catch(e) { showToast('Could not save before preview: ' + e.message, 'err'); }
+  finally { btn.textContent = 'Preview ↗'; btn.disabled = false; }
 }
 
 /* ─────────────────────────────── UTILS ──────── */
