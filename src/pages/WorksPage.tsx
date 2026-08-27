@@ -89,6 +89,57 @@ function mapRow(row: Record<string, unknown>): CaseStudy {
   };
 }
 
+/* ── Carlofty — hardcoded, permanently pinned card ──────── */
+function CarloftyCaseCard({ onRead }: { onRead: () => void }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [hovered, setHovered] = useState(false);
+
+  const handleEnter = () => { setHovered(true); videoRef.current?.play().catch(() => {}); };
+  const handleLeave = () => {
+    setHovered(false);
+    const v = videoRef.current;
+    if (v) { v.pause(); v.currentTime = 0; }
+  };
+
+  return (
+    <div className="works-case">
+      <div className="works-case-img-wrap" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+        <img
+          src={carloftyImg}
+          alt="Carlofty case study"
+          className={`works-case-img${hovered ? ' works-case-img--hidden' : ''}`}
+        />
+        <video
+          ref={videoRef}
+          src={carloftyVideo}
+          className={`works-case-video${hovered ? ' works-case-video--visible' : ''}`}
+          muted loop playsInline preload="none"
+        />
+      </div>
+      <div className="works-case-body">
+        <h3 className="works-case-title">
+          Designing Trust into a Broken Payment Experience For Cross-border Car Sourcing.
+        </h3>
+        <p className="works-case-desc">
+          Global car auctions shouldn't require a middleman. Carlofty was designed to give
+          Nigerian buyers direct, transparent access to Copart, Manheim, and IAAI — from a
+          single platform they could actually trust.
+        </p>
+        <span
+          className="works-case-cta"
+          role="button"
+          tabIndex={0}
+          onClick={onRead}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onRead(); }}
+        >
+          <span>Read Case Study</span>
+          <ArrowUpRight />
+        </span>
+      </div>
+    </div>
+  );
+}
+
 /* ── Case study card — handles hover video on the image ─ */
 function CaseCard({ cs }: { cs: CaseStudy }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -241,7 +292,7 @@ interface WorksPageProps {
 }
 
 /* ── Page ───────────────────────────────────────────── */
-export default function WorksPage({ onBack, onNavigate }: WorksPageProps) {
+export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: WorksPageProps) {
   const [tab, setTab] = useState<Tab>('live');
   const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
   const [loading, setLoading] = useState(false);
@@ -255,7 +306,11 @@ export default function WorksPage({ onBack, onNavigate }: WorksPageProps) {
           .select('id, slug, content, published')
           .eq('published', true)
           .order('created_at', { ascending: false });
-        setCaseStudies((data ?? []).map(mapRow));
+        // exclude any Supabase entry with the reserved 'carlofty' slug (hardcoded below)
+        const filtered = (data ?? []).filter(
+          (r) => String(r.slug).toLowerCase() !== 'carlofty'
+        );
+        setCaseStudies(filtered.map(mapRow));
       } catch { /* silently show empty */ }
       setLoading(false);
     })();
@@ -306,6 +361,9 @@ export default function WorksPage({ onBack, onNavigate }: WorksPageProps) {
         {/* ── Case studies list ────────────────────────── */}
         {tab === 'cases' && (
           <div className="works-cases" role="tabpanel">
+            {/* ── Carlofty — permanently pinned, cannot be deleted ── */}
+            <CarloftyCaseCard onRead={onReadCaseStudy} />
+
             {loading && (
               <p style={{ color: 'var(--tx-2)', fontSize: '0.9rem', padding: '2rem 0' }}>
                 Loading case studies…
@@ -314,8 +372,8 @@ export default function WorksPage({ onBack, onNavigate }: WorksPageProps) {
             {caseStudies.map((cs) => (
               <CaseCard key={cs.id} cs={cs} />
             ))}
-            {/* Placeholder — hidden once 3 or more case studies are published */}
-            {!loading && caseStudies.length < 3 && (
+            {/* Placeholder — hidden once total studies (Carlofty + Supabase) reaches 3 */}
+            {!loading && caseStudies.length < 2 && (
               <div className="works-case works-case--locked">
                 <p className="works-coming-soon">
                   <span>Coming soon</span>
