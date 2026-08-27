@@ -30,15 +30,6 @@ function ArrowUpRight() {
   );
 }
 
-function LockIcon() {
-  return (
-    <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden>
-      <rect x="1.5" y="5" width="9" height="6.5" rx="1.5" stroke="currentColor" strokeWidth="1.2"/>
-      <path d="M3.5 5V3.5a2.5 2.5 0 0 1 5 0V5"
-        stroke="currentColor" strokeWidth="1.2" strokeLinecap="round"/>
-    </svg>
-  );
-}
 
 /* ── Data ───────────────────────────────────────────── */
 type Tab = 'live' | 'cases';
@@ -248,16 +239,17 @@ export default function WorksPage({ onBack, onNavigate }: WorksPageProps) {
 
   useEffect(() => {
     setLoading(true);
-    supabase
-      .from('case_studies')
-      .select('id, slug, content, published')
-      .eq('published', true)
-      .order('created_at', { ascending: false })
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('case_studies')
+          .select('id, slug, content, published')
+          .eq('published', true)
+          .order('created_at', { ascending: false });
         setCaseStudies((data ?? []).map(mapRow));
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      } catch { /* silently show empty */ }
+      setLoading(false);
+    })();
   }, []);
 
   const handleNav = (page: string) => {
