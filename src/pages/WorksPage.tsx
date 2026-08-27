@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
+import { supabase } from '../lib/supabase';
 
 /* ── Images ─────────────────────────────────────────── */
 import carloftyImg    from '../assets/images/carlofty-case-study.png';
@@ -44,21 +45,21 @@ type Tab = 'live' | 'cases';
 
 interface LiveProject {
   id:     string;
-  title:  string;    // full project name (used as img alt)
-  label:  string;    // short label shown in info row header
-  year:   string;    // e.g. "2026 - Present"
+  title:  string;
+  label:  string;
+  year:   string;
   image:  string;
   video?: string;
-  href?:  string;    // used by "Visit site" CTA only, not card click
+  href?:  string;
 }
 
 interface CaseStudy {
   id:          string;
+  slug:        string;
   image:       string;
   title:       string;
   description: string;
   video?:      string;
-  comingSoon?: boolean;
 }
 
 const liveProjects: LiveProject[] = [
@@ -70,39 +71,30 @@ const liveProjects: LiveProject[] = [
   { id:'karsa',     label:'Karsa',           year:'2024',           title:'Karsa',         image:karsaImg                                                                         },
 ];
 
-const caseStudies: CaseStudy[] = [
-  {
-    id: 'carlofty',
-    video: carloftyVideo,
-    image: carloftyImg,
-    title:
-      'Designing Trust into a Broken Payment Experience For Cross-border Car Sourcing.',
-    description:
-      "Global car auctions shouldn't require a middleman. Carlofty was designed to give " +
-      "Nigerian buyers direct, transparent access to Copart, Manheim, and IAAI — from a " +
-      "single platform they could actually trust.",
-  },
-  {
-    id: 'coming-soon',
-    image: dashboardImg,
-    title: 'Next case study in progress.',
-    description:
-      "A detailed breakdown of another end-to-end product design engagement. " +
-      "Currently being documented — check back soon.",
-    comingSoon: true,
-  },
-];
+function isVideo(url: string) {
+  return /\.(mp4|webm|mov|ogg)(\?|$)/i.test(url);
+}
+
+function mapRow(row: Record<string, unknown>): CaseStudy {
+  const c = (row.content ?? {}) as Record<string, unknown>;
+  const hero = (c.hero ?? {}) as Record<string, unknown>;
+  const thumb = (c.thumbnailUrl as string) || (hero.mediaUrl as string) || '';
+  return {
+    id:          String(row.id),
+    slug:        String(row.slug),
+    image:       isVideo(thumb) ? '' : thumb,
+    video:       isVideo(thumb) ? thumb : (hero.mediaUrl && isVideo(hero.mediaUrl as string) ? hero.mediaUrl as string : undefined),
+    title:       (hero.title as string) || String(row.slug),
+    description: (hero.subtitle as string) || '',
+  };
+}
 
 /* ── Case study card — handles hover video on the image ─ */
-function CaseCard({
-  cs,
-  onReadCaseStudy,
-}: {
-  cs: CaseStudy;
-  onReadCaseStudy: () => void;
-}) {
+function CaseCard({ cs }: { cs: CaseStudy }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+
+  const navigate = () => { window.location.href = '/case-study/' + cs.slug; };
 
   const handleEnter = () => {
     if (!cs.video) return;
@@ -118,30 +110,24 @@ function CaseCard({
   };
 
   return (
-    <div className={`works-case${cs.comingSoon ? ' works-case--locked' : ''}`}>
-      {cs.comingSoon && (
-        <p className="works-coming-soon">
-          <span>Coming soon</span>
-          <LockIcon />
-        </p>
-      )}
-
-      {/* Image / video frame */}
+    <div className="works-case">
       <div
         className="works-case-img-wrap"
         onMouseEnter={handleEnter}
         onMouseLeave={handleLeave}
       >
-        <img
-          src={cs.image}
-          alt={cs.title}
-          className={`works-case-img${hovered ? ' works-case-img--hidden' : ''}`}
-        />
+        {cs.image && (
+          <img
+            src={cs.image}
+            alt={cs.title}
+            className={`works-case-img${hovered ? ' works-case-img--hidden' : ''}`}
+          />
+        )}
         {cs.video && (
           <video
             ref={videoRef}
             src={cs.video}
-            className={`works-case-video${hovered ? ' works-case-video--visible' : ''}`}
+            className={`works-case-video${hovered || !cs.image ? ' works-case-video--visible' : ''}`}
             muted
             loop
             playsInline
@@ -155,12 +141,10 @@ function CaseCard({
         <p className="works-case-desc">{cs.description}</p>
         <span
           className="works-case-cta"
-          role={cs.comingSoon ? undefined : 'button'}
-          tabIndex={cs.comingSoon ? -1 : 0}
-          onClick={cs.comingSoon ? undefined : onReadCaseStudy}
-          onKeyDown={(e) => {
-            if (!cs.comingSoon && (e.key === 'Enter' || e.key === ' ')) onReadCaseStudy();
-          }}
+          role="button"
+          tabIndex={0}
+          onClick={navigate}
+          onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate(); }}
         >
           <span>Read Case Study</span>
           <ArrowUpRight />
@@ -257,8 +241,24 @@ interface WorksPageProps {
 }
 
 /* ── Page ───────────────────────────────────────────── */
-export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: WorksPageProps) {
+export default function WorksPage({ onBack, onNavigate }: WorksPageProps) {
   const [tab, setTab] = useState<Tab>('live');
+  const [caseStudies, setCaseStudies] = useState<CaseStudy[]>([]);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    supabase
+      .from('case_studies')
+      .select('id, slug, content, published')
+      .eq('published', true)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => {
+        setCaseStudies((data ?? []).map(mapRow));
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
 
   const handleNav = (page: string) => {
     if (page === 'Home') onBack();
@@ -305,8 +305,18 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
         {/* ── Case studies list ────────────────────────── */}
         {tab === 'cases' && (
           <div className="works-cases" role="tabpanel">
+            {loading && (
+              <p style={{ color: 'var(--tx-2)', fontSize: '0.9rem', padding: '2rem 0' }}>
+                Loading case studies…
+              </p>
+            )}
+            {!loading && caseStudies.length === 0 && (
+              <p style={{ color: 'var(--tx-2)', fontSize: '0.9rem', padding: '2rem 0' }}>
+                No published case studies yet.
+              </p>
+            )}
             {caseStudies.map((cs) => (
-              <CaseCard key={cs.id} cs={cs} onReadCaseStudy={onReadCaseStudy} />
+              <CaseCard key={cs.id} cs={cs} />
             ))}
           </div>
         )}
