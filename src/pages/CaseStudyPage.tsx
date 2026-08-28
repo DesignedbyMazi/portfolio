@@ -78,27 +78,13 @@ const icon = (name: string) => ICON_MAP[name] ?? <Stack size={20} weight="fill" 
 
 /* ── Scroll helpers ──────────────────────────────── */
 function scrollToTopSmooth() {
-  const start = window.scrollY, duration = 900, startTime = performance.now();
-  const ease = (t: number) => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
-  const step = (now: number) => {
-    const t = Math.min((now - startTime) / duration, 1);
-    window.scrollTo(0, start * (1 - ease(t)));
-    if (t < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 function scrollToSection(id: string) {
   const el = document.getElementById(id);
   if (!el) return;
-  const targetY = el.getBoundingClientRect().top + window.scrollY - 80;
-  const start = window.scrollY, dist = targetY - start, duration = 700, startTime = performance.now();
-  const ease = (t: number) => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
-  const step = (now: number) => {
-    const t = Math.min((now - startTime) / duration, 1);
-    window.scrollTo(0, start + dist * ease(t));
-    if (t < 1) requestAnimationFrame(step);
-  };
-  requestAnimationFrame(step);
+  const y = el.getBoundingClientRect().top + window.scrollY - 80;
+  window.scrollTo({ top: y, behavior: 'smooth' });
 }
 
 /* ── VideoInView ─────────────────────────────────── */
@@ -249,20 +235,32 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
     else onNavigate?.(page);
   }, [onGoHome, onNavigate]);
 
-  /* Build nav items based on visible sections */
-  const navItems = study ? [
-    { label: 'Case Study', id: 'cs-sec-top' },
-    ...(study.content.myRole?.visible !== false       ? [{ label: 'My Role',             id: 'cs-sec-role'          }] : []),
-    ...(study.content.challenge?.visible !== false     ? [{ label: 'The Challenge',       id: 'cs-sec-challenge'     }] : []),
-    ...(study.content.research?.visible !== false      ? [{ label: 'Research',            id: 'cs-sec-research'      }] : []),
-    ...(study.content.competitor?.visible !== false    ? [{ label: 'Competitor Analysis', id: 'cs-sec-competitor'    }] : []),
-    ...(study.content.userResearch?.visible !== false  ? [{ label: 'User Research',       id: 'cs-sec-user-research' }] : []),
-    ...(study.content.audit?.visible !== false         ? [{ label: 'Product Audit',       id: 'cs-sec-audit'         }] : []),
-    ...(study.content.improvement?.visible !== false   ? [{ label: 'Product Improvement', id: 'cs-sec-improvement'   }] : []),
-    ...(study.content.goals?.visible !== false         ? [{ label: 'Goals',               id: 'cs-sec-goals'         }] : []),
-    ...(study.content.solutions?.visible !== false     ? [{ label: 'Solutions',           id: 'cs-sec-solutions'     }] : []),
-    ...(study.content.outcome?.visible !== false       ? [{ label: 'Outcome',             id: 'cs-sec-outcome'       }] : []),
-  ] : [{ label: 'Case Study', id: 'cs-sec-top' }];
+  /* Build nav items — mirrors exact content checks used by each section's render guard */
+  const navItems = study ? (() => {
+    const c = study.content;
+    const items: { label: string; id: string }[] = [{ label: 'Case Study', id: 'cs-sec-top' }];
+    if (c.myRole?.visible !== false       && (c.myRole?.heading      || c.myRole?.body))
+      items.push({ label: 'My Role',             id: 'cs-sec-role'          });
+    if (c.challenge?.visible !== false    && (c.challenge?.heading   || c.challenge?.body1))
+      items.push({ label: 'The Challenge',       id: 'cs-sec-challenge'     });
+    if (c.research?.visible !== false     && (c.research?.heading    || c.research?.body))
+      items.push({ label: 'Research',            id: 'cs-sec-research'      });
+    if (c.competitor?.visible !== false   && (c.competitor?.heading  || c.competitor?.body))
+      items.push({ label: 'Competitor Analysis', id: 'cs-sec-competitor'    });
+    if (c.userResearch?.visible !== false && (c.userResearch?.heading || c.userResearch?.body))
+      items.push({ label: 'User Research',       id: 'cs-sec-user-research' });
+    if (c.audit?.visible !== false        && (c.audit?.heading       || c.audit?.body))
+      items.push({ label: 'Product Audit',       id: 'cs-sec-audit'         });
+    if (c.improvement?.visible !== false  && (c.improvement?.heading || c.improvement?.body))
+      items.push({ label: 'Product Improvement', id: 'cs-sec-improvement'   });
+    if (c.goals?.visible !== false        && (c.goals?.heading       || c.goals?.body))
+      items.push({ label: 'Goals',               id: 'cs-sec-goals'         });
+    if (c.solutions?.visible !== false    && (c.solutions?.heading   || (c.solutions?.cards && c.solutions.cards.length > 0)))
+      items.push({ label: 'Solutions',           id: 'cs-sec-solutions'     });
+    if (c.outcome?.visible !== false      && (c.outcome?.heading     || c.outcome?.body))
+      items.push({ label: 'Outcome',             id: 'cs-sec-outcome'       });
+    return items;
+  })() : [{ label: 'Case Study', id: 'cs-sec-top' }];
 
   /* Scrollspy */
   useEffect(() => {
