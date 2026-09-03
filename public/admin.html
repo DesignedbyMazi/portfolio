@@ -175,6 +175,45 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-heigh
 }
 .study-btn:hover{background:var(--bg-s);color:var(--tx);}
 .study-btn--del:hover{border-color:#FECACA;color:var(--err);background:var(--err-dim);}
+
+/* ── DRAG & REORDER ── */
+.study-card[draggable="true"]{cursor:default;}
+.drag-handle{cursor:grab;color:var(--bd-h);font-size:1.1rem;flex-shrink:0;padding:2px 6px 2px 0;user-select:none;transition:color .12s;}
+.drag-handle:hover{color:var(--tx-3);}
+.drag-handle:active{cursor:grabbing;}
+.study-card.dragging{opacity:.35;border-style:dashed;}
+.study-card.drag-over{border-color:var(--tx);box-shadow:0 0 0 2px var(--tx);background:var(--bg-s);}
+.order-arrows{display:flex;gap:3px;flex-shrink:0;}
+.order-arrow{
+  padding:4px 8px;border-radius:var(--r-sm);font-size:0.7rem;
+  border:1px solid var(--bd);background:transparent;color:var(--tx-3);
+  cursor:pointer;transition:all .12s;font-family:var(--font-body);line-height:1;
+  title:attr(title);
+}
+.order-arrow:hover{background:var(--bg-s);color:var(--tx);border-color:var(--bd-h);}
+.save-order-bar{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:10px 14px;background:var(--warn-dim);border:1px solid #FDE68A;
+  border-radius:var(--r);margin-bottom:14px;
+}
+.save-order-bar-text{font-size:0.78rem;color:var(--warn);font-weight:500;}
+.save-order-btn{
+  padding:6px 16px;border-radius:var(--r-sm);background:var(--warn);
+  color:#fff;border:none;font-size:0.78rem;font-weight:500;
+  cursor:pointer;font-family:var(--font-body);white-space:nowrap;
+}
+.save-order-btn:hover{opacity:.85;}
+.save-order-btn:disabled{opacity:.5;cursor:default;}
+
+/* ── AUTO-SAVE STATUS ── */
+#autosave-status{
+  font-size:0.72rem;display:none;padding:3px 8px;
+  border-radius:20px;font-weight:500;transition:all .2s;
+}
+#autosave-status.saving{display:inline!important;background:var(--bg-s);color:var(--tx-3);}
+#autosave-status.saved{display:inline!important;background:var(--ok-dim);color:var(--ok);}
+#autosave-status.error{display:inline!important;background:var(--err-dim);color:var(--err);}
+
 .empty-state{text-align:center;padding:64px 0;}
 .empty-icon{font-size:2rem;margin-bottom:12px;opacity:.2;}
 .empty-text{font-size:0.875rem;color:var(--tx-3);}
@@ -355,6 +394,7 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-heigh
     <div class="topbar-sep"></div>
     <span class="topbar-crumb" id="tb-crumb">Dashboard</span>
     <span class="topbar-pill topbar-pill--draft" id="tb-pill" style="display:none">Draft</span>
+    <span id="autosave-status"></span>
     <button class="topbar-btn topbar-btn--new" id="btn-new" onclick="startNew()">+ New Case Study</button>
     <button class="topbar-btn topbar-btn--ghost" id="btn-preview" style="display:none" onclick="previewStudy()">Preview &#8599;</button>
     <button class="topbar-btn topbar-btn--ghost" id="btn-draft" style="display:none" onclick="saveDraft()">Save Draft</button>
@@ -430,6 +470,14 @@ let editing = null;
 let formData = {};
 let openSecs = new Set(['card', 'hero']);
 let supaAvail = true;
+
+/* reorder */
+let orderDirty = false;
+let dragSrcIdx = null;
+
+/* auto-save */
+let autoSaveTimer = null;
+let autoSaving = false;
 
 /* ─────────────────────────────── AUTH ──────── */
 const isAuthed = () => sessionStorage.getItem('cms-auth') === '1';
@@ -558,10 +606,26 @@ function renderDash(list) {
       <div class="dash-sub">${count} ${count === 1 ? 'study' : 'studies'} in your portfolio</div>
     </div>
     ${needsSql ? `<div class="sql-notice"><p>The <strong>case_studies</strong> table doesn't exist yet in Supabase, or the connection failed. Create the table first, then refresh.</p><button onclick="showSql()">View Setup SQL</button></div>` : ''}
-    <div class="study-list">
+    ${orderDirty ? `
+      <div class="save-order-bar">
+        <span class="save-order-bar-text">Unsaved order — drag or use arrows to arrange, then save.</span>
+        <button class="save-order-btn" id="save-order-btn" onclick="saveOrder()">Save Order</button>
+      </div>` : count > 1 ? `
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;font-size:0.72rem;color:var(--tx-3);">
+        <span>&#9776;</span><span>Drag rows to reorder · arrows move to top/bottom · Save Order to apply changes to live portfolio</span>
+      </div>` : ''}
+    <div class="study-list" id="study-list-el">
       ${count === 0 && !needsSql ? `<div class="empty-state"><div class="empty-icon">📂</div><div class="empty-text">No case studies yet – create your first one</div></div>` : ''}
-      ${list.map(s => `
-        <div class="study-card" onclick="openEdit('${s.id}')">
+      ${list.map((s, i) => `
+        <div class="study-card"
+          draggable="true"
+          ondragstart="onDragStart(event,${i})"
+          ondragover="onDragOver(event,${i})"
+          ondragleave="onDragLeave(event)"
+          ondrop="onDrop(event,${i})"
+          ondragend="onDragEnd(event)"
+          onclick="openEdit('${s.id}')">
+          <span class="drag-handle" title="Drag to reorder" onclick="event.stopPropagation()">&#8942;&#8942;</span>
           <div class="study-thumb">
             ${s.card_image_url ? `<img src="${esc(s.card_image_url)}" alt="">` : '<div class="study-thumb-empty">No img</div>'}
           </div>
@@ -571,6 +635,10 @@ function renderDash(list) {
           </div>
           <span class="topbar-pill topbar-pill--${s.published ? 'live' : 'draft'}">${s.published ? 'Live' : 'Draft'}</span>
           <div class="study-actions" onclick="event.stopPropagation()">
+            <div class="order-arrows">
+              <button class="order-arrow" title="Move to top" onclick="moveToTop('${s.id}')" ${i === 0 ? 'disabled style="opacity:.3;cursor:default"' : ''}>⇑</button>
+              <button class="order-arrow" title="Move to bottom" onclick="moveToBottom('${s.id}')" ${i === list.length - 1 ? 'disabled style="opacity:.3;cursor:default"' : ''}>⇓</button>
+            </div>
             ${s.slug ? `<a class="study-btn" href="/case-study/${esc(s.slug)}" target="_blank" rel="noopener" style="text-decoration:none">Preview &#8599;</a>` : ''}
             <button class="study-btn" onclick="openEdit('${s.id}')">Edit</button>
             <button class="study-btn study-btn--del" onclick="deleteStudy('${s.id}')">Delete</button>
@@ -585,6 +653,103 @@ function renderDash(list) {
 function fmtDate(iso) {
   if (!iso) return 'never';
   return new Date(iso).toLocaleDateString('en-GB', { day:'numeric', month:'short', year:'numeric' });
+}
+
+/* ─────────────────────────────── DRAG & REORDER ─── */
+function onDragStart(e, idx) {
+  dragSrcIdx = idx;
+  setTimeout(() => e.currentTarget.classList.add('dragging'), 0);
+  e.dataTransfer.effectAllowed = 'move';
+}
+function onDragOver(e, idx) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = 'move';
+  document.querySelectorAll('.study-card').forEach(c => c.classList.remove('drag-over'));
+  const cards = document.querySelectorAll('.study-card');
+  if (cards[idx]) cards[idx].classList.add('drag-over');
+}
+function onDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function onDragEnd(e) {
+  e.currentTarget.classList.remove('dragging');
+  document.querySelectorAll('.study-card').forEach(c => c.classList.remove('drag-over', 'dragging'));
+}
+function onDrop(e, idx) {
+  e.preventDefault();
+  if (dragSrcIdx === null || dragSrcIdx === idx) { dragSrcIdx = null; return; }
+  const moved = studies.splice(dragSrcIdx, 1)[0];
+  studies.splice(idx, 0, moved);
+  orderDirty = true;
+  dragSrcIdx = null;
+  renderDash(studies);
+}
+function moveToTop(id) {
+  const idx = studies.findIndex(s => s.id === id);
+  if (idx <= 0) return;
+  studies.unshift(studies.splice(idx, 1)[0]);
+  orderDirty = true;
+  renderDash(studies);
+}
+function moveToBottom(id) {
+  const idx = studies.findIndex(s => s.id === id);
+  if (idx < 0 || idx === studies.length - 1) return;
+  studies.push(studies.splice(idx, 1)[0]);
+  orderDirty = true;
+  renderDash(studies);
+}
+async function saveOrder() {
+  const btn = document.getElementById('save-order-btn');
+  if (btn) { btn.textContent = 'Saving…'; btn.disabled = true; }
+  try {
+    await Promise.all(studies.map((s, i) =>
+      fetch(`${SB_URL}/rest/v1/case_studies?id=eq.${encodeURIComponent(s.id)}`, {
+        method: 'PATCH',
+        headers: hdrs(),
+        body: JSON.stringify({ order: i, updated_at: new Date().toISOString() }),
+      })
+    ));
+    orderDirty = false;
+    showToast('Order saved — portfolio updated ✓', 'ok');
+    await loadStudies();
+  } catch(e) {
+    showToast('Failed to save order: ' + e.message, 'err');
+    if (btn) { btn.textContent = 'Save Order'; btn.disabled = false; }
+  }
+}
+
+/* ─────────────────────────────── AUTO-SAVE ─── */
+function scheduleAutoSave() {
+  if (!document.getElementById('view-editor').classList.contains('active')) return;
+  clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(autoSaveNow, 2500);
+}
+function setAutoSaveStatus(state) {
+  const el = document.getElementById('autosave-status');
+  if (!el) return;
+  if (state === 'saving') { el.className = 'saving'; el.textContent = 'Auto-saving…'; }
+  else if (state === 'saved') { el.className = 'saved'; el.textContent = 'Saved ✓'; setTimeout(() => { el.className = ''; el.textContent = ''; el.style.display='none'; }, 2500); }
+  else if (state === 'error') { el.className = 'error'; el.textContent = 'Auto-save failed'; }
+  else { el.className = ''; el.textContent = ''; el.style.display = 'none'; }
+}
+async function autoSaveNow() {
+  if (autoSaving) return;
+  // New study: need slug before we can create the record
+  if (!editing && !formData.slug) return;
+  autoSaving = true;
+  setAutoSaveStatus('saving');
+  const payload = {
+    slug: formData.slug, title: formData.title, description: formData.description,
+    card_image_url: formData.card_image_url, published: formData.published,
+    order: parseInt(formData.order) || 0, content: formData.content,
+  };
+  try {
+    const res = await upsertStudy(payload);
+    if (res && !editing) { editing = res; }
+    setAutoSaveStatus('saved');
+    loadStudies().catch(() => {});
+  } catch(e) {
+    setAutoSaveStatus('error');
+  }
+  autoSaving = false;
 }
 
 /* ─────────────────────────────── EDITOR ────── */
@@ -796,6 +961,7 @@ function sp(path, val) {
   let o = formData;
   for (const k of keys) { if (!o[k]) o[k]={}; o=o[k]; }
   o[last] = val;
+  scheduleAutoSave();
 }
 function addTag(e, path, twId) {
   if (e.key !== 'Enter' && e.key !== ',') return;
