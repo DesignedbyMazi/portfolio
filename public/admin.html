@@ -381,8 +381,8 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-heigh
     <div class="login-logo">Portfolio<span>.</span>CMS</div>
     <div class="login-sub">Admin access · Private</div>
     <label class="login-label" for="lp">Password</label>
-    <input type="password" class="login-input" id="lp" placeholder="Enter password" autocomplete="current-password">
-    <button class="login-btn" id="login-btn">Sign In</button>
+    <input type="password" class="login-input" id="lp" placeholder="Enter password" autocomplete="current-password" onkeydown="if(event.key==='Enter')attemptLogin()">
+    <button class="login-btn" id="login-btn" onclick="attemptLogin()">Sign In</button>
     <div class="login-err" id="login-err">Incorrect password. Try again.</div>
   </div>
 </div>
@@ -488,25 +488,28 @@ function doLogin(pw) {
 function logout() { sessionStorage.removeItem('cms-auth'); location.reload(); }
 
 /* ─────────────────────────────── INIT ──────── */
-window.addEventListener('DOMContentLoaded', () => {
+function attemptLogin() {
+  const inp = document.getElementById('lp');
+  const err = document.getElementById('login-err');
+  if (doLogin(inp.value)) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    init();
+  } else { err.style.display = 'block'; inp.value = ''; inp.focus(); }
+}
+
+// Script is at end of body — DOM is already ready, run directly
+(function() {
   const inp = document.getElementById('lp');
   const btn = document.getElementById('login-btn');
-  const err = document.getElementById('login-err');
-  const go = () => {
-    if (doLogin(inp.value)) {
-      document.getElementById('login-screen').style.display = 'none';
-      document.getElementById('app').style.display = 'flex';
-      init();
-    } else { err.style.display = 'block'; inp.value = ''; inp.focus(); }
-  };
-  btn.addEventListener('click', go);
-  inp.addEventListener('keydown', e => e.key === 'Enter' && go());
+  if (inp) inp.addEventListener('keydown', e => e.key === 'Enter' && attemptLogin());
+  if (btn) btn.addEventListener('click', attemptLogin);
   if (isAuthed()) {
     document.getElementById('login-screen').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
     init();
   }
-});
+})();
 
 async function init() { renderDash([]); await loadStudies(); }
 
@@ -517,12 +520,15 @@ const hdrs = (extra = {}) => ({
   ...extra
 });
 
+let supaConnected = false;
+
 async function loadStudies() {
   try {
     const r = await fetch(`${SB_URL}/rest/v1/case_studies?select=id,slug,title,card_image_url,published,order,updated_at&order=order.asc`, { headers: hdrs() });
     if (r.status === 404 || r.status === 400) { showSql(); return; }
     if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message || e.error || r.statusText); }
     studies = await r.json();
+    supaConnected = true;
   } catch(e) {
     showToast('Supabase error: ' + e.message, 'err');
   }
@@ -599,7 +605,7 @@ function showDash() {
 function renderDash(list) {
   const el = document.getElementById('view-dash');
   const count = list.length;
-  const needsSql = count === 0;
+  const needsSql = !supaConnected && count === 0;
   el.innerHTML = `
     <div class="dash-header">
       <div class="dash-title">Case Studies</div>
