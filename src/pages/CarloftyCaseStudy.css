@@ -296,6 +296,14 @@
 .cs-rte p { margin: 0 0 0.6em; }
 .cs-rte p:last-child { margin-bottom: 0; }
 
+/* Bold + underlined text acts as an in-body heading */
+.cs-rte strong u,
+.cs-rte u strong {
+  color: var(--color-text-primary);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
 /* ── Tags ──────────────────────────────────────────── */
 .cs-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 
