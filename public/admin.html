@@ -394,6 +394,20 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-heigh
   line-height:1.65;overflow-x:auto;white-space:pre;max-height:280px;overflow-y:auto;
 }
 .modal-close{margin-top:16px;padding:8px 20px;background:var(--tx);color:#fff;border:none;border-radius:var(--r-sm);font-size:0.8rem;font-weight:500;cursor:pointer;font-family:var(--font-body);}
+
+/* ── RICH TEXT EDITOR ── */
+.rte-wrap{border:1px solid var(--bd);border-radius:var(--r-sm);overflow:hidden;background:var(--bg);transition:border-color .15s,box-shadow .15s;}
+.rte-wrap:focus-within{border-color:#999;box-shadow:0 0 0 2px rgba(45,45,45,.06);}
+.rte-bar{display:flex;align-items:center;gap:2px;padding:4px 8px;background:var(--bg-s);border-bottom:1px solid var(--bd);flex-wrap:wrap;user-select:none;}
+.rte-btn{padding:3px 7px;border-radius:4px;border:none;background:transparent;font-size:0.75rem;cursor:pointer;color:var(--tx-2);font-family:var(--font-body);line-height:1.5;transition:background .1s,color .1s;}
+.rte-btn:hover{background:var(--bg-h);color:var(--tx);}
+.rte-sep{width:1px;height:14px;background:var(--bd);margin:0 3px;flex-shrink:0;}
+.rte-body{min-height:84px;padding:9px 11px;outline:none;font-family:var(--font-body);font-size:0.8rem;color:var(--tx);line-height:1.65;overflow-y:auto;cursor:text;}
+.rte-body:empty::before{content:attr(data-ph);color:var(--tx-3);pointer-events:none;}
+.rte-body ul,.rte-body ol{padding-left:18px;margin:4px 0;}
+.rte-body li{margin-bottom:2px;}
+.rte-body p{margin:0 0 5px;}
+.rte-body p:last-child{margin-bottom:0;}
 </style>
 
 <!-- ── LOGIN ── -->
@@ -859,6 +873,7 @@ function renderEditor() {
       <div style="height:80px"></div>
     </div>
   `;
+  initRtes();
 }
 
 function buildSecBlock(s) {
@@ -897,7 +912,7 @@ function toggleSec(key) {
   } else {
     openSecs.add(key);
     head.classList.add('open');
-    if (!body.innerHTML.trim()) body.innerHTML = secFields(key);
+    if (!body.innerHTML.trim()) { body.innerHTML = secFields(key); initRtes(body); }
     body.classList.add('open');
   }
 }
@@ -1044,6 +1059,39 @@ function rerenderTags(path, twId) {
 
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
+/* ─── RICH TEXT EDITOR ──────────────────────── */
+function richta(path, ph='') {
+  const rawVal = String(g(path) || '');
+  const id = 'rte-' + path.replace(/[^a-zA-Z0-9]/g, '_');
+  return `
+    <div class="rte-wrap">
+      <div class="rte-bar" onmousedown="event.preventDefault()">
+        <button class="rte-btn" title="Bold" onclick="rteCmd('bold')"><b>B</b></button>
+        <button class="rte-btn" title="Italic" style="font-style:italic" onclick="rteCmd('italic')">I</button>
+        <button class="rte-btn" title="Underline" style="text-decoration:underline" onclick="rteCmd('underline')">U</button>
+        <div class="rte-sep"></div>
+        <button class="rte-btn" title="Bullet list" onclick="rteCmd('insertUnorderedList')">&#8226; List</button>
+        <button class="rte-btn" title="Numbered list" onclick="rteCmd('insertOrderedList')">1. List</button>
+        <div class="rte-sep"></div>
+        <button class="rte-btn" title="Clear formatting" onclick="rteCmd('removeFormat')" style="font-size:0.68rem;color:var(--tx-3)">Clear</button>
+      </div>
+      <div class="rte-body" id="${id}" contenteditable="true"
+        data-ph="${esc(ph)}"
+        data-html="${esc(rawVal)}"
+        oninput="rteSync('${id}','${path}')"
+      ></div>
+    </div>`;
+}
+function rteCmd(cmd) { document.execCommand(cmd, false, null); }
+function rteSync(id, path) { const el = document.getElementById(id); if (el) sp(path, el.innerHTML); }
+function initRtes(container) {
+  const root = container || document;
+  root.querySelectorAll('.rte-body[data-html]').forEach(el => {
+    el.innerHTML = el.dataset.html || '';
+    el.removeAttribute('data-html');
+  });
+}
+
 /* ─── SECTION RENDERERS ─────────────────────── */
 function fCard() {
   const pub = formData.published;
@@ -1058,14 +1106,14 @@ function fCard() {
     <div><label class="flabel">Display Order</label>${num('order','1')}</div>
   </div>
   <div class="frow"><label class="flabel">Card Title</label><input type="text" class="finput" placeholder="Designing Trust into a Broken Payment Experience..." value="${esc(String(g('title')))}" oninput="sp('title',this.value);autoSlug(this.value)"></div>
-  <div class="frow"><label class="flabel">Card Description (portfolio preview)</label>${ta('description','Global car auctions shouldn\'t require a middleman...')}</div>
+  <div class="frow"><label class="flabel">Card Description (portfolio preview)</label>${richta('description','Global car auctions shouldn\'t require a middleman...')}</div>
   <div class="frow"><label class="flabel">Card Thumbnail</label>${uploadCard('card_image_url','image/*')}</div>
 `; }
 
 function fHero() { return `
   <div class="frow"><label class="flabel">Breadcrumb</label>${inp('content.hero.breadcrumb','Case study – Carlofty')}</div>
   <div class="frow"><label class="flabel">H1 Title</label>${ta('content.hero.title','Designing Trust into a Broken Payment Experience For Cross-Border Car Sourcing','ftextarea-lg')}</div>
-  <div class="frow"><label class="flabel">Overview</label>${ta('content.hero.overview','How I established design direction...')}</div>
+  <div class="frow"><label class="flabel">Overview</label>${richta('content.hero.overview','How I established design direction...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Meta Grid</div>
   <div class="frow-2">
@@ -1083,7 +1131,7 @@ function fHero() { return `
 function fMyRole() { return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.myRole.eyebrow','MY ROLE – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${inp('content.myRole.heading','Lead Product Designer')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.myRole.body','I was responsible for design direction, system, flows, and handoff...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.myRole.body','I was responsible for design direction, system, flows, and handoff...')}</div>
   <div class="frow"><label class="flabel">Tags</label>${tagsEl('content.myRole.tags')}</div>
   <div class="fdivider"></div>
   <div class="frow"><label class="flabel">Role Video / Image</label>${uploadCard('content.myRole.videoUrl','image/*,video/*')}</div>
@@ -1094,10 +1142,10 @@ function fChallenge() {
   return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.challenge.eyebrow','THE CHALLENGE – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${ta('content.challenge.heading','Dealers send money to people they\'ve never met...')}</div>
-  <div class="frow"><label class="flabel">Body – Paragraph 1</label>${ta('content.challenge.body1','Sourcing cars from foreign auctions is common practice...')}</div>
-  <div class="frow"><label class="flabel">Body – Paragraph 2</label>${ta('content.challenge.body2','That gap created a broker economy...')}</div>
+  <div class="frow"><label class="flabel">Body – Paragraph 1</label>${richta('content.challenge.body1','Sourcing cars from foreign auctions is common practice...')}</div>
+  <div class="frow"><label class="flabel">Body – Paragraph 2</label>${richta('content.challenge.body2','That gap created a broker economy...')}</div>
   <div class="frow"><label class="flabel">Red Callout</label>${inp('content.challenge.calloutRed','You sent money. Then you waited. And hoped.')}</div>
-  <div class="frow"><label class="flabel">Body – Paragraph 3</label>${ta('content.challenge.body3','The v1 product existed but...')}</div>
+  <div class="frow"><label class="flabel">Body – Paragraph 3</label>${richta('content.challenge.body3','The v1 product existed but...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Problem Items (Ban List)</div>
   <div class="repeat-list" id="ban-list">
@@ -1121,17 +1169,17 @@ function updBan(i,col,v) { let a=g('content.challenge.banItems')||[]; a[i]=a[i]|
 function fResearch() { return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.research.eyebrow','RESEARCH – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${inp('content.research.heading','Understanding The Problem Before Opening Figma')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.research.body','I ran three layers of research before touching any UI...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.research.body','I ran three layers of research before touching any UI...')}</div>
 `; }
 
 function fCompetitor() { return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.competitor.eyebrow','1. COMPETITOR ANALYSIS – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${ta('content.competitor.heading','Three Platforms. Three Different Approaches. One Clear Gap.')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.competitor.body','I mapped Carlofty against existing players...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.competitor.body','I mapped Carlofty against existing players...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Gray Callout</div>
   <div class="frow"><label class="flabel">Label</label>${inp('content.competitor.calloutLabel','WHAT I FOUND')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.competitor.calloutBody','Competitors either served individual buyers...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.competitor.calloutBody','Competitors either served individual buyers...')}</div>
 `; }
 
 function fUserResearch() {
@@ -1139,7 +1187,7 @@ function fUserResearch() {
   return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.userResearch.eyebrow','2. USER RESEARCH – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${ta('content.userResearch.heading','Dealers Knew What They Needed. The Product Wasn\'t Delivering It.')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.userResearch.body','I mapped the needs, goals, and frustrations...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.userResearch.body','I mapped the needs, goals, and frustrations...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Research Findings</div>
   <div class="repeat-list" id="findings-list">${renderFindings(items)}</div>
@@ -1148,9 +1196,9 @@ function fUserResearch() {
   <div class="frow"><label class="flabel">Red Callout</label>${inp('content.userResearch.calloutRed','Money moved. Nothing else did...')}</div>
 `; }
 
-function renderFindings(items) { return items.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Finding ${i+1}</span><button class="repeat-del" onclick="rmFinding(${i})">Remove</button></div><div class="frow-2"><div><label class="flabel">Number</label><input class="finput" value="${esc(it.num||String(i+1).padStart(2,'0'))}" oninput="updFinding(${i},'num',this.value)"></div><div><label class="flabel">Title</label><input class="finput" value="${esc(it.title||'')}" oninput="updFinding(${i},'title',this.value)"></div></div><div class="frow"><label class="flabel">Body</label><textarea class="ftextarea" oninput="updFinding(${i},'body',this.value)">${esc(it.body||'')}</textarea></div></div>`).join(''); }
-function addFinding() { let a=g('content.userResearch.findings')||[]; a=[...a,{num:String(a.length+1).padStart(2,'0'),title:'',body:''}]; sp('content.userResearch.findings',a); document.getElementById('findings-list').innerHTML=renderFindings(a); }
-function rmFinding(i) { let a=g('content.userResearch.findings')||[]; a=a.filter((_,x)=>x!==i); sp('content.userResearch.findings',a); document.getElementById('findings-list').innerHTML=renderFindings(a); }
+function renderFindings(items) { return items.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Finding ${i+1}</span><button class="repeat-del" onclick="rmFinding(${i})">Remove</button></div><div class="frow-2"><div><label class="flabel">Number</label><input class="finput" value="${esc(it.num||String(i+1).padStart(2,'0'))}" oninput="updFinding(${i},'num',this.value)"></div><div><label class="flabel">Title</label><input class="finput" value="${esc(it.title||'')}" oninput="updFinding(${i},'title',this.value)"></div></div><div class="frow"><label class="flabel">Body</label>${richta(`content.userResearch.findings.${i}.body`,'Description...')}</div></div>`).join(''); }
+function addFinding() { let a=g('content.userResearch.findings')||[]; a=[...a,{num:String(a.length+1).padStart(2,'0'),title:'',body:''}]; sp('content.userResearch.findings',a); const el=document.getElementById('findings-list'); el.innerHTML=renderFindings(a); initRtes(el); }
+function rmFinding(i) { let a=g('content.userResearch.findings')||[]; a=a.filter((_,x)=>x!==i); sp('content.userResearch.findings',a); const el=document.getElementById('findings-list'); el.innerHTML=renderFindings(a); initRtes(el); }
 function updFinding(i,k,v) { let a=g('content.userResearch.findings')||[]; a[i]=a[i]||{}; a[i][k]=v; sp('content.userResearch.findings',a); }
 
 const ICONS = ['Stack','DeviceMobile','CreditCard','Browsers','UserMinus','Package','ShieldCheck','Lightning','TrendUp'];
@@ -1160,7 +1208,7 @@ function fAudit() {
   return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.audit.eyebrow','3. PRODUCT AUDIT – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${ta('content.audit.heading','The v1 had Good Intent. The Execution Created Friction At Every Step.')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.audit.body','I audited the existing product end-to-end...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.audit.body','I audited the existing product end-to-end...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Audit Cards</div>
   <div class="repeat-list" id="audit-list">${renderAuditCards(items)}</div>
@@ -1170,9 +1218,9 @@ function fAudit() {
   <div class="frow"><label class="flabel">Audit Video / Image</label>${uploadCard('content.audit.videoUrl','image/*,video/*')}</div>
 `; }
 
-function renderAuditCards(items) { return items.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Card ${i+1}</span><button class="repeat-del" onclick="rmAudit(${i})">Remove</button></div><div class="frow-2"><div><label class="flabel">Icon</label><select class="fselect" onchange="updAudit(${i},'icon',this.value)">${ICONS.map(ic=>`<option${it.icon===ic?' selected':''}>${ic}</option>`).join('')}</select></div><div><label class="flabel">Title</label><input class="finput" value="${esc(it.title||'')}" oninput="updAudit(${i},'title',this.value)"></div></div><div class="frow"><label class="flabel">Body</label><textarea class="ftextarea" oninput="updAudit(${i},'body',this.value)">${esc(it.body||'')}</textarea></div></div>`).join(''); }
-function addAudit() { let a=g('content.audit.cards')||[]; a=[...a,{icon:'Stack',title:'',body:''}]; sp('content.audit.cards',a); document.getElementById('audit-list').innerHTML=renderAuditCards(a); }
-function rmAudit(i) { let a=g('content.audit.cards')||[]; a=a.filter((_,x)=>x!==i); sp('content.audit.cards',a); document.getElementById('audit-list').innerHTML=renderAuditCards(a); }
+function renderAuditCards(items) { return items.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Card ${i+1}</span><button class="repeat-del" onclick="rmAudit(${i})">Remove</button></div><div class="frow-2"><div><label class="flabel">Icon</label><select class="fselect" onchange="updAudit(${i},'icon',this.value)">${ICONS.map(ic=>`<option${it.icon===ic?' selected':''}>${ic}</option>`).join('')}</select></div><div><label class="flabel">Title</label><input class="finput" value="${esc(it.title||'')}" oninput="updAudit(${i},'title',this.value)"></div></div><div class="frow"><label class="flabel">Body</label>${richta(`content.audit.cards.${i}.body`,'Describe the audit finding...')}</div></div>`).join(''); }
+function addAudit() { let a=g('content.audit.cards')||[]; a=[...a,{icon:'Stack',title:'',body:''}]; sp('content.audit.cards',a); const el=document.getElementById('audit-list'); el.innerHTML=renderAuditCards(a); initRtes(el); }
+function rmAudit(i) { let a=g('content.audit.cards')||[]; a=a.filter((_,x)=>x!==i); sp('content.audit.cards',a); const el=document.getElementById('audit-list'); el.innerHTML=renderAuditCards(a); initRtes(el); }
 function updAudit(i,k,v) { let a=g('content.audit.cards')||[]; a[i]=a[i]||{}; a[i][k]=v; sp('content.audit.cards',a); }
 
 function fImprovement() {
@@ -1180,7 +1228,7 @@ function fImprovement() {
   return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.improvement.eyebrow','4. HOW CAN THIS PRODUCT BE IMPROVED? – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${inp('content.improvement.heading','Four Questions That Shaped The Design Direction')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.improvement.body','From the research, I framed the design challenge...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.improvement.body','From the research, I framed the design challenge...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">How Can We Questions</div>
   <div class="repeat-list" id="qs-list">${renderQs(items)}</div>
@@ -1197,7 +1245,7 @@ function fGoals() {
   return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.goals.eyebrow','5. GOALS – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${inp('content.goals.heading','Four Goals. Two Users.')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.goals.body','The research pointed to four clear problems...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.goals.body','The research pointed to four clear problems...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Goal Cells</div>
   <div class="repeat-list" id="goals-list">${renderGoals(items)}</div>
@@ -1205,7 +1253,7 @@ function fGoals() {
   <div class="fdivider"></div>
   <div class="fsub-label">Gray Callout</div>
   <div class="frow"><label class="flabel">Label</label>${inp('content.goals.calloutLabel','DESIGN PRINCIPLE FROM RESEARCH')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.goals.calloutBody','Absorb the complexity. Surface only what the user needs at that exact moment...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.goals.calloutBody','Absorb the complexity. Surface only what the user needs at that exact moment...')}</div>
 `; }
 
 function renderGoals(items) { return items.map((it,i)=>`<div class="repeat-item"><div class="repeat-item-head"><span class="repeat-item-num">Goal ${i+1}</span><button class="repeat-del" onclick="rmGoal(${i})">Remove</button></div><div class="frow-2"><div><label class="flabel">Number</label><input class="finput" value="${esc(it.num||String(i+1).padStart(2,'0'))}" oninput="updGoal(${i},'num',this.value)"></div><div><label class="flabel">Description</label><input class="finput" value="${esc(it.body||'')}" oninput="updGoal(${i},'body',this.value)"></div></div></div>`).join(''); }
@@ -1218,7 +1266,7 @@ function fSolutions() {
   return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.solutions.eyebrow','6. DESIGN SOLUTION – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${inp('content.solutions.heading','Structure First. Trust Throughout. Speed As The Proof.')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.solutions.body','Every solution traced back to a research finding...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.solutions.body','Every solution traced back to a research finding...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Solution Cards</div>
   <div class="repeat-list" id="sols-list">${renderSols(items)}</div>
@@ -1234,7 +1282,7 @@ function renderSols(items) { return items.map((it,i)=>{
     <div><label class="flabel">Media Type</label><select class="fselect" onchange="updSol(${i},'mediaType',this.value)"><option${it.mediaType==='video'?' selected':''} value="video">Video</option><option${it.mediaType==='image'?' selected':''} value="image">Image</option></select></div>
   </div>
   <div class="frow"><label class="flabel">Title</label><input class="finput" value="${esc(it.title||'')}" oninput="updSol(${i},'title',this.value)"></div>
-  <div class="frow"><label class="flabel">Body</label><textarea class="ftextarea" oninput="updSol(${i},'body',this.value)">${esc(it.body||'')}</textarea></div>
+  <div class="frow"><label class="flabel">Body</label>${richta(`content.solutions.cards.${i}.body`,'Describe this solution...')}</div>
   <div class="frow"><label class="flabel">Tags</label>
     <div class="tags-wrap" id="${tid}">
       ${tags.map((t,ti)=>`<span class="tag-chip">${esc(t)}<button class="tag-del" onclick="rmSolTag(${i},${ti})">×</button></span>`).join('')}
@@ -1244,8 +1292,8 @@ function renderSols(items) { return items.map((it,i)=>{
   <div class="frow"><label class="flabel">Media (Image or Video)</label>${uploadCard(`content.solutions.cards.${i}.mediaUrl`,'image/*,video/*')}</div>
   </div>`;
 }).join(''); }
-function addSol() { let a=g('content.solutions.cards')||[]; a=[...a,{icon:'Stack',title:'',body:'',tags:[],mediaUrl:'',mediaType:'video'}]; sp('content.solutions.cards',a); document.getElementById('sols-list').innerHTML=renderSols(a); }
-function rmSol(i) { let a=g('content.solutions.cards')||[]; a=a.filter((_,x)=>x!==i); sp('content.solutions.cards',a); document.getElementById('sols-list').innerHTML=renderSols(a); }
+function addSol() { let a=g('content.solutions.cards')||[]; a=[...a,{icon:'Stack',title:'',body:'',tags:[],mediaUrl:'',mediaType:'video'}]; sp('content.solutions.cards',a); const el=document.getElementById('sols-list'); el.innerHTML=renderSols(a); initRtes(el); }
+function rmSol(i) { let a=g('content.solutions.cards')||[]; a=a.filter((_,x)=>x!==i); sp('content.solutions.cards',a); const el=document.getElementById('sols-list'); el.innerHTML=renderSols(a); initRtes(el); }
 function updSol(i,k,v) { let a=g('content.solutions.cards')||[]; a[i]=a[i]||{}; a[i][k]=v; sp('content.solutions.cards',a); }
 function addSolTag(e,i) { if(e.key!=='Enter'&&e.key!==',')return; e.preventDefault(); const v=e.target.value.trim(); if(!v)return; let a=g('content.solutions.cards')||[]; if(!a[i].tags)a[i].tags=[]; a[i].tags=[...a[i].tags,v]; sp('content.solutions.cards',a); document.getElementById('sols-list').innerHTML=renderSols(a); }
 function rmSolTag(ci,ti) { let a=g('content.solutions.cards')||[]; a[ci].tags=a[ci].tags.filter((_,x)=>x!==ti); sp('content.solutions.cards',a); document.getElementById('sols-list').innerHTML=renderSols(a); }
@@ -1255,7 +1303,7 @@ function fOutcome() {
   return `
   <div class="frow"><label class="flabel">Eyebrow</label>${inp('content.outcome.eyebrow','7. OUTCOME – Carlofty')}</div>
   <div class="frow"><label class="flabel">H2 Heading</label>${inp('content.outcome.heading','The Platform Works. The Numbers Show It.')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.outcome.body','Due to an NDA, specific internal metrics are not shared...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.outcome.body','Due to an NDA, specific internal metrics are not shared...')}</div>
   <div class="fdivider"></div>
   <div class="fsub-label">Outcome Cards</div>
   <div class="repeat-list" id="outcome-list">${renderOutcomes(items)}</div>
@@ -1263,7 +1311,7 @@ function fOutcome() {
   <div class="fdivider"></div>
   <div class="fsub-label">Gray Callout</div>
   <div class="frow"><label class="flabel">Label</label>${inp('content.outcome.calloutLabel','WHAT THIS CASE STUDY DEMONSTRATES')}</div>
-  <div class="frow"><label class="flabel">Body</label>${ta('content.outcome.calloutBody','End-to-end product design ownership on a live fintech-adjacent platform...')}</div>
+  <div class="frow"><label class="flabel">Body</label>${richta('content.outcome.calloutBody','End-to-end product design ownership on a live fintech-adjacent platform...')}</div>
   <div class="fdivider"></div>
   <div class="frow"><label class="flabel">Outro Video / Image</label>${uploadCard('content.outcome.videoUrl','image/*,video/*')}</div>
 `; }

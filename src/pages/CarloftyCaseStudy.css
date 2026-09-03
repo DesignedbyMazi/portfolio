@@ -284,6 +284,18 @@
   margin: 0;
 }
 
+/* Rich text content rendered from CMS */
+.cs-rte ul,
+.cs-rte ol {
+  padding-left: 1.4em;
+  margin: 0.5em 0;
+}
+.cs-rte li { margin-bottom: 0.3em; }
+.cs-rte strong { font-weight: 600; }
+.cs-rte u { text-decoration: underline; }
+.cs-rte p { margin: 0 0 0.6em; }
+.cs-rte p:last-child { margin-bottom: 0; }
+
 /* ── Tags ──────────────────────────────────────────── */
 .cs-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 

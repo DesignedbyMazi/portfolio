@@ -321,7 +321,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                 <p className="cs-breadcrumb">{c.hero.breadcrumb}</p>
               )}
               {c.hero?.title && <h1 className="cs-hero__title">{c.hero.title}</h1>}
-              {c.hero?.overview && <p className="cs-hero__overview">{c.hero.overview}</p>}
+              {c.hero?.overview && <div className="cs-hero__overview cs-rte" dangerouslySetInnerHTML={{ __html: c.hero.overview }} />}
               {(c.hero?.metaYear || c.hero?.metaRole || c.hero?.metaTeam || c.hero?.metaDeliverables) && (
                 <div className="cs-meta-grid">
                   {c.hero?.metaYear && (
@@ -367,7 +367,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.myRole?.eyebrow && <Eyebrow text={c.myRole.eyebrow} />}
                 {c.myRole?.heading && <h2 className="cs-heading">{c.myRole.heading}</h2>}
-                {c.myRole?.body && <p className="cs-body">{c.myRole.body}</p>}
+                {c.myRole?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.myRole.body }} />}
                 {c.myRole?.tags && c.myRole.tags.length > 0 && (
                   <div className="cs-tags">
                     {c.myRole.tags.map(t => <span key={t} className="cs-tag">{t}</span>)}
@@ -391,14 +391,14 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.challenge?.eyebrow && <Eyebrow text={c.challenge.eyebrow} />}
                 {c.challenge?.heading && <h2 className="cs-heading">{c.challenge.heading}</h2>}
-                {c.challenge?.body1 && <p className="cs-body">{c.challenge.body1}</p>}
-                {c.challenge?.body2 && <p className="cs-body">{c.challenge.body2}</p>}
+                {c.challenge?.body1 && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.challenge.body1 }} />}
+                {c.challenge?.body2 && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.challenge.body2 }} />}
                 {c.challenge?.calloutRed && (
                   <div className="cs-callout-red">
                     <p className="cs-callout-red__text">{c.challenge.calloutRed}</p>
                   </div>
                 )}
-                {c.challenge?.body3 && <p className="cs-body">{c.challenge.body3}</p>}
+                {c.challenge?.body3 && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.challenge.body3 }} />}
                 {c.challenge?.banItems && c.challenge.banItems.length > 0 && (
                   <div className="cs-ban-list">
                     {c.challenge.banItems.map(([b, r], i) => (
@@ -427,7 +427,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.research?.eyebrow && <Eyebrow text={c.research.eyebrow} />}
                 {c.research?.heading && <h2 className="cs-heading">{c.research.heading}</h2>}
-                {c.research?.body && <p className="cs-body">{c.research.body}</p>}
+                {c.research?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.research.body }} />}
               </Reveal>
             </div>
           )}
@@ -438,11 +438,11 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.competitor?.eyebrow && <Eyebrow text={c.competitor.eyebrow} />}
                 {c.competitor?.heading && <h2 className="cs-heading">{c.competitor.heading}</h2>}
-                {c.competitor?.body && <p className="cs-body">{c.competitor.body}</p>}
+                {c.competitor?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.competitor.body }} />}
                 {c.competitor?.calloutBody && (
                   <div className="cs-callout-gray">
                     {c.competitor.calloutLabel && <p className="cs-callout-gray__label">{c.competitor.calloutLabel}</p>}
-                    <p className="cs-callout-gray__body">{c.competitor.calloutBody}</p>
+                    <div className="cs-callout-gray__body cs-rte" dangerouslySetInnerHTML={{ __html: c.competitor.calloutBody }} />
                   </div>
                 )}
               </Reveal>
@@ -455,7 +455,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.userResearch?.eyebrow && <Eyebrow text={c.userResearch.eyebrow} />}
                 {c.userResearch?.heading && <h2 className="cs-heading">{c.userResearch.heading}</h2>}
-                {c.userResearch?.body && <p className="cs-body">{c.userResearch.body}</p>}
+                {c.userResearch?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.userResearch.body }} />}
                 {c.userResearch?.findings && c.userResearch.findings.length > 0 && (
                   <div className="cs-findings">
                     {c.userResearch.findings.map((f, i) => (
@@ -463,7 +463,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                         <span className="cs-finding__num">{f.num}</span>
                         <div>
                           <strong className="cs-finding__title">{f.title}</strong>
-                          <p className="cs-finding__text">{f.body}</p>
+                          <div className="cs-finding__text cs-rte" dangerouslySetInnerHTML={{ __html: f.body }} />
                         </div>
                       </div>
                     ))}
@@ -484,14 +484,14 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.audit?.eyebrow && <Eyebrow text={c.audit.eyebrow} />}
                 {c.audit?.heading && <h2 className="cs-heading">{c.audit.heading}</h2>}
-                {c.audit?.body && <p className="cs-body">{c.audit.body}</p>}
+                {c.audit?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.audit.body }} />}
                 {c.audit?.cards && c.audit.cards.length > 0 && (
                   <div className="cs-audit-grid">
                     {c.audit.cards.map((card, i) => (
                       <div key={i} className="cs-audit-card">
                         <span className="cs-audit-card__icon">{icon(card.icon)}</span>
                         <strong className="cs-audit-card__title">{card.title}</strong>
-                        <p className="cs-audit-card__body">{card.body}</p>
+                        <div className="cs-audit-card__body cs-rte" dangerouslySetInnerHTML={{ __html: card.body }} />
                       </div>
                     ))}
                   </div>
@@ -515,7 +515,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.improvement?.eyebrow && <Eyebrow text={c.improvement.eyebrow} />}
                 {c.improvement?.heading && <h2 className="cs-heading">{c.improvement.heading}</h2>}
-                {c.improvement?.body && <p className="cs-body">{c.improvement.body}</p>}
+                {c.improvement?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.improvement.body }} />}
                 {c.improvement?.questions && c.improvement.questions.length > 0 && (
                   <div className="cs-findings">
                     {c.improvement.questions.map((q, i) => (
@@ -539,13 +539,13 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.goals?.eyebrow && <Eyebrow text={c.goals.eyebrow} />}
                 {c.goals?.heading && <h2 className="cs-heading">{c.goals.heading}</h2>}
-                {c.goals?.body && <p className="cs-body">{c.goals.body}</p>}
+                {c.goals?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.goals.body }} />}
                 {c.goals?.cells && c.goals.cells.length > 0 && (
                   <div className="cs-goals-grid">
                     {c.goals.cells.map((cell, i) => (
                       <div key={i} className="cs-goal-cell">
                         <span className="cs-goal-cell__num">{cell.num}</span>
-                        <p className="cs-goal-cell__body">{cell.body}</p>
+                        <div className="cs-goal-cell__body cs-rte" dangerouslySetInnerHTML={{ __html: cell.body }} />
                       </div>
                     ))}
                   </div>
@@ -553,7 +553,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                 {c.goals?.calloutBody && (
                   <div className="cs-callout-gray">
                     {c.goals.calloutLabel && <p className="cs-callout-gray__label">{c.goals.calloutLabel}</p>}
-                    <p className="cs-callout-gray__body">{c.goals.calloutBody}</p>
+                    <div className="cs-callout-gray__body cs-rte" dangerouslySetInnerHTML={{ __html: c.goals.calloutBody }} />
                   </div>
                 )}
               </Reveal>
@@ -567,7 +567,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                 <Reveal className="cs-section">
                   {c.solutions?.eyebrow && <Eyebrow text={c.solutions.eyebrow} />}
                   {c.solutions?.heading && <h2 className="cs-heading">{c.solutions.heading}</h2>}
-                  {c.solutions?.body && <p className="cs-body">{c.solutions.body}</p>}
+                  {c.solutions?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.solutions.body }} />}
                 </Reveal>
               )}
               {c.solutions?.cards && c.solutions.cards.length > 0 && (
@@ -577,7 +577,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                       <div className="cs-solution">
                         <span className="cs-solution__icon">{icon(s.icon)}</span>
                         <strong className="cs-solution__title">{s.title}</strong>
-                        {s.body && <p className="cs-body">{s.body}</p>}
+                        {s.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: s.body }} />}
                         {s.tags && s.tags.length > 0 && (
                           <div className="cs-tags">
                             {s.tags.map(t => <span key={t} className="cs-tag">{t}</span>)}
@@ -602,7 +602,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               <Reveal className="cs-section">
                 {c.outcome?.eyebrow && <Eyebrow text={c.outcome.eyebrow} />}
                 {c.outcome?.heading && <h2 className="cs-heading">{c.outcome.heading}</h2>}
-                {c.outcome?.body && <p className="cs-body">{c.outcome.body}</p>}
+                {c.outcome?.body && <div className="cs-body cs-rte" dangerouslySetInnerHTML={{ __html: c.outcome.body }} />}
                 {c.outcome?.cards && c.outcome.cards.length > 0 && (
                   <div className="cs-outcome-grid">
                     {c.outcome.cards.map((oc, i) => (
@@ -619,7 +619,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                 {c.outcome?.calloutBody && (
                   <div className="cs-callout-gray">
                     {c.outcome.calloutLabel && <p className="cs-callout-gray__label">{c.outcome.calloutLabel}</p>}
-                    <p className="cs-callout-gray__body">{c.outcome.calloutBody}</p>
+                    <div className="cs-callout-gray__body cs-rte" dangerouslySetInnerHTML={{ __html: c.outcome.calloutBody }} />
                   </div>
                 )}
               </Reveal>
