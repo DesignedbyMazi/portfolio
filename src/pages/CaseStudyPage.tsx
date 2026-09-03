@@ -31,7 +31,7 @@ interface AuditContent extends SectionBase {
   videoLabel?: string; videoUrl?: string;
 }
 interface ImprovementContent extends SectionBase {
-  questions?: { num: string; title: string }[];
+  questions?: { num: string; label?: string; title: string; body?: string }[];
 }
 interface GoalsContent extends SectionBase {
   cells?: { num: string; body: string }[];
@@ -522,8 +522,9 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                       <div key={i} className="cs-finding">
                         <span className="cs-finding__num">{q.num}</span>
                         <div>
-                          <span className="cs-how-can-we">How can we</span>
+                          <span className="cs-how-can-we">{q.label || 'How can we'}</span>
                           <strong className="cs-finding__title">{q.title}</strong>
+                          {q.body && <div className="cs-finding__text cs-rte" dangerouslySetInnerHTML={{ __html: q.body }} />}
                         </div>
                       </div>
                     ))}
