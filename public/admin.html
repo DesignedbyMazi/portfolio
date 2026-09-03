@@ -238,22 +238,43 @@ body{font-family:var(--font-body);background:var(--bg);color:var(--tx);min-heigh
 .sec-head:hover{background:var(--bg-s);}
 .sec-head.open{border-radius:var(--r) var(--r) 0 0;border-color:var(--bd-h);}
 .sec-head-label{font-size:0.8rem;font-weight:500;color:var(--tx);flex:1;}
-.sec-vis-badge{
-  font-size:0.6rem;font-weight:500;
-  padding:2px 7px;border-radius:8px;letter-spacing:0.02em;
+
+/* ── INLINE SECTION VISIBILITY TOGGLE ── */
+.sec-vis-inline{
+  position:relative;display:inline-flex;align-items:center;
+  width:34px;height:19px;flex-shrink:0;cursor:pointer;
 }
+.sec-vis-inline input{opacity:0;width:0;height:0;position:absolute;}
+.sec-vis-slider{
+  position:absolute;inset:0;background:var(--bd-h);border-radius:19px;
+  transition:background .18s;
+}
+.sec-vis-slider::after{
+  content:'';position:absolute;width:13px;height:13px;border-radius:50%;
+  left:3px;top:3px;background:#fff;transition:transform .18s;
+  box-shadow:0 1px 2px rgba(0,0,0,.18);
+}
+.sec-vis-inline input:checked+.sec-vis-slider{background:var(--ok);}
+.sec-vis-inline input:checked+.sec-vis-slider::after{transform:translateX(15px);}
+
+/* ── EDITABLE SECTION LABEL ── */
+.sec-label-input{
+  flex:1;border:none;background:transparent;padding:3px 6px;border-radius:4px;
+  font-size:0.8rem;font-weight:500;color:var(--tx);font-family:var(--font-body);
+  outline:none;cursor:text;min-width:0;transition:background .12s,box-shadow .12s;
+}
+.sec-label-input::placeholder{color:var(--tx-3);}
+.sec-label-input:hover{background:var(--bg-h);}
+.sec-label-input:focus{background:var(--bg-h);box-shadow:0 0 0 2px var(--bd-h);}
+.sec-head--hidden .sec-label-input{opacity:.4;text-decoration:line-through;}
+.sec-head--hidden{background:var(--bg-s);}
+
+/* keep sidebar badges */
+.sec-vis-badge{font-size:0.6rem;font-weight:500;padding:2px 7px;border-radius:8px;letter-spacing:0.02em;}
 .sec-vis-badge--v{background:var(--ok-dim);color:var(--ok);}
 .sec-vis-badge--h{background:var(--bg-h);color:var(--tx-3);}
-.sec-vis-toggle{
-  display:flex;align-items:center;gap:5px;padding:4px 10px;border-radius:var(--r-sm);
-  font-size:0.7rem;font-weight:450;
-  border:1px solid var(--bd);background:transparent;color:var(--tx-3);cursor:pointer;
-  transition:all .12s;font-family:var(--font-body);
-}
-.sec-vis-toggle:hover{background:var(--bg-h);color:var(--tx-2);}
-.sec-vis-toggle.on{border-color:#BBF7D0;color:var(--ok);background:var(--ok-dim);}
-.sec-vis-toggle.off{border-color:#FECACA;color:var(--err);background:var(--err-dim);}
-.sec-chevron{color:var(--tx-3);font-size:0.6rem;transition:transform .2s;}
+
+.sec-chevron{color:var(--tx-3);font-size:0.6rem;transition:transform .2s;flex-shrink:0;}
 .sec-head.open .sec-chevron{transform:rotate(180deg);}
 .sec-body{
   display:none;padding:20px;background:var(--bg-s);
@@ -468,7 +489,7 @@ create policy "Anon write" on public.case_studies
 let studies = [];
 let editing = null;
 let formData = {};
-let openSecs = new Set(['card', 'hero']);
+let openSecs = new Set(['card']);
 let supaAvail = true;
 
 /* reorder */
@@ -813,13 +834,18 @@ function showEditor(title) {
   updatePill();
 }
 
+function secCustomLabel(s) {
+  return s.always ? s.label : (formData.content?.[s.key]?.sectionLabel || s.label);
+}
+
 function renderEditor() {
   const nl = document.getElementById('sec-nav-list');
   nl.innerHTML = SECS.map(s => {
     const vis = s.always ? true : (formData.content?.[s.key]?.visible !== false);
+    const label = secCustomLabel(s);
     return `<li><button class="sb-item${!vis ? ' hidden-sec' : ''}" id="snav-${s.key}" onclick="scrollSec('${s.key}')">
       <span class="sb-dot"></span>
-      <span class="sb-item-label">${s.label}</span>
+      <span class="sb-item-label">${esc(label)}</span>
       ${!s.always ? `<span class="sb-vis-badge sb-vis-badge--${vis?'v':'h'}">${vis?'On':'Off'}</span>` : ''}
     </button></li>`;
   }).join('');
@@ -827,7 +853,7 @@ function renderEditor() {
     <div class="editor-wrap">
       <div class="editor-header">
         <div class="editor-title">${editing ? 'Edit Case Study' : 'New Case Study'}</div>
-        <div class="editor-sub">Expand sections below – toggle visibility to hide individual sections from the live portfolio without deleting content.</div>
+        <div class="editor-sub">Toggle the switch to show/hide a section on the live portfolio. Click a section name to rename it. Expand to edit content.</div>
       </div>
       ${SECS.map(s => buildSecBlock(s)).join('')}
       <div style="height:80px"></div>
@@ -838,16 +864,22 @@ function renderEditor() {
 function buildSecBlock(s) {
   const open = openSecs.has(s.key);
   const vis = s.always ? true : (formData.content?.[s.key]?.visible !== false);
+  const label = secCustomLabel(s);
   return `
     <div class="section-block" id="sec-${s.key}">
-      <div class="sec-head${open?' open':''}" onclick="toggleSec('${s.key}')">
-        <span class="sec-head-label">${s.label}</span>
+      <div class="sec-head${open?' open':''}${!vis&&!s.always?' sec-head--hidden':''}" onclick="toggleSec('${s.key}')">
         ${!s.always ? `
-          <span class="sec-vis-badge sec-vis-badge--${vis?'v':'h'}">${vis?'Visible':'Hidden'}</span>
-          <button class="sec-vis-toggle${vis?' on':' off'}" onclick="event.stopPropagation();toggleVis('${s.key}')">
-            ${vis ? '● Visible' : '○ Hidden'}
-          </button>
-        ` : ''}
+          <label class="sec-vis-inline" onclick="event.stopPropagation()" title="${vis?'Visible on portfolio — click to hide':'Hidden from portfolio — click to show'}">
+            <input type="checkbox" ${vis?'checked':''} onchange="event.stopPropagation();toggleVis('${s.key}',this.checked)">
+            <span class="sec-vis-slider"></span>
+          </label>
+        ` : `<span style="width:34px;flex-shrink:0;display:inline-block"></span>`}
+        ${!s.always ? `
+          <input class="sec-label-input" value="${esc(label)}" placeholder="${esc(s.label)}"
+            onclick="event.stopPropagation()" onfocus="event.stopPropagation()"
+            oninput="event.stopPropagation();updSecLabel('${s.key}',this.value)"
+            title="Click to rename this section">
+        ` : `<span class="sec-head-label">${esc(s.label)}</span>`}
         <span class="sec-chevron">▼</span>
       </div>
       <div class="sec-body${open?' open':''}" id="body-${s.key}">${open ? secFields(s.key) : ''}</div>
@@ -870,21 +902,40 @@ function toggleSec(key) {
   }
 }
 
-function toggleVis(key) {
+function toggleVis(key, checked) {
   if (!formData.content[key]) formData.content[key] = {};
-  const now = formData.content[key].visible = !(formData.content[key].visible !== false);
+  const now = (checked !== undefined) ? checked : !(formData.content[key].visible !== false);
+  formData.content[key].visible = now;
   const block = document.getElementById(`sec-${key}`);
-  block.querySelector('.sec-vis-badge').textContent = now ? 'Visible' : 'Hidden';
-  block.querySelector('.sec-vis-badge').className = `sec-vis-badge sec-vis-badge--${now?'v':'h'}`;
-  const vbtn = block.querySelector('.sec-vis-toggle');
-  vbtn.textContent = now ? '● Visible' : '○ Hidden';
-  vbtn.className = `sec-vis-toggle${now?' on':' off'}`;
+  const head = block.querySelector('.sec-head');
+  if (head) {
+    if (now) head.classList.remove('sec-head--hidden');
+    else head.classList.add('sec-head--hidden');
+  }
+  // sync checkbox
+  const cb = block.querySelector('.sec-vis-inline input');
+  if (cb) cb.checked = now;
+  // sync sidebar
   const si = document.getElementById(`snav-${key}`);
   if (si) {
     si.className = `sb-item${!now?' hidden-sec':''}`;
     const badge = si.querySelector('.sb-vis-badge');
     if (badge) { badge.textContent = now?'On':'Off'; badge.className = `sb-vis-badge sb-vis-badge--${now?'v':'h'}`; }
   }
+  scheduleAutoSave();
+}
+
+function updSecLabel(key, val) {
+  if (!formData.content[key]) formData.content[key] = {};
+  formData.content[key].sectionLabel = val;
+  // update sidebar label live
+  const si = document.getElementById(`snav-${key}`);
+  if (si) {
+    const labelEl = si.querySelector('.sb-item-label');
+    const defaultLabel = SECS.find(s => s.key === key)?.label || key;
+    if (labelEl) labelEl.textContent = val || defaultLabel;
+  }
+  scheduleAutoSave();
 }
 
 function scrollSec(key) {

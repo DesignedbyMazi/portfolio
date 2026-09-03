@@ -15,7 +15,7 @@ interface HeroContent {
   metaYear?: string; metaRole?: string; metaTeam?: string;
   metaDeliverables?: string; imageUrl?: string;
 }
-interface SectionBase { visible?: boolean; eyebrow?: string; heading?: string; body?: string; }
+interface SectionBase { visible?: boolean; sectionLabel?: string; eyebrow?: string; heading?: string; body?: string; }
 interface MyRoleContent extends SectionBase { tags?: string[]; videoUrl?: string; }
 interface ChallengeContent extends SectionBase {
   body1?: string; body2?: string; body3?: string;
@@ -238,27 +238,28 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
   /* Build nav items — mirrors exact content checks used by each section's render guard */
   const navItems = study ? (() => {
     const c = study.content;
+    const lbl = (sec: SectionBase | undefined, fallback: string) => sec?.sectionLabel || fallback;
     const items: { label: string; id: string }[] = [{ label: 'Case Study', id: 'cs-sec-top' }];
     if (c.myRole?.visible !== false       && (c.myRole?.heading      || c.myRole?.body))
-      items.push({ label: 'My Role',             id: 'cs-sec-role'          });
+      items.push({ label: lbl(c.myRole, 'My Role'),                  id: 'cs-sec-role'          });
     if (c.challenge?.visible !== false    && (c.challenge?.heading   || c.challenge?.body1))
-      items.push({ label: 'The Challenge',       id: 'cs-sec-challenge'     });
+      items.push({ label: lbl(c.challenge, 'The Challenge'),         id: 'cs-sec-challenge'     });
     if (c.research?.visible !== false     && (c.research?.heading    || c.research?.body))
-      items.push({ label: 'Research',            id: 'cs-sec-research'      });
+      items.push({ label: lbl(c.research, 'Research'),               id: 'cs-sec-research'      });
     if (c.competitor?.visible !== false   && (c.competitor?.heading  || c.competitor?.body))
-      items.push({ label: 'Competitor Analysis', id: 'cs-sec-competitor'    });
+      items.push({ label: lbl(c.competitor, 'Competitor Analysis'),  id: 'cs-sec-competitor'    });
     if (c.userResearch?.visible !== false && (c.userResearch?.heading || c.userResearch?.body))
-      items.push({ label: 'User Research',       id: 'cs-sec-user-research' });
+      items.push({ label: lbl(c.userResearch, 'User Research'),      id: 'cs-sec-user-research' });
     if (c.audit?.visible !== false        && (c.audit?.heading       || c.audit?.body))
-      items.push({ label: 'Product Audit',       id: 'cs-sec-audit'         });
+      items.push({ label: lbl(c.audit, 'Product Audit'),             id: 'cs-sec-audit'         });
     if (c.improvement?.visible !== false  && (c.improvement?.heading || c.improvement?.body))
-      items.push({ label: 'Product Improvement', id: 'cs-sec-improvement'   });
+      items.push({ label: lbl(c.improvement, 'Product Improvement'), id: 'cs-sec-improvement'   });
     if (c.goals?.visible !== false        && (c.goals?.heading       || c.goals?.body))
-      items.push({ label: 'Goals',               id: 'cs-sec-goals'         });
+      items.push({ label: lbl(c.goals, 'Goals'),                     id: 'cs-sec-goals'         });
     if (c.solutions?.visible !== false    && (c.solutions?.heading   || (c.solutions?.cards && c.solutions.cards.length > 0)))
-      items.push({ label: 'Solutions',           id: 'cs-sec-solutions'     });
+      items.push({ label: lbl(c.solutions, 'Solutions'),             id: 'cs-sec-solutions'     });
     if (c.outcome?.visible !== false      && (c.outcome?.heading     || c.outcome?.body))
-      items.push({ label: 'Outcome',             id: 'cs-sec-outcome'       });
+      items.push({ label: lbl(c.outcome, 'Outcome'),                 id: 'cs-sec-outcome'       });
     return items;
   })() : [{ label: 'Case Study', id: 'cs-sec-top' }];
 
