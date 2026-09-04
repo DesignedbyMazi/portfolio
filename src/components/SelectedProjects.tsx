@@ -62,8 +62,9 @@ function CaseStudyCard({
           <video
             ref={videoRef}
             src={video}
+            poster={image}
             className={`case-card__video${hovered ? ' case-card__video--visible' : ''}`}
-            muted loop playsInline preload="none"
+            muted loop playsInline preload="auto"
           />
         )}
       </div>
@@ -113,8 +114,9 @@ function LiveProjectCard({
           <video
             ref={videoRef}
             src={video}
+            poster={image}
             className={`case-card__video${hovered ? ' case-card__video--visible' : ''}`}
-            muted loop playsInline preload="none"
+            muted loop playsInline preload="auto"
           />
         )}
       </div>

@@ -110,8 +110,9 @@ function CarloftyCaseCard({ onRead }: { onRead: () => void }) {
         <video
           ref={videoRef}
           src={carloftyVideo}
+          poster={carloftyImg}
           className={`works-case-video${hovered ? ' works-case-video--visible' : ''}`}
-          muted loop playsInline preload="none"
+          muted loop playsInline preload="auto"
         />
       </div>
       <div className="works-case-body">
@@ -176,11 +177,12 @@ function CaseCard({ cs, onOpen }: { cs: CaseStudy; onOpen: (slug: string) => voi
           <video
             ref={videoRef}
             src={cs.video}
+            poster={cs.image || undefined}
             className={`works-case-video${hovered || !cs.image ? ' works-case-video--visible' : ''}`}
             muted
             loop
             playsInline
-            preload="none"
+            preload="auto"
           />
         )}
       </div>
@@ -241,9 +243,10 @@ function GridCard({ project }: { project: LiveProject }) {
         <video
           ref={videoRef}
           src={project.video}
+          poster={project.image}
           className="works-grid-video"
           muted loop playsInline
-          preload="none"
+          preload="auto"
         />
       )}
     </div>
