@@ -90,6 +90,8 @@ function scrollToSection(id: string) {
 /* ── VideoInView ─────────────────────────────────── */
 function VideoInView({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const [muted, setMuted] = useState(true);
+
   useEffect(() => {
     const video = ref.current; if (!video) return;
     const obs = new IntersectionObserver(([e]) => {
@@ -98,7 +100,38 @@ function VideoInView({ src, className }: { src: string; className?: string }) {
     obs.observe(video);
     return () => obs.disconnect();
   }, [src]);
-  return <video ref={ref} src={src} muted loop playsInline preload="none" className={className} />;
+
+  const toggleMute = () => {
+    const video = ref.current; if (!video) return;
+    video.muted = !video.muted;
+    setMuted(video.muted);
+  };
+
+  return (
+    <div className={`cs-video-wrap${className ? ` ${className}` : ''}`}>
+      <video ref={ref} src={src} muted loop playsInline preload="none" />
+      <button
+        className="cs-volume-btn"
+        onClick={toggleMute}
+        title={muted ? 'Unmute' : 'Mute'}
+        aria-label={muted ? 'Unmute video' : 'Mute video'}
+      >
+        {muted ? (
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+            <path d="M2 5.5h2.5L9 2v12L4.5 10.5H2a.5.5 0 0 1-.5-.5V6a.5.5 0 0 1 .5-.5Z" fill="currentColor"/>
+            <line x1="11" y1="5" x2="15" y2="11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <line x1="15" y1="5" x2="11" y2="11" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        ) : (
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden>
+            <path d="M2 5.5h2.5L9 2v12L4.5 10.5H2a.5.5 0 0 1-.5-.5V6a.5.5 0 0 1 .5-.5Z" fill="currentColor"/>
+            <path d="M11.5 5.5a3.5 3.5 0 0 1 0 5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+            <path d="M13.5 3.5a6 6 0 0 1 0 9" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+          </svg>
+        )}
+      </button>
+    </div>
+  );
 }
 
 /* ── Reveal ──────────────────────────────────────── */

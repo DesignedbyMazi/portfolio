@@ -239,6 +239,45 @@
   background: #000;
 }
 
+/* Video wrapper — provides positioning context for the volume button */
+.cs-video-wrap {
+  position: relative;
+  display: block;
+  overflow: hidden;
+}
+
+/* Video fills the wrapper; inherits aspect-ratio from the cs-video class on the wrapper */
+.cs-video-wrap video {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+/* Mute / unmute toggle */
+.cs-volume-btn {
+  position: absolute;
+  bottom: 14px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0, 0, 0, 0.52);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.15s, transform 0.1s;
+  z-index: 2;
+  flex-shrink: 0;
+}
+.cs-volume-btn:hover  { background: rgba(0, 0, 0, 0.72); }
+.cs-volume-btn:active { transform: scale(0.93); }
+
 /* ── Generic section wrapper ───────────────────────── */
 .cs-section {
   display: flex;
