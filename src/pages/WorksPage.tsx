@@ -20,6 +20,31 @@ import barakaVideo    from '../assets/videos/baraka-demo.mp4';
 
 import './WorksPage.css';
 
+/* ── Preload video when card enters viewport (300px ahead) ── */
+function useInViewPreload(
+  cardRef: { current: HTMLElement | null },
+  videoRef: { current: HTMLVideoElement | null },
+  src?: string
+) {
+  useEffect(() => {
+    const card = cardRef.current;
+    const vid  = videoRef.current;
+    if (!card || !vid || !src) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          vid.preload = 'auto';
+          vid.load();
+          io.disconnect();
+        }
+      },
+      { rootMargin: '300px' }
+    );
+    io.observe(card);
+    return () => io.disconnect();
+  }, [src]);
+}
+
 /* ── Icons ──────────────────────────────────────────── */
 function ArrowUpRight() {
   return (
@@ -89,8 +114,11 @@ function mapRow(row: Record<string, unknown>): CaseStudy {
 
 /* ── Carlofty — hardcoded, permanently pinned card ──────── */
 function CarloftyCaseCard({ onRead }: { onRead: () => void }) {
+  const cardRef  = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+
+  useInViewPreload(cardRef, videoRef, carloftyVideo);
 
   const handleEnter = () => { setHovered(true); videoRef.current?.play().catch(() => {}); };
   const handleLeave = () => {
@@ -100,7 +128,7 @@ function CarloftyCaseCard({ onRead }: { onRead: () => void }) {
   };
 
   return (
-    <div className="works-case">
+    <div ref={cardRef} className="works-case">
       <div className="works-case-img-wrap" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
         <img
           src={carloftyImg}
@@ -141,8 +169,11 @@ function CarloftyCaseCard({ onRead }: { onRead: () => void }) {
 
 /* ── Case study card — handles hover video on the image ─ */
 function CaseCard({ cs, onOpen }: { cs: CaseStudy; onOpen: (slug: string) => void }) {
+  const cardRef  = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+
+  useInViewPreload(cardRef, videoRef, cs.video);
 
   const navigate = () => { onOpen(cs.slug); };
 
@@ -160,7 +191,7 @@ function CaseCard({ cs, onOpen }: { cs: CaseStudy; onOpen: (slug: string) => voi
   };
 
   return (
-    <div className="works-case">
+    <div ref={cardRef} className="works-case">
       <div
         className="works-case-img-wrap"
         onMouseEnter={handleEnter}
@@ -207,8 +238,11 @@ function CaseCard({ cs, onOpen }: { cs: CaseStudy; onOpen: (slug: string) => voi
 
 /* ── Grid card — video only, no redirect on click ───── */
 function GridCard({ project }: { project: LiveProject }) {
+  const cardRef   = useRef<HTMLDivElement>(null);
   const videoRef  = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+
+  useInViewPreload(cardRef, videoRef, project.video);
 
   /* No interaction for static image cards (no video) */
   const handleEnter = () => {
@@ -226,6 +260,7 @@ function GridCard({ project }: { project: LiveProject }) {
 
   return (
     <div
+      ref={cardRef}
       className={`works-grid-card${hovered ? ' works-grid-card--hovered' : ''}`}
       style={{ cursor: project.video ? 'pointer' : 'default' }}
       onMouseEnter={handleEnter}

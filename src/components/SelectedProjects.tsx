@@ -18,6 +18,31 @@ function ArrowUpRightIcon({ className }: { className?: string }) {
   );
 }
 
+/* Start buffering video when its card scrolls into view (300px ahead) */
+function useInViewPreload(
+  cardRef: { current: HTMLElement | null },
+  videoRef: { current: HTMLVideoElement | null },
+  src?: string
+) {
+  useEffect(() => {
+    const card = cardRef.current;
+    const vid  = videoRef.current;
+    if (!card || !vid || !src) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          vid.preload = 'auto';
+          vid.load();
+          io.disconnect();
+        }
+      },
+      { rootMargin: '300px' }
+    );
+    io.observe(card);
+    return () => io.disconnect();
+  }, [src]);
+}
+
 /* ── Case study card — supports hover video ─── */
 function CaseStudyCard({
   title, description, image, video, slug, onReadCaseStudy,
@@ -26,8 +51,11 @@ function CaseStudyCard({
   video?: string; slug?: string;
   onReadCaseStudy?: (slug?: string) => void;
 }) {
+  const cardRef  = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+
+  useInViewPreload(cardRef, videoRef, video);
 
   const handleEnter = () => {
     if (!video) return;
@@ -45,6 +73,7 @@ function CaseStudyCard({
 
   return (
     <div
+      ref={cardRef}
       className="case-card"
       onClick={handleClick}
       role="button"
@@ -87,8 +116,11 @@ function LiveProjectCard({
   title: string; image: string;
   video?: string; href?: string;
 }) {
+  const cardRef  = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
+
+  useInViewPreload(cardRef, videoRef, video);
 
   const handleEnter = () => {
     if (!video) return;
@@ -104,7 +136,7 @@ function LiveProjectCard({
 
   const cardContent = (
     <>
-      <div className="case-card__image" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
+      <div ref={cardRef} className="case-card__image" onMouseEnter={handleEnter} onMouseLeave={handleLeave}>
         <img
           src={image}
           alt={title}
