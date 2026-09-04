@@ -123,7 +123,6 @@ function LiveProjectCard({
       </div>
       <div className="case-card__body">
         <h3 className="case-card__title">{title}</h3>
-        <p className="case-card__desc">{description}</p>
         {href && (
           <span className="case-card__link">
             <span>Visit site</span>
