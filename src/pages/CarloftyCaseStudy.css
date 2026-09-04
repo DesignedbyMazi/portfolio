@@ -196,20 +196,39 @@
 /* ── Hero CTA ──────────────────────────────────────── */
 .cs-hero__cta {
   display: inline-flex;
+  align-self: flex-start;
   align-items: center;
   gap: 6px;
   height: 44px;
   max-height: 44px;
-  padding: 0 16px;
+  padding: 0 14px;
   border-radius: 22px;
-  border: 1px solid currentColor;
+  border: none;
   font-size: 14px;
   font-family: var(--font-body, inherit);
   font-weight: 500;
   text-decoration: none;
-  color: var(--color-text-primary);
+  /* Light mode: dark fill, white text */
+  background: #101010;
+  color: #ffffff;
   transition: opacity 0.15s, transform 0.1s;
   margin-bottom: 24px;
+  white-space: nowrap;
+}
+/* Dark mode: white fill, dark text */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .cs-hero__cta {
+    background: #ffffff;
+    color: #101010;
+  }
+}
+:root[data-theme="dark"] .cs-hero__cta {
+  background: #ffffff;
+  color: #101010;
+}
+:root[data-theme="light"] .cs-hero__cta {
+  background: #101010;
+  color: #ffffff;
 }
 .cs-hero__cta:hover  { opacity: 0.75; transform: translateY(-1px); }
 .cs-hero__cta:active { opacity: 1; transform: translateY(0); }

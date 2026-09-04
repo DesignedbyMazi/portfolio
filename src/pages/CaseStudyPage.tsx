@@ -77,6 +77,15 @@ const ICON_MAP: Record<string, React.ReactNode> = {
 };
 const icon = (name: string) => ICON_MAP[name] ?? <Stack size={20} weight="fill" />;
 
+/* ── Luminance helper for CTA color override ─────── */
+function isLightHex(hex: string): boolean {
+  const c = hex.replace('#', '');
+  const r = parseInt(c.slice(0, 2), 16);
+  const g = parseInt(c.slice(2, 4), 16);
+  const b = parseInt(c.slice(4, 6), 16);
+  return (r * 299 + g * 587 + b * 114) / 1000 > 128;
+}
+
 /* ── Scroll helpers ──────────────────────────────── */
 function scrollToTopSmooth() {
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -377,7 +386,10 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="cs-hero__cta"
-                  style={c.hero.ctaColor ? { color: c.hero.ctaColor, borderColor: c.hero.ctaColor } as React.CSSProperties : undefined}
+                  style={c.hero.ctaColor ? {
+                    background: c.hero.ctaColor,
+                    color: isLightHex(c.hero.ctaColor) ? '#101010' : '#ffffff',
+                  } as React.CSSProperties : undefined}
                 >
                   <span>{c.hero.ctaLabel}</span>
                   <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">

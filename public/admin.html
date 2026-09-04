@@ -1135,11 +1135,11 @@ function fHero() { return `
     <div><label class="flabel">CTA Link</label>${inp('content.hero.ctaUrl','https://')}</div>
   </div>
   <div class="frow" style="align-items:center;gap:12px;display:flex;">
-    <label class="flabel" style="margin:0;white-space:nowrap;">CTA Color</label>
-    <input type="color" value="${esc(String(g('content.hero.ctaColor')||'#F0F0F0'))}"
+    <label class="flabel" style="margin:0;white-space:nowrap;">Fill Color</label>
+    <input type="color" value="${esc(String(g('content.hero.ctaColor')||'#101010'))}"
       oninput="sp('content.hero.ctaColor',this.value)"
       style="width:36px;height:28px;padding:2px;border:1px solid var(--bd);border-radius:4px;background:var(--bg);cursor:pointer;">
-    <span style="font-size:0.72rem;color:var(--tx-3);">Leave at default to follow page theme (white in dark, dark in light).</span>
+    <span style="font-size:0.72rem;color:var(--tx-3);">Background fill color. Text auto-adjusts for contrast. Leave unset to follow page theme.</span>
     <button onclick="sp('content.hero.ctaColor','');renderEditor()" style="padding:3px 8px;font-size:0.7rem;border-radius:var(--r-sm);border:1px solid var(--bd);background:transparent;color:var(--tx-2);cursor:pointer;">Reset to theme</button>
   </div>
   <div class="fdivider"></div>
