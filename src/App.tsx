@@ -9,6 +9,7 @@ import UIExploration from './components/UIExploration';
 import SelectedProjects from './components/SelectedProjects';
 import Footer from './components/Footer';
 import CarloftyCaseStudy from './pages/CarloftyCaseStudy';
+import CaseStudyPage from './pages/CaseStudyPage';
 import WorksPage from './pages/WorksPage';
 import ServicesPage from './pages/ServicesPage';
 import AboutPage from './pages/AboutPage';
@@ -119,15 +120,28 @@ function useWelcomeConfetti() {
   }, []);
 }
 
-type View = 'home' | 'works' | 'services' | 'carlofty' | 'about';
-const VALID_VIEWS: View[] = ['home', 'works', 'services', 'carlofty', 'about'];
+type View = 'home' | 'works' | 'services' | 'carlofty' | 'about' | 'caseStudy';
+const VALID_VIEWS: View[] = ['home', 'works', 'services', 'carlofty', 'about', 'caseStudy'];
 
-/* Read the last view from sessionStorage — falls back to 'home' */
+/* Read the last view from sessionStorage — falls back to 'home'.
+   URL path takes precedence for case study deep links. */
 function getSavedView(): View {
+  const path = window.location.pathname;
+  if (path.startsWith('/case-study/')) return 'caseStudy';
   try {
     const v = sessionStorage.getItem('portfolio-view') as View;
+    // Don't restore 'caseStudy' from sessionStorage — URL is the source of truth
+    if (v === 'caseStudy') return 'home';
     return VALID_VIEWS.includes(v) ? v : 'home';
   } catch { return 'home'; }
+}
+
+function getSlugFromUrl(): string {
+  const path = window.location.pathname;
+  if (path.startsWith('/case-study/')) {
+    return decodeURIComponent(path.replace('/case-study/', ''));
+  }
+  return '';
 }
 
 function getSavedReturn(): 'home' | 'works' {
@@ -149,6 +163,8 @@ function App() {
   const [aboutMounted,    setAboutMounted]    = useState(initialView === 'about');
 
   const [carloftyReturn, setCarloftyReturn] = useState<'home' | 'works'>(getSavedReturn);
+  const [caseStudySlug, setCaseStudySlug] = useState<string>(getSlugFromUrl);
+  const [caseStudyMounted, setCaseStudyMounted] = useState(getSavedView() === 'caseStudy');
 
   useAnimations();
   useWelcomeConfetti();
@@ -156,6 +172,9 @@ function App() {
   const nav = (to: View) => {
     window.scrollTo({ top: 0, behavior: 'instant' });
     try { sessionStorage.setItem('portfolio-view', to); } catch {}
+    if (to !== 'caseStudy' && window.location.pathname.startsWith('/case-study/')) {
+      window.history.pushState({}, '', '/');
+    }
     setView(to);
   };
 
@@ -170,6 +189,12 @@ function App() {
     nav('carlofty');
   };
   const goBack = () => nav(carloftyReturn);
+  const goCaseStudy = (slug: string) => {
+    setCaseStudySlug(slug);
+    setCaseStudyMounted(true);
+    window.history.pushState({}, '', '/case-study/' + encodeURIComponent(slug));
+    nav('caseStudy');
+  };
 
   /* Shared cross-page nav handler */
   const handleNav = (page: string) => {
@@ -205,7 +230,7 @@ function App() {
         <div style={{ display: view === 'works' ? undefined : 'none' }}>
           <WorksPage
             onBack={goHome}
-            onReadCaseStudy={() => goCarlofty('works')}
+            onReadCaseStudy={(slug) => slug ? goCaseStudy(slug) : goCarlofty('works')}
             onNavigate={handleNav}
           />
         </div>
@@ -229,6 +254,20 @@ function App() {
       {aboutMounted && (
         <div style={{ display: view === 'about' ? undefined : 'none' }}>
           <AboutPage onBack={goHome} onNavigate={handleNav} />
+        </div>
+      )}
+
+      {/* ── Dynamic Case Study (Supabase) ─────────────────── */}
+      {caseStudyMounted && caseStudySlug && (
+        <div style={{ display: view === 'caseStudy' ? undefined : 'none' }}>
+          <CaseStudyPage
+            slug={caseStudySlug}
+            onNavigate={handleNav}
+            onGoHome={() => {
+              window.history.pushState({}, '', '/');
+              goHome();
+            }}
+          />
         </div>
       )}
     </>

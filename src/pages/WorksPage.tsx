@@ -141,11 +141,11 @@ function CarloftyCaseCard({ onRead }: { onRead: () => void }) {
 }
 
 /* ── Case study card — handles hover video on the image ─ */
-function CaseCard({ cs }: { cs: CaseStudy }) {
+function CaseCard({ cs, onOpen }: { cs: CaseStudy; onOpen: (slug: string) => void }) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const [hovered, setHovered] = useState(false);
 
-  const navigate = () => { window.location.href = '/case-study/' + cs.slug; };
+  const navigate = () => { onOpen(cs.slug); };
 
   const handleEnter = () => {
     if (!cs.video) return;
@@ -287,7 +287,7 @@ function GridItem({ project }: { project: LiveProject }) {
 /* ── Props ──────────────────────────────────────────── */
 interface WorksPageProps {
   onBack:          () => void;
-  onReadCaseStudy: () => void;
+  onReadCaseStudy: (slug?: string) => void;
   onNavigate:      (page: string) => void;
 }
 
@@ -370,7 +370,7 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
               </p>
             )}
             {caseStudies.map((cs) => (
-              <CaseCard key={cs.id} cs={cs} />
+              <CaseCard key={cs.id} cs={cs} onOpen={onReadCaseStudy} />
             ))}
             {/* Placeholder — hidden once total studies (Carlofty + Supabase) reaches 3 */}
             {!loading && caseStudies.length < 2 && (
