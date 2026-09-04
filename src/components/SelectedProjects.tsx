@@ -2,11 +2,9 @@ import { useEffect, useRef, useState } from 'react';
 import { supabase } from '../lib/supabase';
 
 import carloftyImg    from '../assets/images/carlofty-case-study.png';
-import pay4meImg      from '../assets/images/pay4me-card.png';
 import barakaImg      from '../assets/images/baraka-card.jpg';
 
 import carloftyVideo  from '../assets/videos/carlofty-outcome.mp4';
-import pay4meVideo    from '../assets/videos/pay4me-demo.mp4';
 import barakaVideo    from '../assets/videos/baraka-demo.mp4';
 
 import './SelectedProjects.css';
@@ -147,16 +145,10 @@ function LiveProjectCard({
 const liveProjects = [
   {
     id: 'baraka',
-    title: 'Baraka — Investment Platform Redesign',
+    title: 'Baraka — Landing page redesign',
     image: barakaImg,
     video: barakaVideo,
     href: 'https://barakaredesign.framer.website/',
-  },
-  {
-    id: 'pay4me',
-    title: 'Pay4me — Landing page redesign',
-    image: pay4meImg,
-    video: pay4meVideo,
   },
 ];
 
