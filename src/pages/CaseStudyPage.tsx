@@ -91,11 +91,24 @@ function scrollToSection(id: string) {
 function VideoInView({ src, className }: { src: string; className?: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(true);
+  const wantsSound = useRef(false); // user's explicit preference
 
   useEffect(() => {
     const video = ref.current; if (!video) return;
     const obs = new IntersectionObserver(([e]) => {
-      e.isIntersecting ? video.play().catch(() => {}) : video.pause();
+      if (e.isIntersecting) {
+        video.play().catch(() => {});
+        // Restore user's audio preference when back in view
+        if (wantsSound.current) {
+          video.muted = false;
+          setMuted(false);
+        }
+      } else {
+        video.pause();
+        // Always mute when scrolled out of view
+        video.muted = true;
+        setMuted(true);
+      }
     }, { threshold: 0.25 });
     obs.observe(video);
     return () => obs.disconnect();
@@ -103,8 +116,10 @@ function VideoInView({ src, className }: { src: string; className?: string }) {
 
   const toggleMute = () => {
     const video = ref.current; if (!video) return;
-    video.muted = !video.muted;
-    setMuted(video.muted);
+    const nowMuted = !video.muted;
+    video.muted = nowMuted;
+    wantsSound.current = !nowMuted; // remember preference
+    setMuted(nowMuted);
   };
 
   return (

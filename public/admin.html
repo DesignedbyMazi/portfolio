@@ -1092,6 +1092,18 @@ function initRtes(container) {
   });
 }
 
+/* Auto-mute any CMS preview video when it scrolls out of view */
+function initVideoObs() {
+  document.querySelectorAll('video').forEach(v => {
+    if (v._volObs) return;
+    v._volObs = new IntersectionObserver(([e]) => {
+      if (!e.isIntersecting) v.muted = true;
+    }, { threshold: 0.25 });
+    v._volObs.observe(v);
+  });
+}
+new MutationObserver(initVideoObs).observe(document.documentElement, { childList: true, subtree: true });
+
 /* ─── SECTION RENDERERS ─────────────────────── */
 function fCard() {
   const pub = formData.published;
