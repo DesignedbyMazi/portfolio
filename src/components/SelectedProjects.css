@@ -96,6 +96,7 @@
   height: 400px;
   overflow: hidden;
   flex-shrink: 0;
+  position: relative;
 }
 
 .case-card__img {
@@ -104,11 +105,38 @@
   object-fit: cover;
   object-position: top center;
   display: block;
-  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.3s ease;
 }
 
-.case-card:hover .case-card__img {
+.case-card:hover .case-card__img:not(.case-card__img--hidden) {
   transform: scale(1.015);
+}
+
+.case-card__img--hidden {
+  opacity: 0;
+}
+
+.case-card__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.case-card__video--visible {
+  opacity: 1;
+}
+
+/* anchor-based live project card — same look, no underline */
+a.case-card--link {
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
 }
 
 /* Text sub-container — 40px padding all sides, 1px top stroke, 0 gap from image */
@@ -189,7 +217,7 @@
 
   /* Card image */
   .case-card__image {
-    height: 200px;
+    height: 220px;
   }
 
   /* Card body */

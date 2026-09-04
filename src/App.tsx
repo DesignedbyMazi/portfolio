@@ -218,7 +218,7 @@ function App() {
             <IntroCopy />
             <div data-animate><SocialSection /></div>
             <div data-animate>
-              <SelectedProjects onReadCaseStudy={() => goCarlofty('home')} />
+              <SelectedProjects onReadCaseStudy={(slug) => slug ? goCaseStudy(slug) : goCarlofty('home')} />
             </div>
             <div data-animate><Footer /></div>
           </div>
