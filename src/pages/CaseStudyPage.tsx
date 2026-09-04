@@ -338,7 +338,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
   }, [slug]);
 
   const handleNav = useCallback((page: string) => {
-    if (page === 'Home') { onGoHome?.(); window.location.href = '/'; }
+    if (page === 'Home') onGoHome?.();
     else onNavigate?.(page);
   }, [onGoHome, onNavigate]);
 
@@ -384,7 +384,7 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
     return () => observer.disconnect();
   }, [study]);
 
-  const goBack = () => { window.history.back(); };
+  const goBack = () => { onGoHome?.(); };
 
   if (loading) return (
     <div className="cs-page" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh' }}>
