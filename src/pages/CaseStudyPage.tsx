@@ -228,6 +228,55 @@ function OutcomeCard({ icon: ic, prefix, count, suffix, label }: {
   );
 }
 
+/* ── Mobile section navigator (dropdown pill) ────── */
+function CsSectionNav({ activeId, navItems }: { activeId: string; navItems: { label: string; id: string }[] }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, [open]);
+
+  const activeItem = navItems.find(n => n.id === activeId) ?? navItems[0];
+  if (!activeItem) return null;
+
+  return (
+    <div className="cs-snav" ref={ref}>
+      <div className={`cs-snav__list${open ? ' cs-snav__list--open' : ''}`} role="listbox">
+        {navItems.map(item => (
+          <button
+            key={item.id}
+            role="option"
+            aria-selected={item.id === activeId}
+            className={`cs-snav__option${item.id === activeId ? ' cs-snav__option--active' : ''}`}
+            onClick={() => { scrollToSection(item.id); setOpen(false); }}
+          >
+            {item.id === activeId && <span className="cs-snav__option-dot" />}
+            {item.label}
+          </button>
+        ))}
+      </div>
+      <button
+        className={`cs-snav__chip${open ? ' cs-snav__chip--open' : ''}`}
+        onClick={() => setOpen(o => !o)}
+        aria-expanded={open}
+        aria-haspopup="listbox"
+      >
+        <span className="cs-snav__dot" />
+        <span className="cs-snav__label">{activeItem.label}</span>
+        <svg className="cs-snav__chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden>
+          <path d="M18 9C18 9 13.58 15 12 15C10.42 15 6 9 6 9" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+      </button>
+    </div>
+  );
+}
+
 /* ── Sidebar ─────────────────────────────────────── */
 function CSSidebar({ activeId, navItems }: { activeId: string; navItems: { label: string; id: string }[] }) {
   return (
@@ -723,6 +772,10 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
 
         </div>
       </div>
+
+      {/* ── Mobile section navigator ─────────────── */}
+      <CsSectionNav activeId={activeId} navItems={navItems} />
+
     </div>
   );
 }
