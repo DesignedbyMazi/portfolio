@@ -212,7 +212,7 @@
   background: #101010;
   color: #ffffff;
   transition: opacity 0.15s, transform 0.1s;
-  margin-bottom: 24px;
+  margin-bottom: 30px;
   white-space: nowrap;
 }
 /* Dark mode: white fill, dark text */
