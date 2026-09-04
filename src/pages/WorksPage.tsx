@@ -127,7 +127,7 @@ function CarloftyCaseCard({ onRead }: { onRead: () => void }) {
           className="works-case-cta"
           role="button"
           tabIndex={0}
-          onClick={onRead}
+          onClick={() => onRead()}
           onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') onRead(); }}
         >
           <span>Read Case Study</span>
