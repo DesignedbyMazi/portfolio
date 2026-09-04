@@ -81,9 +81,9 @@ function CaseStudyCard({
 
 /* ── Live project card ────────────────────── */
 function LiveProjectCard({
-  title, description, image, video, href,
+  title, image, video, href,
 }: {
-  title: string; description: string; image: string;
+  title: string; image: string;
   video?: string; href?: string;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -231,7 +231,6 @@ export default function SelectedProjects({ onReadCaseStudy }: SelectedProjectsPr
           <LiveProjectCard
             key={p.id}
             title={p.title}
-            description={p.description}
             image={p.image}
             video={'video' in p ? (p as { video?: string }).video : undefined}
             href={'href' in p ? (p as { href?: string }).href : undefined}
