@@ -4,7 +4,6 @@ import { supabase } from '../lib/supabase';
 import carloftyImg    from '../assets/images/carlofty-case-study.png';
 import pay4meImg      from '../assets/images/pay4me-card.png';
 import barakaImg      from '../assets/images/baraka-card.jpg';
-import karsaImg       from '../assets/images/karsa-card.png';
 
 import carloftyVideo  from '../assets/videos/carlofty-outcome.mp4';
 import pay4meVideo    from '../assets/videos/pay4me-demo.mp4';
@@ -149,23 +148,15 @@ const liveProjects = [
   {
     id: 'baraka',
     title: 'Baraka — Investment Platform Redesign',
-    description: 'A full redesign of the Baraka investment platform, improving accessibility, clarity, and trust for first-time investors in the MENA region.',
     image: barakaImg,
     video: barakaVideo,
     href: 'https://barakaredesign.framer.website/',
   },
   {
     id: 'pay4me',
-    title: 'Pay4Me — Cross-border Payments',
-    description: 'Designing a seamless payment experience for Nigerians sending and receiving money internationally — fast, clear, and trustworthy.',
+    title: 'Pay4me — Landing page redesign',
     image: pay4meImg,
     video: pay4meVideo,
-  },
-  {
-    id: 'karsa',
-    title: 'Karsa — Design System',
-    description: 'A scalable design system built for product teams who need consistency across web and mobile without sacrificing speed.',
-    image: karsaImg,
   },
 ];
 
