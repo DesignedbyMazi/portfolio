@@ -12,6 +12,7 @@ import './CarloftyCaseStudy.css';
 /* ── Types ───────────────────────────────────────── */
 interface HeroContent {
   breadcrumb?: string; title?: string; overview?: string;
+  ctaLabel?: string; ctaUrl?: string; ctaColor?: string;
   metaYear?: string; metaRole?: string; metaTeam?: string;
   metaDeliverables?: string; imageUrl?: string;
 }
@@ -370,6 +371,20 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
               )}
               {c.hero?.title && <h1 className="cs-hero__title">{c.hero.title}</h1>}
               {c.hero?.overview && <div className="cs-hero__overview cs-rte" dangerouslySetInnerHTML={{ __html: c.hero.overview }} />}
+              {c.hero?.ctaLabel && c.hero?.ctaUrl && (
+                <a
+                  href={c.hero.ctaUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="cs-hero__cta"
+                  style={c.hero.ctaColor ? { color: c.hero.ctaColor, borderColor: c.hero.ctaColor } as React.CSSProperties : undefined}
+                >
+                  <span>{c.hero.ctaLabel}</span>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                    <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5.5M11.5 2.5V8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </a>
+              )}
               {(c.hero?.metaYear || c.hero?.metaRole || c.hero?.metaTeam || c.hero?.metaDeliverables) && (
                 <div className="cs-meta-grid">
                   {c.hero?.metaYear && (

@@ -385,6 +385,17 @@ export default function CarloftyCaseStudy({ onBack, onNavigate, onGoHome }: Prop
                 thousands of dollars in auction transactions — including a record 10-minute Copart
                 payment.
               </p>
+              <a
+                href="https://carlofty.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cs-hero__cta"
+              >
+                <span>Visit website</span>
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+                  <path d="M2.5 11.5L11.5 2.5M11.5 2.5H5.5M11.5 2.5V8.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </a>
               <div className="cs-meta-grid">
                 <div className="cs-meta-cell">
                   <span className="cs-meta-label">Year</span>

@@ -71,19 +71,17 @@ const liveProjects: LiveProject[] = [
   { id:'karsa',     label:'Karsa',           year:'2024',           title:'Karsa',         image:karsaImg                                                                         },
 ];
 
-function isVideo(url: string) {
-  return /\.(mp4|webm|mov|ogg)(\?|$)/i.test(url);
-}
-
 function mapRow(row: Record<string, unknown>): CaseStudy {
   const c = (row.content ?? {}) as Record<string, unknown>;
   const hero = (c.hero ?? {}) as Record<string, unknown>;
-  const thumb = (c.thumbnailUrl as string) || (hero.mediaUrl as string) || '';
+  // card_image_url is a root-level column; fall back to content thumbnailUrl or hero image
+  const cardImg = (row.card_image_url as string) || (c.thumbnailUrl as string) || '';
+  const cardVid = (row.card_video_url as string) || '';
   return {
     id:          String(row.id),
     slug:        String(row.slug),
-    image:       isVideo(thumb) ? '' : thumb,
-    video:       isVideo(thumb) ? thumb : (hero.mediaUrl && isVideo(hero.mediaUrl as string) ? hero.mediaUrl as string : undefined),
+    image:       cardImg,
+    video:       cardVid || undefined,
     title:       (hero.title as string) || String(row.slug),
     description: (hero.subtitle as string) || '',
   };
@@ -303,7 +301,7 @@ export default function WorksPage({ onBack, onReadCaseStudy, onNavigate }: Works
       try {
         const { data } = await supabase
           .from('case_studies')
-          .select('id, slug, content, published')
+          .select('id, slug, content, published, card_image_url, card_video_url')
           .eq('published', true)
           .order('created_at', { ascending: false });
         // exclude any Supabase entry with the reserved 'carlofty' slug (hardcoded below)

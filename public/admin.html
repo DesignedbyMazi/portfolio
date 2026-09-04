@@ -484,6 +484,7 @@ create table if not exists public.case_studies (
   title text not null,
   description text,
   card_image_url text,
+  card_video_url text,
   published boolean default false,
   "order" integer default 0,
   content jsonb default '{}'::jsonb,
@@ -559,7 +560,7 @@ let supaConnected = false;
 
 async function loadStudies() {
   try {
-    const r = await fetch(`${SB_URL}/rest/v1/case_studies?select=id,slug,title,card_image_url,published,order,updated_at&order=order.asc`, { headers: hdrs() });
+    const r = await fetch(`${SB_URL}/rest/v1/case_studies?select=id,slug,title,card_image_url,card_video_url,published,order,updated_at&order=order.asc`, { headers: hdrs() });
     if (r.status === 404 || r.status === 400) { showSql(); return; }
     if (!r.ok) { const e = await r.json().catch(()=>({})); throw new Error(e.message || e.error || r.statusText); }
     studies = await r.json();
@@ -779,8 +780,8 @@ async function autoSaveNow() {
   setAutoSaveStatus('saving');
   const payload = {
     slug: formData.slug, title: formData.title, description: formData.description,
-    card_image_url: formData.card_image_url, published: formData.published,
-    order: parseInt(formData.order) || 0, content: formData.content,
+    card_image_url: formData.card_image_url, card_video_url: formData.card_video_url || null,
+    published: formData.published, order: parseInt(formData.order) || 0, content: formData.content,
   };
   try {
     const res = await upsertStudy(payload);
@@ -827,8 +828,8 @@ async function openEdit(id) {
     editing = s;
     formData = {
       slug: s.slug || '', title: s.title || '', description: s.description || '',
-      card_image_url: s.card_image_url || '', published: !!s.published, order: s.order || 0,
-      content: mergeContent(s.content || {}),
+      card_image_url: s.card_image_url || '', card_video_url: s.card_video_url || '',
+      published: !!s.published, order: s.order || 0, content: mergeContent(s.content || {}),
     };
     showEditor(s.title || 'Edit Study');
   } catch(e) { showToast('Failed to load: ' + e.message, 'err'); }
@@ -1120,12 +1121,27 @@ function fCard() {
   <div class="frow"><label class="flabel">Card Title</label><input type="text" class="finput" placeholder="Designing Trust into a Broken Payment Experience..." value="${esc(String(g('title')))}" oninput="sp('title',this.value);autoSlug(this.value)"></div>
   <div class="frow"><label class="flabel">Card Description (portfolio preview)</label>${richta('description','Global car auctions shouldn\'t require a middleman...')}</div>
   <div class="frow"><label class="flabel">Card Thumbnail</label>${uploadCard('card_image_url','image/*')}</div>
+  <div class="frow"><label class="flabel">Card Hover Video</label>${uploadCard('card_video_url','video/*')}</div>
 `; }
 
 function fHero() { return `
   <div class="frow"><label class="flabel">Breadcrumb</label>${inp('content.hero.breadcrumb','Case study – Carlofty')}</div>
   <div class="frow"><label class="flabel">H1 Title</label>${ta('content.hero.title','Designing Trust into a Broken Payment Experience For Cross-Border Car Sourcing','ftextarea-lg')}</div>
   <div class="frow"><label class="flabel">Overview</label>${richta('content.hero.overview','How I established design direction...')}</div>
+  <div class="fdivider"></div>
+  <div class="fsub-label">Call-to-Action Button</div>
+  <div class="frow-2">
+    <div><label class="flabel">CTA Label</label>${inp('content.hero.ctaLabel','Visit website')}</div>
+    <div><label class="flabel">CTA Link</label>${inp('content.hero.ctaUrl','https://')}</div>
+  </div>
+  <div class="frow" style="align-items:center;gap:12px;display:flex;">
+    <label class="flabel" style="margin:0;white-space:nowrap;">CTA Color</label>
+    <input type="color" value="${esc(String(g('content.hero.ctaColor')||'#F0F0F0'))}"
+      oninput="sp('content.hero.ctaColor',this.value)"
+      style="width:36px;height:28px;padding:2px;border:1px solid var(--bd);border-radius:4px;background:var(--bg);cursor:pointer;">
+    <span style="font-size:0.72rem;color:var(--tx-3);">Leave at default to follow page theme (white in dark, dark in light).</span>
+    <button onclick="sp('content.hero.ctaColor','');renderEditor()" style="padding:3px 8px;font-size:0.7rem;border-radius:var(--r-sm);border:1px solid var(--bd);background:transparent;color:var(--tx-2);cursor:pointer;">Reset to theme</button>
+  </div>
   <div class="fdivider"></div>
   <div class="fsub-label">Meta Grid</div>
   <div class="frow-2">
@@ -1355,7 +1371,7 @@ function mergeContent(saved) {
   return out;
 }
 
-function defaultFD() { return { slug:'', title:'', description:'', card_image_url:'', published:false, order:0, content:defaultContent() }; }
+function defaultFD() { return { slug:'', title:'', description:'', card_image_url:'', card_video_url:'', published:false, order:0, content:defaultContent() }; }
 
 /* ─────────────────────────────── SAVE / PUBLISH ─── */
 async function _doSave(publishState, btnId, labelBusy, labelDone) {

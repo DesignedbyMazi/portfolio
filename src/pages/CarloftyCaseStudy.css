@@ -193,6 +193,27 @@
   margin: 0 0 32px;
 }
 
+/* ── Hero CTA ──────────────────────────────────────── */
+.cs-hero__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 44px;
+  max-height: 44px;
+  padding: 0 16px;
+  border-radius: 22px;
+  border: 1px solid currentColor;
+  font-size: 14px;
+  font-family: var(--font-body, inherit);
+  font-weight: 500;
+  text-decoration: none;
+  color: var(--color-text-primary);
+  transition: opacity 0.15s, transform 0.1s;
+  margin-bottom: 24px;
+}
+.cs-hero__cta:hover  { opacity: 0.75; transform: translateY(-1px); }
+.cs-hero__cta:active { opacity: 1; transform: translateY(0); }
+
 /* ── 2×2 meta grid ─────────────────────────────────── */
 .cs-meta-grid {
   display: grid;
