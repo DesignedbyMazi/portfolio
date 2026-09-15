@@ -109,11 +109,11 @@ function CaseStudyCard({
   );
 }
 
-/* ── Live project card ────────────────────── */
+/* ── Live project card (Baraka) ────────────────────── */
 function LiveProjectCard({
-  title, image, video, href,
+  title, description, image, video, href,
 }: {
-  title: string; image: string;
+  title: string; description: string; image: string;
   video?: string; href?: string;
 }) {
   const cardRef  = useRef<HTMLDivElement>(null);
@@ -154,6 +154,7 @@ function LiveProjectCard({
       </div>
       <div className="case-card__body">
         <h3 className="case-card__title">{title}</h3>
+        {description && <p className="case-card__desc">{description}</p>}
         {href && (
           <span className="case-card__link">
             <span>Visit site</span>
@@ -174,17 +175,6 @@ function LiveProjectCard({
 
   return <div className="case-card">{cardContent}</div>;
 }
-
-/* ── Static live projects shown on homepage ── */
-const liveProjects = [
-  {
-    id: 'baraka',
-    title: 'Baraka — Landing page redesign',
-    image: barakaImg,
-    video: barakaVideo,
-    href: 'https://barakaredesign.framer.website/',
-  },
-];
 
 interface SelectedProjectsProps {
   onReadCaseStudy?: (slug?: string) => void;
@@ -221,11 +211,9 @@ export default function SelectedProjects({ onReadCaseStudy }: SelectedProjectsPr
 
   return (
     <div className="selected-projects">
-      {/* ── Case Studies ─────────────────────────── */}
       <div className="selected-projects__header">
         <div className="selected-projects__title-group">
-          <h2 className="selected-projects__heading">Selected Case Studies</h2>
-          <p className="selected-projects__subheading">A record of my thoughtful process</p>
+          <h2 className="selected-projects__heading">Selected works</h2>
         </div>
       </div>
 
@@ -250,26 +238,15 @@ export default function SelectedProjects({ onReadCaseStudy }: SelectedProjectsPr
             onReadCaseStudy={onReadCaseStudy}
           />
         )}
-      </div>
 
-      {/* ── Live Projects ─────────────────────────── */}
-      <div className="selected-projects__header" style={{ marginTop: 16 }}>
-        <div className="selected-projects__title-group">
-          <h2 className="selected-projects__heading">Live &amp; Exploration Projects</h2>
-          <p className="selected-projects__subheading">Products shipped into the real world</p>
-        </div>
-      </div>
-
-      <div className="selected-projects__list">
-        {liveProjects.map((p) => (
-          <LiveProjectCard
-            key={p.id}
-            title={p.title}
-            image={p.image}
-            video={'video' in p ? (p as { video?: string }).video : undefined}
-            href={'href' in p ? (p as { href?: string }).href : undefined}
-          />
-        ))}
+        {/* Baraka — live project */}
+        <LiveProjectCard
+          title="Baraka — Landing page redesign"
+          description="A clean, conversion-focused redesign of Baraka's marketing landing page."
+          image={barakaImg}
+          video={barakaVideo}
+          href="https://barakaredesign.framer.website/"
+        />
       </div>
     </div>
   );

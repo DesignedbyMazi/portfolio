@@ -3,9 +3,6 @@ import confetti from 'canvas-confetti';
 import { useAnimations } from './hooks/useAnimations';
 import Navbar from './components/Navbar';
 import Hero from './components/Hero';
-import IntroCopy from './components/IntroCopy';
-import SocialSection from './components/SocialSection';
-import UIExploration from './components/UIExploration';
 import SelectedProjects from './components/SelectedProjects';
 import Footer from './components/Footer';
 import CarloftyCaseStudy from './pages/CarloftyCaseStudy';
@@ -212,11 +209,8 @@ function App() {
       <div className="page" style={{ display: view === 'home' ? undefined : 'none' }}>
         <Navbar onNavigate={handleNav} pageLabel="Godswill Uche" showViewWorks onGoHome={goHome} />
         <main className="main">
-          <UIExploration />
           <div className="content">
-            <Hero onViewWorks={goWorks} />
-            <IntroCopy />
-            <div data-animate><SocialSection /></div>
+            <Hero />
             <div data-animate>
               <SelectedProjects onReadCaseStudy={(slug) => slug ? goCaseStudy(slug) : goCarlofty('home')} />
             </div>
