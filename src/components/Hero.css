@@ -271,3 +271,17 @@
 :root[data-theme="dark"] .hero__emphasis { color: #E8E8E8; }
 :root[data-theme="dark"] .hero__mention { color: #E8E8E8; }
 :root[data-theme="dark"] .hero__mention:hover { color: #fff; }
+
+/* ── Mobile ──────────────────────────────────────────────────── */
+@media (max-width: 767px) {
+  .hero {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .hero__avatar {
+    width: 64px;
+    height: 64px;
+  }
+}
