@@ -6,7 +6,7 @@
 
 .main {
   width: 100%;
-  padding-top: 100px;
+  padding-top: 140px;
   padding-bottom: 96px;  /* ≥ navbar height (44px) + comfortable clearance */
 }
 
@@ -32,7 +32,7 @@
 
 @media (max-width: 1024px) {
   :root { --content-padding: 60px; }
-  .main { padding-top: 80px; }
+  .main { padding-top: 120px; }
 }
 
 @media (max-width: 767px) {
@@ -40,7 +40,7 @@
     --content-padding: 24px;   /* 24px left/right on mobile */
     --space-4xl: 44px;
   }
-  .main { padding-top: 96px; }
+  .main { padding-top: 120px; }
 }
 
 @media (max-width: 420px) {
