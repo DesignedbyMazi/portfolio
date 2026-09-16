@@ -231,6 +231,8 @@
   margin-right: 3px;
   background: #ffffff;
   flex-shrink: 0;
+  border: 0.5px solid #eaeaea;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.10), 0 0.5px 1px rgba(0, 0, 0, 0.06);
 }
 
 .hero__mention-text {
