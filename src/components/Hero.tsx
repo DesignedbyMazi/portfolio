@@ -8,6 +8,7 @@ import valueplusLogo from '../assets/images/valueplus-logo.png';
 import zeduchatLogo from '../assets/images/zeduchat-logo.png';
 import cosonasLogo from '../assets/images/cosonas-logo.webp';
 import sheclusiveLogo from '../assets/images/sheclusive-logo.webp';
+import madinaLogo from '../assets/images/madina-logo.png';
 import { useRef, useEffect } from 'react';
 import TextType from './TextType';
 import './Hero.css';
@@ -268,7 +269,7 @@ export default function Hero({ cvUrl = '#cv' }: HeroProps) {
           {' '}(lottery),{' '}
           <Mention handle="@twingle" href="https://www.twingle.ng/" logoSrc={twingleLogo} />
           {' '}(dating), and{' '}
-          <Mention handle="@madina" href="https://www.madina.ng" />
+          <Mention handle="@madina" href="https://www.madina.ng" logoSrc={madinaLogo} />
           {' '}(e-commerce). Delivered campaign and ad platform designs at{' '}
           <Mention handle="@valueplusagency" href="https://www.valueplusagency.com/" logoSrc={valueplusLogo} />
           {'. '}Collaborated cross-functionally at{' '}
