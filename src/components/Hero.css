@@ -135,7 +135,7 @@
 .hero__mention {
   position: relative;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-weight: 700;
+  font-weight: 600;
   font-size: inherit;
   line-height: inherit;
   color: #101010;
@@ -232,7 +232,7 @@
   margin-right: 4px;
   background: #ffffff;
   flex-shrink: 0;
-  border: 0.5px solid #eaeaea;
+  border: 0.8px solid #eaeaea;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.10), 0 0.5px 1px rgba(0, 0, 0, 0.06);
 }
 
