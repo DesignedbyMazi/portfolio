@@ -1,4 +1,6 @@
 import profileImg from '../assets/images/profile.jpg';
+import carloftyLogo from '../assets/images/carlofty-logo.svg';
+import learnbetaLogo from '../assets/images/learnbeta-logo.svg';
 import { useRef, useEffect } from 'react';
 import TextType from './TextType';
 import './Hero.css';
@@ -154,7 +156,14 @@ function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
 }
 
 /* ── @mention link component ─────────────────────────── */
-function Mention({ handle, href }: { handle: string; href?: string }) {
+function Mention({ handle, href, logoSrc }: { handle: string; href?: string; logoSrc?: string }) {
+  const label = logoSrc ? (
+    <>
+      <img src={logoSrc} alt={handle} className="hero__mention-logo" />
+      <span className="hero__mention-text">{handle.replace(/^@/, '')}</span>
+    </>
+  ) : handle;
+
   if (href) {
     return (
       <a
@@ -163,11 +172,11 @@ function Mention({ handle, href }: { handle: string; href?: string }) {
         target="_blank"
         rel="noopener noreferrer"
       >
-        {handle}
+        {label}
       </a>
     );
   }
-  return <span className="hero__mention hero__mention--static">{handle}</span>;
+  return <span className="hero__mention hero__mention--static">{label}</span>;
 }
 
 /* ── Component ───────────────────────────────────────── */
@@ -239,16 +248,16 @@ export default function Hero({ cvUrl = '#cv' }: HeroProps) {
         <p className="hero__bio">
           Product Designer with hands-on experience in fintech, health tech, e-commerce,
           and social impact. Currently leading design at{' '}
-          <Mention handle="@carlofty" href="https://www.carlofty.com" />
+          <Mention handle="@carlofty" href="https://www.carlofty.com" logoSrc={carloftyLogo} />
           {' '}— built a scalable design system (components, variables, tokens), conducted
           user and competitive research, and contributed to a product processing over{' '}
           <strong className="hero__emphasis">$6M</strong>
           {' '}in payments. Redesigned onboarding flows at{' '}
-          <Mention handle="@Learnbeta" href="https://www.learnbeta.ng" />
+          <Mention handle="@Learnbeta" href="https://www.learnbeta.ng" logoSrc={learnbetaLogo} />
           {'. '}Led end-to-end product design for{' '}
           <Mention handle="@betacare" href="https://www.betacare.ng" />
           {' '}(health tech),{' '}
-          <Mention handle="@betaplay" />
+          <Mention handle="@betaplay" href="https://betaplay.ng/" />
           {' '}(lottery),{' '}
           <Mention handle="@twingle" href="https://www.twingle.ng/" />
           {' '}(dating), and{' '}

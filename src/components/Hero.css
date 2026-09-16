@@ -179,7 +179,9 @@
 
 .hero__mention {
   position: relative;
-  display: inline;
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
   color: #101010;
   text-decoration: underline;
   text-decoration-color: currentColor;
@@ -187,6 +189,7 @@
   text-decoration-thickness: 1px;
   cursor: pointer;
   transition: color 0.15s ease;
+  vertical-align: middle;
 }
 
 .hero__mention::before {
@@ -215,6 +218,24 @@
 
 .hero__mention:hover {
   color: #000;
+}
+
+/* ── Inline brand logo badge ─────────────────────────────────── */
+.hero__mention-logo {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  object-fit: contain;
+  vertical-align: middle;
+  margin-right: 3px;
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+}
+
+.hero__mention-text {
+  vertical-align: middle;
 }
 
 /* Static mention (no link, no hover effect) */
@@ -255,6 +276,10 @@
   :root:not([data-theme="light"]) .hero__emphasis { color: #E8E8E8; }
   :root:not([data-theme="light"]) .hero__mention { color: #E8E8E8; }
   :root:not([data-theme="light"]) .hero__mention:hover { color: #fff; }
+  :root:not([data-theme="light"]) .hero__mention-logo {
+    background: #2A2A2A;
+    border-color: rgba(255, 255, 255, 0.12);
+  }
 }
 
 :root[data-theme="dark"] .hero__name { color: #E8E8E8; }
@@ -271,6 +296,10 @@
 :root[data-theme="dark"] .hero__emphasis { color: #E8E8E8; }
 :root[data-theme="dark"] .hero__mention { color: #E8E8E8; }
 :root[data-theme="dark"] .hero__mention:hover { color: #fff; }
+:root[data-theme="dark"] .hero__mention-logo {
+  background: #2A2A2A;
+  border-color: rgba(255, 255, 255, 0.12);
+}
 
 /* ── Mobile ──────────────────────────────────────────────────── */
 @media (max-width: 767px) {
