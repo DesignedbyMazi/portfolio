@@ -226,11 +226,10 @@
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  object-fit: contain;
+  object-fit: cover;
   vertical-align: middle;
   margin-right: 3px;
-  background: #fff;
-  border: 1px solid rgba(0, 0, 0, 0.08);
+  background: #ffffff;
   flex-shrink: 0;
 }
 
@@ -277,8 +276,7 @@
   :root:not([data-theme="light"]) .hero__mention { color: #E8E8E8; }
   :root:not([data-theme="light"]) .hero__mention:hover { color: #fff; }
   :root:not([data-theme="light"]) .hero__mention-logo {
-    background: #2A2A2A;
-    border-color: rgba(255, 255, 255, 0.12);
+    background: #ffffff;
   }
 }
 
@@ -297,8 +295,7 @@
 :root[data-theme="dark"] .hero__mention { color: #E8E8E8; }
 :root[data-theme="dark"] .hero__mention:hover { color: #fff; }
 :root[data-theme="dark"] .hero__mention-logo {
-  background: #2A2A2A;
-  border-color: rgba(255, 255, 255, 0.12);
+  background: #ffffff;
 }
 
 /* ── Mobile ──────────────────────────────────────────────────── */

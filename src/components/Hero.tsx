@@ -1,6 +1,13 @@
 import profileImg from '../assets/images/profile.jpg';
-import carloftyLogo from '../assets/images/carlofty-logo.svg';
-import learnbetaLogo from '../assets/images/learnbeta-logo.svg';
+import carloftyLogo from '../assets/images/carlofty-logo.png';
+import learnbetaLogo from '../assets/images/learnbeta-logo.png';
+import betacareLogo from '../assets/images/betacare-logo.png';
+import betaplayLogo from '../assets/images/betaplay-logo.png';
+import twingleLogo from '../assets/images/twingle-logo.png';
+import valueplusLogo from '../assets/images/valueplus-logo.png';
+import zeduchatLogo from '../assets/images/zeduchat-logo.png';
+import cosonasLogo from '../assets/images/cosonas-logo.webp';
+import sheclusiveLogo from '../assets/images/sheclusive-logo.webp';
 import { useRef, useEffect } from 'react';
 import TextType from './TextType';
 import './Hero.css';
@@ -255,22 +262,22 @@ export default function Hero({ cvUrl = '#cv' }: HeroProps) {
           {' '}in payments. Redesigned onboarding flows at{' '}
           <Mention handle="@Learnbeta" href="https://www.learnbeta.ng" logoSrc={learnbetaLogo} />
           {'. '}Led end-to-end product design for{' '}
-          <Mention handle="@betacare" href="https://www.betacare.ng" />
+          <Mention handle="@betacare" href="https://www.betacare.ng" logoSrc={betacareLogo} />
           {' '}(health tech),{' '}
-          <Mention handle="@betaplay" href="https://betaplay.ng/" />
+          <Mention handle="@betaplay" href="https://betaplay.ng/" logoSrc={betaplayLogo} />
           {' '}(lottery),{' '}
-          <Mention handle="@twingle" href="https://www.twingle.ng/" />
+          <Mention handle="@twingle" href="https://www.twingle.ng/" logoSrc={twingleLogo} />
           {' '}(dating), and{' '}
           <Mention handle="@madina" href="https://www.madina.ng" />
           {' '}(e-commerce). Delivered campaign and ad platform designs at{' '}
-          <Mention handle="@valueplusagency" href="https://www.valueplusagency.com/" />
+          <Mention handle="@valueplusagency" href="https://www.valueplusagency.com/" logoSrc={valueplusLogo} />
           {'. '}Collaborated cross-functionally at{' '}
-          <Mention handle="@cosonas" href="https://cosonas.com/" />
+          <Mention handle="@cosonas" href="https://cosonas.com/" logoSrc={cosonasLogo} />
           {' '}to ship multi-stakeholder products. Led UX/UI design for{' '}
-          <Mention handle="@sheclusiveafrica" href="https://sheclusive.africa/" />
+          <Mention handle="@sheclusiveafrica" href="https://sheclusive.africa/" logoSrc={sheclusiveLogo} />
           {', '}an NGO driving women's digital empowerment across Africa. HNG Finalist —
           co-designed{' '}
-          <Mention handle="@zeduchat" href="https://zedu.chat/" />
+          <Mention handle="@zeduchat" href="https://zedu.chat/" logoSrc={zeduchatLogo} />
           {' '}(formerly Telex).
         </p>
 
