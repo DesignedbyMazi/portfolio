@@ -237,32 +237,32 @@ export default function Hero({ cvUrl = '#cv' }: HeroProps) {
 
         {/* Row 2 — bio */}
         <p className="hero__bio">
-          Currently leading design{' '}
+          Product Designer with hands-on experience in fintech, health tech, e-commerce,
+          and social impact. Currently leading design at{' '}
           <Mention handle="@carlofty" href="https://www.carlofty.com" />
-          {' '}built design system, components and variables, conducted user and competitor
-          analysis research used daily by customers and admin and has processed about{' '}
+          {' '}— built a scalable design system (components, variables, tokens), conducted
+          user and competitive research, and contributed to a product processing over{' '}
           <strong className="hero__emphasis">$6M</strong>
-          {' '}in dollar payment, revamped onboarding for{' '}
+          {' '}in payments. Redesigned onboarding flows at{' '}
           <Mention handle="@Learnbeta" href="https://www.learnbeta.ng" />
-          {', '}led design direction on v1 for{' '}
+          {'. '}Led end-to-end product design for{' '}
           <Mention handle="@betacare" href="https://www.betacare.ng" />
-          {' '}a health tech platform, led design direction for{' '}
+          {' '}(health tech),{' '}
           <Mention handle="@betaplay" />
-          {' '}a lottery platform, designed for an e-commerce{' '}
-          <Mention handle="@madina" href="https://www.madina.ng" />
-          {'. '}Designed for a campaign (ads) platform{' '}
-          <Mention handle="@valueplusagency" href="https://www.valueplusagency.com/" />
-          {', '}led design direction v1 for a dating platform{' '}
+          {' '}(lottery),{' '}
           <Mention handle="@twingle" href="https://www.twingle.ng/" />
-          {', '}collaborated with a team of designers in an agency to ship products for
-          stakeholders{' '}
+          {' '}(dating), and{' '}
+          <Mention handle="@madina" href="https://www.madina.ng" />
+          {' '}(e-commerce). Delivered campaign and ad platform designs at{' '}
+          <Mention handle="@valueplusagency" href="https://www.valueplusagency.com/" />
+          {'. '}Collaborated cross-functionally at{' '}
           <Mention handle="@cosonas" href="https://cosonas.com/" />
-          {', '}and led design for an NGO targeted at building Africa's digital economy
-          through women empowerment{' '}
+          {' '}to ship multi-stakeholder products. Led UX/UI design for{' '}
           <Mention handle="@sheclusiveafrica" href="https://sheclusive.africa/" />
-          {'. '}Collaborated with designers during a bootcamp to build{' '}
+          {', '}an NGO driving women's digital empowerment across Africa. HNG Finalist —
+          co-designed{' '}
           <Mention handle="@zeduchat" href="https://zedu.chat/" />
-          {' '}formerly known as telex as a HNG finalist.
+          {' '}(formerly Telex).
         </p>
 
       </div>
