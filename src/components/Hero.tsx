@@ -164,13 +164,16 @@ function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
 }
 
 /* ── @mention link component ─────────────────────────── */
+function capitalize(s: string) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
 function Mention({ handle, href, logoSrc, logoFit = 'cover' }: { handle: string; href?: string; logoSrc?: string; logoFit?: 'cover' | 'contain' }) {
+  const displayName = capitalize(handle.replace(/^@/, ''));
   const label = logoSrc ? (
     <>
-      <img src={logoSrc} alt={handle} className="hero__mention-logo" style={{ objectFit: logoFit }} />
-      <span className="hero__mention-text">{handle.replace(/^@/, '')}</span>
+      <img src={logoSrc} alt={displayName} className="hero__mention-logo" style={{ objectFit: logoFit }} />
+      <span className="hero__mention-text">{displayName}</span>
     </>
-  ) : handle;
+  ) : displayName;
 
   if (href) {
     return (
