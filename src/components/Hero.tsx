@@ -164,10 +164,10 @@ function useDragMagnify(ref: React.RefObject<HTMLDivElement | null>) {
 }
 
 /* ── @mention link component ─────────────────────────── */
-function Mention({ handle, href, logoSrc }: { handle: string; href?: string; logoSrc?: string }) {
+function Mention({ handle, href, logoSrc, logoFit = 'cover' }: { handle: string; href?: string; logoSrc?: string; logoFit?: 'cover' | 'contain' }) {
   const label = logoSrc ? (
     <>
-      <img src={logoSrc} alt={handle} className="hero__mention-logo" />
+      <img src={logoSrc} alt={handle} className="hero__mention-logo" style={{ objectFit: logoFit }} />
       <span className="hero__mention-text">{handle.replace(/^@/, '')}</span>
     </>
   ) : handle;
@@ -256,12 +256,12 @@ export default function Hero({ cvUrl = '#cv' }: HeroProps) {
         <p className="hero__bio">
           Product Designer with hands-on experience in fintech, health tech, e-commerce,
           and social impact. Currently leading design at{' '}
-          <Mention handle="@carlofty" href="https://www.carlofty.com" logoSrc={carloftyLogo} />
+          <Mention handle="@carlofty" href="https://www.carlofty.com" logoSrc={carloftyLogo} logoFit="contain" />
           {' '}— built a scalable design system (components, variables, tokens), conducted
           user and competitive research, and contributed to a product processing over{' '}
           <strong className="hero__emphasis">$6M</strong>
           {' '}in payments. Redesigned onboarding flows at{' '}
-          <Mention handle="@Learnbeta" href="https://www.learnbeta.ng" logoSrc={learnbetaLogo} />
+          <Mention handle="@Learnbeta" href="https://www.learnbeta.ng" logoSrc={learnbetaLogo} logoFit="contain" />
           {'. '}Led end-to-end product design for{' '}
           <Mention handle="@betacare" href="https://www.betacare.ng" logoSrc={betacareLogo} />
           {' '}(health tech),{' '}
@@ -271,14 +271,14 @@ export default function Hero({ cvUrl = '#cv' }: HeroProps) {
           {' '}(dating), and{' '}
           <Mention handle="@madina" href="https://www.madina.ng" logoSrc={madinaLogo} />
           {' '}(e-commerce). Delivered campaign and ad platform designs at{' '}
-          <Mention handle="@valueplusagency" href="https://www.valueplusagency.com/" logoSrc={valueplusLogo} />
+          <Mention handle="@valueplusagency" href="https://www.valueplusagency.com/" logoSrc={valueplusLogo} logoFit="contain" />
           {'. '}Collaborated cross-functionally at{' '}
           <Mention handle="@cosonas" href="https://cosonas.com/" logoSrc={cosonasLogo} />
           {' '}to ship multi-stakeholder products. Led UX/UI design for{' '}
           <Mention handle="@sheclusiveafrica" href="https://sheclusive.africa/" logoSrc={sheclusiveLogo} />
           {', '}an NGO driving women's digital empowerment across Africa. HNG Finalist —
           co-designed{' '}
-          <Mention handle="@zeduchat" href="https://zedu.chat/" logoSrc={zeduchatLogo} />
+          <Mention handle="@zeduchat" href="https://zedu.chat/" logoSrc={zeduchatLogo} logoFit="contain" />
           {' '}(formerly Telex).
         </p>
 
