@@ -7,7 +7,7 @@ import twingleLogo from '../assets/images/twingle-logo.png';
 import valueplusLogo from '../assets/images/valueplus-logo.png';
 import zeduchatLogo from '../assets/images/zeduchat-logo.png';
 import cosonasLogo from '../assets/images/cosonas-logo.webp';
-import sheclusiveLogo from '../assets/images/sheclusive-logo.webp';
+import sheclusiveLogo from '../assets/images/sheclusive-logo.jpg';
 import madinaLogo from '../assets/images/madina-logo.png';
 import { useRef, useEffect } from 'react';
 import TextType from './TextType';
