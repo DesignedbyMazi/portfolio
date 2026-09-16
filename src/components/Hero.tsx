@@ -180,7 +180,7 @@ export default function Hero({ cvUrl = '#cv' }: HeroProps) {
   useDragMagnify(avatarRef);
 
   return (
-    <div className="hero" data-animate>
+    <div className="hero">
       {/* ── Avatar ───────────────────────── */}
       <div className="hero__avatar" ref={avatarRef}>
         <img

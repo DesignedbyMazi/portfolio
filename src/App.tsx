@@ -161,6 +161,7 @@ function App() {
 
   const [carloftyReturn, setCarloftyReturn] = useState<'home' | 'works'>(getSavedReturn);
   const [caseStudySlug, setCaseStudySlug] = useState<string>(getSlugFromUrl);
+  const [caseStudyReturn, setCaseStudyReturn] = useState<'home' | 'works'>('home');
   const [caseStudyMounted, setCaseStudyMounted] = useState(getSavedView() === 'caseStudy');
 
   useAnimations();
@@ -186,8 +187,9 @@ function App() {
     nav('carlofty');
   };
   const goBack = () => nav(carloftyReturn);
-  const goCaseStudy = (slug: string) => {
+  const goCaseStudy = (slug: string, returnTo: 'home' | 'works' = 'home') => {
     setCaseStudySlug(slug);
+    setCaseStudyReturn(returnTo);
     setCaseStudyMounted(true);
     window.history.pushState({}, '', '/case-study/' + encodeURIComponent(slug));
     nav('caseStudy');
@@ -212,7 +214,7 @@ function App() {
           <div className="content">
             <Hero />
             <div data-animate>
-              <SelectedProjects onReadCaseStudy={(slug) => slug ? goCaseStudy(slug) : goCarlofty('home')} />
+              <SelectedProjects onReadCaseStudy={(slug) => slug ? goCaseStudy(slug, 'home') : goCarlofty('home')} />
             </div>
             <div data-animate><Footer /></div>
           </div>
@@ -224,7 +226,7 @@ function App() {
         <div style={{ display: view === 'works' ? undefined : 'none' }}>
           <WorksPage
             onBack={goHome}
-            onReadCaseStudy={(slug) => slug ? goCaseStudy(slug) : goCarlofty('works')}
+            onReadCaseStudy={(slug) => slug ? goCaseStudy(slug, 'works') : goCarlofty('works')}
             onNavigate={handleNav}
           />
         </div>
@@ -259,7 +261,8 @@ function App() {
             onNavigate={handleNav}
             onGoHome={() => {
               window.history.pushState({}, '', '/');
-              goHome();
+              if (caseStudyReturn === 'works') goWorks();
+              else goHome();
             }}
           />
         </div>

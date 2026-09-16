@@ -387,8 +387,16 @@ export default function CaseStudyPage({ slug, onNavigate, onGoHome }: Props) {
   const goBack = () => { onGoHome?.(); };
 
   if (loading) return (
-    <div className="cs-page" style={{ display:'flex', alignItems:'center', justifyContent:'center', minHeight:'100vh' }}>
-      <span style={{ fontSize:'0.9rem', color:'var(--color-text-secondary)' }}>Loading…</span>
+    <div className="cs-page">
+      <div className="cs-skeleton">
+        <div className="cs-skeleton__bar cs-skeleton__bar--tag" />
+        <div className="cs-skeleton__bar cs-skeleton__bar--title" />
+        <div className="cs-skeleton__bar cs-skeleton__bar--title cs-skeleton__bar--short" />
+        <div className="cs-skeleton__bar cs-skeleton__bar--body" />
+        <div className="cs-skeleton__bar cs-skeleton__bar--body cs-skeleton__bar--med" />
+        <div className="cs-skeleton__bar cs-skeleton__bar--body" />
+        <div className="cs-skeleton__img" />
+      </div>
     </div>
   );
 
